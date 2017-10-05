@@ -1,0 +1,1 @@
+![API_Slogo](doc/slogo_team10_API.JPG)
