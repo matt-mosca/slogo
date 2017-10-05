@@ -215,6 +215,8 @@ public int getFishBreed() - internal
 
 }
  
+### Front End 
+
 package frontend;
 
 public class ErrorMessageDisplay { 
@@ -355,6 +357,10 @@ public void start(Stage primaryStage) throws Exception - external
 
 }
  
+### Util
+
+All public methods in the util package are justifiably public because they necessarily will be used by other parts of the program 
+
 package util;
 
 public class EightNeighborFinder extends NeighborFinder { 
