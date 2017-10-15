@@ -10,16 +10,16 @@ public class MathCommand extends Command {
 		// TODO - fill in all
 		SUM, SIN, PI;
 	}
-	
+
 	private MathCommandType mathCommandType;
 
-	public MathCommand(String commandName) throws IllegalArgumentException {
+	MathCommand(String commandName) throws IllegalArgumentException {
 		super(CommandType.MATH, commandName);
 		// Verify it is a valid name
 		mathCommandType = MathCommandType.valueOf(commandName);
 	}
 
-	public static Collection<String> getCommands() {
+	static Collection<String> getCommands() {
 		Set<String> commandStrings = new HashSet<>();
 		for (MathCommandType commandType : MathCommandType.class.getEnumConstants()) {
 			commandStrings.add(commandType.toString());
@@ -28,22 +28,22 @@ public class MathCommand extends Command {
 	}
 
 	@Override
-	public SyntaxNodeType getSyntaxNodeType() {
+	SyntaxNodeType getSyntaxNodeType() {
 		// TODO - update once MathCommandType enum is updated
 		switch (mathCommandType) {
-			case SUM :
-				return SyntaxNodeType.BINARY_INTERIOR;
-			case SIN :
-				return SyntaxNodeType.UNARY_INTERIOR;
-			case PI :
-				return SyntaxNodeType.TERMINAL;
+		case SUM:
+			return SyntaxNodeType.BINARY_INTERIOR;
+		case SIN:
+			return SyntaxNodeType.UNARY_INTERIOR;
+		case PI:
+			return SyntaxNodeType.TERMINAL;
 		}
 		// Shouldn't happen
 		return SyntaxNodeType.TERMINAL;
 	}
-	
+
 	@Override
-	public double execute(double leftVal, double rightVal) {
+	double execute(double leftVal, double rightVal) {
 		// TODO - call private helper functions for SUM, DIFFERENCE, etc.
 		return 0; // TEMP
 	}

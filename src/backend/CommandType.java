@@ -1,5 +1,5 @@
 package backend;
 
-public enum CommandType {
+enum CommandType {
 	MATH, LOGIC, TURTLE, CONTROL;
 }
