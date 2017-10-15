@@ -1,10 +1,8 @@
 package test;
 
-import java.io.InputStream;
+import utilities.CommandGetter;
+
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 public class ReflectionTesting {
 
@@ -12,35 +10,42 @@ public class ReflectionTesting {
         return Math.cos(angle);
     }
 
-    public static void main (String[] args) {
-        Map<String, Class> primitives = new HashMap<>();
-        primitives.put("double", Double.TYPE);
+    private double sum(double a, double b) {
+        return a + b;
+    }
+
+    private double getPi() {
+        return Math.PI;
+    }
+
+    public static void main(String[] args) {
         ReflectionTesting t = new ReflectionTesting();
-        Properties properties = new Properties();
-        InputStream filestream = ReflectionTesting.class.getClassLoader()
-                .getResourceAsStream("test/Test.properties");
+        CommandGetter getter = new CommandGetter("languages/English.properties");
+        String[] methodInfo = getter.getCommandInfo("pi".toLowerCase());
+        int numberOfDoubleParameters = Integer.parseInt(methodInfo[1]);
+        double result = Double.MIN_VALUE;
+        Method method = null;
         try {
-            properties.load(filestream);
-        } catch (Exception e) {
-            System.out.println("file not found");
-        }
-        try {
-            String[] methodInfo = properties.getProperty("COS".toLowerCase()).split(",");
-            Class methodHost = Class.forName(methodInfo[0]);
-            Class[] parameterClasses = new Class[methodInfo.length-2];
-            for (int i = 2; i < methodInfo.length; i++) {
-                if (primitives.containsKey(methodInfo[i])) {
-                    parameterClasses[i-2] = primitives.get(methodInfo[i]);
-                } else {
-                    parameterClasses[i-2] = Class.forName(methodInfo[i]);
-                }
+            switch (numberOfDoubleParameters) {
+                case 0:
+                    method = ReflectionTesting.class.getDeclaredMethod(methodInfo[0]);
+                    method.setAccessible(true);
+                    result = (double) method.invoke(t);
+                    break;
+                case 1:
+                    method = ReflectionTesting.class.getDeclaredMethod(methodInfo[0], double.class);
+                    method.setAccessible(true);
+                    result = (double) method.invoke(t, Math.random());
+                    break;
+                case 2:
+                    method = ReflectionTesting.class.getDeclaredMethod(methodInfo[0], double.class, double.class);
+                    method.setAccessible(true);
+                    result = (double) method.invoke(t, Math.random(), Math.random());
+                    break;
             }
-            Method method = methodHost.getDeclaredMethod(methodInfo[1], parameterClasses);
-            System.out.println(method.getName());
-            method.setAccessible(true);
-            System.out.println(method.invoke(t, 1.1));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // for testing only!!!
         }
+        System.out.println(result);
     }
 }
