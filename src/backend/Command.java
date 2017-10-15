@@ -31,6 +31,6 @@ public abstract class Command {
 
 	abstract SyntaxNodeType getSyntaxNodeType();
 
-	abstract double execute(double leftVal, double rightVal);
+	abstract double evaluate(double leftVal, double rightVal);
 
 }
