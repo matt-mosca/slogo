@@ -8,6 +8,7 @@ public class Parser {
 
 	public static final String DELIMITER_REGEX = "\\s+";
 	public static final String STANDARD_DELIMITER = " ";
+	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 
 	private Translator translator;
 	private Map<String, CommandType> commandNamesToTypes;
@@ -59,6 +60,11 @@ public class Parser {
 			return null;
 		}
 		String commandName = commands[index];
+		if (isNumeric(commandName)) {
+			return new SyntaxNode(new Constant(Double.parseDouble(commandName)));
+		}
+		// TODO - Check variable store for user-defined variables first
+
 		// Account for localization
 		String canonicalCommandName = translator.getCanonicalCommandFromLocaleString(commandName);
 		CommandType commandType = commandNamesToTypes.get(canonicalCommandName);
@@ -82,7 +88,11 @@ public class Parser {
 		}
 		double leftVal = parseSyntaxTree(tree.getLeft());
 		double rightVal = parseSyntaxTree(tree.getRight());
-		return tree.getCommand().execute(leftVal, rightVal);
+		return tree.getCommand().evaluate(leftVal, rightVal);
+	}
+
+	private boolean isNumeric(String command) {
+		return command != null && command.matches(NUMBER_REGEX);
 	}
 
 }

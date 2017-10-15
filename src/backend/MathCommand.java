@@ -43,7 +43,7 @@ public class MathCommand extends Command {
 	}
 
 	@Override
-	double execute(double leftVal, double rightVal) {
+	double evaluate(double leftVal, double rightVal) {
 		// TODO - call private helper functions for SUM, DIFFERENCE, etc.
 		return 0; // TEMP
 	}
