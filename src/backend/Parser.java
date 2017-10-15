@@ -65,10 +65,10 @@ public class Parser {
 		SyntaxNode root = new SyntaxNode(Command.makeCommandFromTypeAndName(commandType, canonicalCommandName));
 		SyntaxNodeType nodeType = root.getCommand().getSyntaxNodeType();
 		if (nodeType != SyntaxNodeType.TERMINAL) {
-			root.setLeft(makeExpTree(commands, ++index));			
+			root.setLeft(makeExpTree(commands, ++index));
 		}
 		if (nodeType == SyntaxNodeType.BINARY_INTERIOR) {
-			root.setRight(makeExpTree(commands, index + root.getLeft().getSize()));			
+			root.setRight(makeExpTree(commands, index + root.getLeft().getSize()));
 		}
 		return root;
 	}

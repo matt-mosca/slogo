@@ -6,31 +6,31 @@ public abstract class Command {
 	private String commandName;
 
 	// TODO - is there a better way of instantiating the right sub-class?
-	public static Command makeCommandFromTypeAndName(CommandType commandType, String commandName) {
+	static Command makeCommandFromTypeAndName(CommandType commandType, String commandName) {
 		switch (commandType) {
-			case MATH :
-				return new MathCommand(commandName);
-			// TODO - other Command sub-classes
-			default : // TEMP
-				return new MathCommand(commandName);
+		case MATH:
+			return new MathCommand(commandName);
+		// TODO - other Command sub-classes
+		default: // TEMP
+			return new MathCommand(commandName);
 		}
 	}
-	
+
 	protected Command(CommandType commandType, String commandName) {
 		this.commandType = commandType;
 		this.commandName = commandName;
 	}
 
-	public CommandType getCommandType() {
+	CommandType getCommandType() {
 		return commandType;
 	}
 
-	public String getCommandName() {
+	String getCommandName() {
 		return commandName;
 	}
 
-	public abstract SyntaxNodeType getSyntaxNodeType();
-	
-	public abstract double execute(double leftVal, double rightVal);
+	abstract SyntaxNodeType getSyntaxNodeType();
+
+	abstract double execute(double leftVal, double rightVal);
 
 }

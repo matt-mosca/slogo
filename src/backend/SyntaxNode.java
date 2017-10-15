@@ -7,34 +7,34 @@ public class SyntaxNode {
 	private SyntaxNode right;
 	private int size;
 
-	public SyntaxNode(Command command) {
+	SyntaxNode(Command command) {
 		this.command = command;
 		this.size = 1;
 	}
 
-	public void setLeft(SyntaxNode left) {
+	void setLeft(SyntaxNode left) {
 		this.left = left;
 		size += left.getSize();
 	}
 
-	public void setRight(SyntaxNode right) {
+	void setRight(SyntaxNode right) {
 		this.right = right;
 		size += right.getSize();
 	}
 
-	public Command getCommand() {
+	Command getCommand() {
 		return command;
 	}
 
-	public SyntaxNode getLeft() {
+	SyntaxNode getLeft() {
 		return left;
 	}
 
-	public SyntaxNode getRight() {
+	SyntaxNode getRight() {
 		return right;
 	}
-	
-	public int getSize() {
+
+	int getSize() {
 		return size;
 	}
 
