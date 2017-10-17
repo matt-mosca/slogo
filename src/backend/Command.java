@@ -31,8 +31,6 @@ public abstract class Command {
 		return commandName;
 	}
 
-	abstract int getNumOperands();
-
 	abstract double evaluate(List<Double> operands);
 
 }

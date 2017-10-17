@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 public class Translator {
 
-	public static final String RESOURCE_PACKAGE = "resources/";
+	public static final String RESOURCE_PACKAGE = "resources/languages/";
 	// ResourceBundle for locale-specific customization
 	private ResourceBundle myResources;
 	private Map<String, String> stringToKeyMapping;

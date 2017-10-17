@@ -6,18 +6,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import utilities.CommandGetter;
+
 public class Parser {
 
 	public static final String DELIMITER_REGEX = "\\s+";
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
+	public static final String DEFAULT_LANGUAGE_PROPERTIES = "languages/English.properties";
 
 	private Translator translator;
+	private CommandGetter commandGetter;
 	private Map<String, CommandType> commandNamesToTypes;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
 
 	public Parser(Locale locale) {
 		translator = new Translator(locale);
+		commandGetter = new CommandGetter(DEFAULT_LANGUAGE_PROPERTIES);
 		commandNamesToTypes = new HashMap<>();
 		// TODO - same for other CommandTypes (Logic, Turtle, Control)
 		for (String commandName : MathCommand.getCommands()) {
@@ -71,7 +76,7 @@ public class Parser {
 		String canonicalCommandName = translator.getCanonicalCommandFromLocaleString(commandName);
 		CommandType commandType = commandNamesToTypes.get(canonicalCommandName);
 		SyntaxNode root = new SyntaxNode(Command.makeCommandFromTypeAndName(commandType, canonicalCommandName));
-		int numChildren = root.getCommand().getNumOperands();
+		int numChildren = commandGetter.getNumOperandsForCommand(root.getCommand().getCommandName());
 		index++;
 		SyntaxNode nextChild;
 		for (int child = 0; child < numChildren; child++) {

@@ -29,12 +29,6 @@ public class MathCommand extends Command {
 	}
 
 	@Override
-	int getNumOperands() {
-		// TODO - fetch info from Commands.properties
-		return 0;// TEMP
-	}
-
-	@Override
 	double evaluate(List<Double> operands) {
 		// TODO - call private helper functions for SUM, DIFFERENCE, etc.
 		return 0; // TEMP

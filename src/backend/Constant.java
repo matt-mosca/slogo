@@ -18,11 +18,6 @@ public class Constant extends Command {
 	}
 
 	@Override
-	int getNumOperands() {
-		return 0;
-	}
-
-	@Override
 	double evaluate(List<Double> operands) {
 		return value;
 	}
