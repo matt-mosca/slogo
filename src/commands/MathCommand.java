@@ -1,0 +1,69 @@
+package commands;
+
+import java.util.Random;
+
+public class MathCommand extends AbstractCommand {
+
+    private final Random RANDOM_NUMBER_GENERATOR;
+
+    public MathCommand(Class thisClass, String methodToInvoke, int numberOfDoubleParameters) throws NoSuchMethodException {
+        super(thisClass, methodToInvoke, numberOfDoubleParameters);
+        RANDOM_NUMBER_GENERATOR = new Random();
+    }
+
+    private double sum (double leftValue, double rightValue) {
+        return leftValue + rightValue;
+    }
+
+    private double difference (double leftValue, double rightValue) {
+        return leftValue - rightValue;
+    }
+
+    private double product (double leftValue, double rightValue) {
+        return leftValue * rightValue;
+    }
+
+    private double quotient (double leftValue, double rightValue) {
+        return leftValue / rightValue;
+    }
+
+    private double remainder (double leftValue, double rightValue) {
+        return leftValue % rightValue;
+    }
+
+    private double minus (double leftValue, double rightValue) {
+        return leftValue - rightValue;
+    }
+
+    private double minus (double value) {
+        return -value;
+    }
+
+    private double random (double upperBound) {
+        return upperBound * RANDOM_NUMBER_GENERATOR.nextDouble();
+    }
+
+    private double sine (double angle) {
+        return Math.sin(angle);
+    }
+
+    private double cosine (double angle) {
+        return Math.cos(angle);
+    }
+
+    private double tangent (double angle) {
+        return Math.tan(angle);
+    }
+
+    private double arctangent (double angle) {
+        return Math.atan(angle);
+    }
+
+    private double power (double base, double exponent) {
+        return Math.pow(base, exponent);
+    }
+
+    private double pi () {
+        return Math.PI;
+    }
+}

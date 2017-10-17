@@ -1,6 +1,7 @@
 package apis;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -19,6 +20,7 @@ public interface Command {
     /**
      * Execute the command the object represents, as passed at construction time.
      */
-    void execute();
+    double execute(Double... arguments) throws IllegalAccessException, InvocationTargetException;
+    // TODO - DOCUMENT THE CHANGE ABOVE
 }
 
