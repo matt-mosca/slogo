@@ -10,7 +10,7 @@ public abstract class Command {
 	// TODO - is there a better way of instantiating the right sub-class?
 	static Command makeCommandFromTypeAndName(CommandType commandType, String commandName) {
 		switch (commandType) {
-		case MATH:
+		case math:
 			return new MathCommand(commandName);
 		// TODO - other Command sub-classes
 		default: // TEMP
