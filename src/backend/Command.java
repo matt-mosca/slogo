@@ -1,5 +1,7 @@
 package backend;
 
+import java.util.List;
+
 public abstract class Command {
 
 	private CommandType commandType;
@@ -29,8 +31,8 @@ public abstract class Command {
 		return commandName;
 	}
 
-	abstract SyntaxNodeType getSyntaxNodeType();
+	abstract int getNumOperands();
 
-	abstract double evaluate(double leftVal, double rightVal);
+	abstract double evaluate(List<Double> operands);
 
 }

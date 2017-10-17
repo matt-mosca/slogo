@@ -1,37 +1,31 @@
 package backend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SyntaxNode {
 
 	private Command command;
-	private SyntaxNode left;
-	private SyntaxNode right;
+	private List<SyntaxNode> children;
 	private int size;
 
 	SyntaxNode(Command command) {
 		this.command = command;
+		children = new ArrayList<>();
 		this.size = 1;
 	}
 
-	void setLeft(SyntaxNode left) {
-		this.left = left;
-		size += left.getSize();
-	}
-
-	void setRight(SyntaxNode right) {
-		this.right = right;
-		size += right.getSize();
+	void addChild(SyntaxNode child) {
+		children.add(child);
+		size += child.getSize();
 	}
 
 	Command getCommand() {
 		return command;
 	}
 
-	SyntaxNode getLeft() {
-		return left;
-	}
-
-	SyntaxNode getRight() {
-		return right;
+	List<SyntaxNode> getChildren() {
+		return children;
 	}
 
 	int getSize() {

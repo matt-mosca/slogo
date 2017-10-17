@@ -1,6 +1,8 @@
 package backend;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -69,12 +71,13 @@ public class Parser {
 		String canonicalCommandName = translator.getCanonicalCommandFromLocaleString(commandName);
 		CommandType commandType = commandNamesToTypes.get(canonicalCommandName);
 		SyntaxNode root = new SyntaxNode(Command.makeCommandFromTypeAndName(commandType, canonicalCommandName));
-		SyntaxNodeType nodeType = root.getCommand().getSyntaxNodeType();
-		if (nodeType != SyntaxNodeType.TERMINAL) {
-			root.setLeft(makeExpTree(commands, ++index));
-		}
-		if (nodeType == SyntaxNodeType.BINARY_INTERIOR) {
-			root.setRight(makeExpTree(commands, index + root.getLeft().getSize()));
+		int numChildren = root.getCommand().getNumOperands();
+		index++;
+		SyntaxNode nextChild;
+		for (int child = 0; child < numChildren; child++) {
+			nextChild = makeExpTree(commands, index);
+			root.addChild(nextChild);
+			index += nextChild.getSize();
 		}
 		return root;
 	}
@@ -86,9 +89,11 @@ public class Parser {
 		if (tree == null) {
 			return 0;
 		}
-		double leftVal = parseSyntaxTree(tree.getLeft());
-		double rightVal = parseSyntaxTree(tree.getRight());
-		return tree.getCommand().evaluate(leftVal, rightVal);
+		List<Double> operands = new ArrayList<>();
+		for (SyntaxNode child : tree.getChildren()) {
+			operands.add(parseSyntaxTree(child));
+		}
+		return tree.getCommand().evaluate(operands);
 	}
 
 	private boolean isNumeric(String command) {
