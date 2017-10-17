@@ -20,7 +20,7 @@ public class ReflectionTesting {
 
     public static void main(String[] args) {
         ReflectionTesting t = new ReflectionTesting();
-        CommandGetter getter = new CommandGetter("languages/English.properties");
+        CommandGetter getter = new CommandGetter();
         String[] methodInfo = getter.getCommandInfo("pi".toLowerCase());
         int numberOfDoubleParameters = Integer.parseInt(methodInfo[1]);
         double result = Double.MIN_VALUE;

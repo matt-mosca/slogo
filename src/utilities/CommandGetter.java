@@ -10,24 +10,33 @@ import java.util.Set;
 public class CommandGetter {
 
 	private final String COMMAND_INFO_FILE = "Commands.properties";
+	private final String LANGUAGES_PROPERTIES_FOLDER = "languages/";
+	private final String PROPERTIES_SUFFIX = ".properties";
+	public static final String DEFAULT_LANGUAGE = "English";
 	private final Properties COMMAND_PROPERTIES;
 	private Properties languageProperties;
 	private Map<String, String> commandMap = new HashMap<>();
 
-	public CommandGetter(String languageFile) {
+	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
 		InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
+		if (commandPropertiesStream == null) {
+			System.out.println("Unable to get stream");
+			System.exit(1);
+		}
 		try {
 			COMMAND_PROPERTIES.load(commandPropertiesStream);
 		} catch (IOException fileNotFound) {
 			// need frontend method to launch failure dialog box
+			System.out.println("Missing File!"); // TEMP
 		}
 		languageProperties = new Properties();
-		setLanguage(languageFile);
+		setLanguage(DEFAULT_LANGUAGE);
 	}
 
-	public void setLanguage(String languageFile) {
-		InputStream properties = getClass().getClassLoader().getResourceAsStream(languageFile);
+	public void setLanguage(String language) {
+		InputStream properties = getClass().getClassLoader()
+				.getResourceAsStream(LANGUAGES_PROPERTIES_FOLDER + language + PROPERTIES_SUFFIX);
 		try {
 			languageProperties.load(properties);
 		} catch (IOException fileNotFound) {
@@ -36,6 +45,19 @@ public class CommandGetter {
 		fillCommandMap();
 	}
 
+	public String[] getCommandInfo(String command) throws IllegalArgumentException {
+		String commandInfo;
+		System.out.println(commandMap.keySet());
+		System.out.println("Looking up command " + command);
+		command = command.toLowerCase();
+		if (!commandMap.containsKey(command)
+				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
+			throw new IllegalArgumentException();
+		}
+		System.out.println(commandInfo);
+		return commandInfo.split(",");
+	}
+	
 	private void fillCommandMap() {
 		commandMap.clear();
 		Set<String> baseCommands = languageProperties.stringPropertyNames();
@@ -48,20 +70,4 @@ public class CommandGetter {
 		}
 	}
 
-	public String[] getCommandInfo(String command) throws IllegalArgumentException {
-		String commandInfo;
-		System.out.println(commandMap.keySet());
-		if (!commandMap.containsKey(command)
-				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
-			throw new IllegalArgumentException();
-		}
-		System.out.println(commandInfo);
-		return commandInfo.split(",");
-	}
-
-	public int getNumOperandsForCommand(String command) throws IllegalArgumentException {
-		String[] commandInfo = getCommandInfo(command);
-		// Need to do bounds checking?
-		return Integer.parseInt(commandInfo[1]);
-	}
 }
