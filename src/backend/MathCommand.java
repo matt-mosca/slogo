@@ -2,6 +2,7 @@ package backend;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MathCommand extends Command {
@@ -28,22 +29,7 @@ public class MathCommand extends Command {
 	}
 
 	@Override
-	SyntaxNodeType getSyntaxNodeType() {
-		// TODO - update once MathCommandType enum is updated
-		switch (mathCommandType) {
-		case SUM:
-			return SyntaxNodeType.BINARY_INTERIOR;
-		case SIN:
-			return SyntaxNodeType.UNARY_INTERIOR;
-		case PI:
-			return SyntaxNodeType.TERMINAL;
-		}
-		// Shouldn't happen
-		return SyntaxNodeType.TERMINAL;
-	}
-
-	@Override
-	double evaluate(double leftVal, double rightVal) {
+	double evaluate(List<Double> operands) {
 		// TODO - call private helper functions for SUM, DIFFERENCE, etc.
 		return 0; // TEMP
 	}

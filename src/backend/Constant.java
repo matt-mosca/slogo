@@ -1,5 +1,7 @@
 package backend;
 
+import java.util.List;
+
 public class Constant extends Command {
 
 	// TODO - Try to eliminate need for this if possible
@@ -16,12 +18,7 @@ public class Constant extends Command {
 	}
 
 	@Override
-	SyntaxNodeType getSyntaxNodeType() {
-		return SyntaxNodeType.TERMINAL;
-	}
-
-	@Override
-	double evaluate(double leftVal, double rightVal) {
+	double evaluate(List<Double> operands) {
 		return value;
 	}
 }
