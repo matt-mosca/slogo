@@ -23,7 +23,6 @@ public class Parser {
 
 	public Parser() {
 		commandGetter = new CommandGetter();
-		// TODO - same for other CommandTypes (Logic, Turtle, Control)
 		syntaxTrees = new HashMap<>();
 	}
 
@@ -93,11 +92,9 @@ public class Parser {
 	}
 
 	// Handled differently based on type of command
-	private double parseSyntaxTree(SyntaxNode tree) throws IllegalAccessException, InvocationTargetException {
-		// Switch to throwing exception to returning 0, to catch malformed trees?
-		// Less elegant but easier to debug?
+	private double parseSyntaxTree(SyntaxNode tree) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (tree == null) {
-			return 0;
+			throw new IllegalArgumentException();
 		}
 		Double[] operands = new Double[tree.getChildren().size()];
 		List<SyntaxNode> children = tree.getChildren();
@@ -107,7 +104,6 @@ public class Parser {
 		}
 		// FOR DEBUGGING, return directly in future without printing
 		double result = tree.getCommand().execute(operands);
-		System.out.println(result);
 		return result;
 	}
 
