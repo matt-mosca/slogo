@@ -43,8 +43,8 @@ public class MathCommand extends AbstractCommand {
         return upperBound * RANDOM_NUMBER_GENERATOR.nextDouble();
     }
 
-    private double sine (double angle) {
-        return Math.sin(angle);
+    private double sine (double val) {
+        return Math.sin(val);
     }
 
     private double cosine (double angle) {
@@ -66,4 +66,5 @@ public class MathCommand extends AbstractCommand {
     private double pi () {
         return Math.PI;
     }
+    
 }

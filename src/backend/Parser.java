@@ -1,11 +1,16 @@
 package backend;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import apis.Command;
 import utilities.CommandGetter;
+import commands.AbstractCommand;
+import commands.Constant;
+import commands.MathCommand;
 
 public class Parser {
 
@@ -14,16 +19,11 @@ public class Parser {
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 
 	private CommandGetter commandGetter;
-	private Map<String, CommandType> commandNamesToTypes;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
 
 	public Parser() {
 		commandGetter = new CommandGetter();
-		commandNamesToTypes = new HashMap<>();
 		// TODO - same for other CommandTypes (Logic, Turtle, Control)
-		for (String commandName : MathCommand.getCommands()) {
-			commandNamesToTypes.put(commandName.toLowerCase(), CommandType.math);
-		}
 		syntaxTrees = new HashMap<>();
 	}
 
@@ -33,25 +33,27 @@ public class Parser {
 		}
 		// Avoid repeated computation for just differing whitespace
 		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
-		System.out.println(formattedCommand);
 		try {
 			syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
-			System.out.println("Saved syntax tree for valid command");
 			return true;
-		} catch (IllegalArgumentException e) {
-			System.out.println("Invalid command!");
+		} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
+				| InstantiationException e) {
 			return false;
 		}
 	}
 
 	public void executeCommand(String command) throws IllegalArgumentException {
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
-		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
-			syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
+		try {
+			String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
+			if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
+				syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
+			}
+			SyntaxNode tree = syntaxTrees.get(formattedCommand);
+			parseSyntaxTree(tree);
+		} catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException
+				| InstantiationException e) {
+			throw new IllegalArgumentException();
 		}
-		SyntaxNode tree = syntaxTrees.get(formattedCommand);
-		System.out.println("About to parse syntax tree!");
-		parseSyntaxTree(tree);
 	}
 
 	// To support switching of language through front end
@@ -59,7 +61,9 @@ public class Parser {
 		commandGetter.setLanguage(language);
 	}
 
-	private SyntaxNode makeExpTree(String[] commands, int index) throws IllegalArgumentException {
+	private SyntaxNode makeExpTree(String[] commands, int index)
+			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+			InvocationTargetException, IllegalAccessException {
 		if (commands == null) {
 			throw new IllegalArgumentException();
 		}
@@ -68,16 +72,16 @@ public class Parser {
 		}
 		String commandName = commands[index];
 		if (isNumeric(commandName)) {
-			return new SyntaxNode(new Constant(Double.parseDouble(commandName)));
+			Constant constant = new Constant(Double.parseDouble(commandName));
+			return new SyntaxNode(constant);
 		}
 		// TODO - Check variable store for user-defined variables first
 
 		// Account for localization
 		String[] commandInfo = commandGetter.getCommandInfo(commandName);
-		String canonicalCommandName = commandInfo[0];
-		int numChildren = Integer.parseInt(commandInfo[1]);
-		CommandType commandType = commandNamesToTypes.get(canonicalCommandName);
-		SyntaxNode root = new SyntaxNode(Command.makeCommandFromTypeAndName(commandType, canonicalCommandName));
+		AbstractCommand command = getCommandFromInfo(commandInfo);
+		int numChildren = Integer.parseInt(commandInfo[2]);
+		SyntaxNode root = new SyntaxNode(command);
 		index++;
 		SyntaxNode nextChild;
 		for (int child = 0; child < numChildren; child++) {
@@ -89,24 +93,36 @@ public class Parser {
 	}
 
 	// Handled differently based on type of command
-	private double parseSyntaxTree(SyntaxNode tree) {
+	private double parseSyntaxTree(SyntaxNode tree) throws IllegalAccessException, InvocationTargetException {
 		// Switch to throwing exception to returning 0, to catch malformed trees?
 		// Less elegant but easier to debug?
 		if (tree == null) {
 			return 0;
 		}
-		List<Double> operands = new ArrayList<>();
-		for (SyntaxNode child : tree.getChildren()) {
-			System.out.println("Parsing child with command " + child.getCommand().getCommandName());	
-			operands.add(parseSyntaxTree(child));
+		Double[] operands = new Double[tree.getChildren().size()];
+		List<SyntaxNode> children = tree.getChildren();
+		for (int childIndex = 0; childIndex < children.size(); childIndex++) {
+			SyntaxNode child = children.get(childIndex);
+			operands[childIndex] = parseSyntaxTree(child);
 		}
-		double result = tree.getCommand().evaluate(operands);
-		System.out.println("Result: " + result);
+		// FOR DEBUGGING, return directly in future without printing
+		double result = tree.getCommand().execute(operands);
+		System.out.println(result);
 		return result;
 	}
 
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
+	}
+
+	// Move to either utilities or to AbstractCommand as static method?
+	private AbstractCommand getCommandFromInfo(String[] commandInfo) throws ClassNotFoundException,
+			NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+		int numChildren = Integer.parseInt(commandInfo[2]);
+		Class commandType = Class.forName(commandInfo[0]);
+		Class[] commandConstructorParameterClasses = new Class[] { Class.class, String.class, int.class };
+		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses).newInstance(commandType,
+				commandInfo[1], numChildren);
 	}
 
 }

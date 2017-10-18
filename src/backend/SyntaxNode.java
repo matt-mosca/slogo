@@ -1,15 +1,16 @@
 package backend;
 
+import commands.AbstractCommand;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SyntaxNode {
 
-	private Command command;
+	private AbstractCommand command;
 	private List<SyntaxNode> children;
 	private int size;
 
-	SyntaxNode(Command command) {
+	SyntaxNode(AbstractCommand command) {
 		this.command = command;
 		children = new ArrayList<>();
 		this.size = 1;
@@ -20,7 +21,7 @@ public class SyntaxNode {
 		size += child.getSize();
 	}
 
-	Command getCommand() {
+	AbstractCommand getCommand() {
 		return command;
 	}
 

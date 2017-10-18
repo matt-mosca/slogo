@@ -14,7 +14,7 @@ public abstract class AbstractCommand implements Command{
     private final Class commandType;
 
     public AbstractCommand(Class commandType, String methodToInvoke, int numberOfDoubleParameters) throws NoSuchMethodException {
-        this.commandType = commandType;
+    		this.commandType = commandType;
         Class[] doubleArguments = new Class[numberOfDoubleParameters];
         Arrays.fill(doubleArguments, double.class);
         METHOD_TO_INVOKE = commandType.getDeclaredMethod(methodToInvoke, doubleArguments);
@@ -27,7 +27,7 @@ public abstract class AbstractCommand implements Command{
 
     @Override
     public double execute(Double... arguments) throws IllegalAccessException, InvocationTargetException {
-        METHOD_TO_INVOKE.setAccessible(true);
+    		METHOD_TO_INVOKE.setAccessible(true);
         return (double) METHOD_TO_INVOKE.invoke(this, arguments);
     }
 }
