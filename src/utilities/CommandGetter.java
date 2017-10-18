@@ -1,5 +1,7 @@
 package utilities;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -9,8 +11,8 @@ import java.util.Set;
 
 public class CommandGetter {
 
-	private final String COMMAND_INFO_FILE = "Commands.properties";
-	private final String LANGUAGES_PROPERTIES_FOLDER = "languages/";
+	private final String COMMAND_INFO_FILE = "src/resources/Commands.properties";
+	private final String LANGUAGES_PROPERTIES_FOLDER = "resources/languages/";
 	private final String PROPERTIES_SUFFIX = ".properties";
 	public static final String DEFAULT_LANGUAGE = "English";
 	private final Properties COMMAND_PROPERTIES;
@@ -19,12 +21,10 @@ public class CommandGetter {
 
 	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
-		InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
-		if (commandPropertiesStream == null) {
-			System.out.println("Unable to get stream");
-			System.exit(1);
-		}
 		try {
+			File f = new File(COMMAND_INFO_FILE);
+			//InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream();
+			InputStream commandPropertiesStream = new FileInputStream(f);
 			COMMAND_PROPERTIES.load(commandPropertiesStream);
 		} catch (IOException fileNotFound) {
 			// need frontend method to launch failure dialog box
@@ -47,14 +47,11 @@ public class CommandGetter {
 
 	public String[] getCommandInfo(String command) throws IllegalArgumentException {
 		String commandInfo;
-		System.out.println(commandMap.keySet());
-		System.out.println("Looking up command " + command);
 		command = command.toLowerCase();
 		if (!commandMap.containsKey(command)
 				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
 			throw new IllegalArgumentException();
 		}
-		System.out.println(commandInfo);
 		return commandInfo.split(",");
 	}
 	
@@ -63,7 +60,7 @@ public class CommandGetter {
 		Set<String> baseCommands = languageProperties.stringPropertyNames();
 		for (String baseCommand : baseCommands) {
 			String aliasesString = languageProperties.getProperty(baseCommand, "");
-			String[] languageAliases = languageProperties.getProperty(baseCommand, "").split("\\|");
+			String[] languageAliases = aliasesString.split("\\|");
 			for (String alias : languageAliases) {
 				commandMap.put(alias.replace("\\", ""), baseCommand);
 			}
