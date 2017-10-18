@@ -8,9 +8,10 @@ import java.lang.reflect.Method;
 public class ReflectionTesting {
 
     public static void main(String[] args) {
-        CommandGetter getter = new CommandGetter("languages/English.properties");
-        String[] methodInfo = getter.getCommandInfo("not".toLowerCase());
-        int numberOfDoubleParameters = Integer.parseInt(methodInfo[2]);
+        ReflectionTesting t = new ReflectionTesting();
+        CommandGetter getter = new CommandGetter();
+        String[] methodInfo = getter.getCommandInfo("pi".toLowerCase());
+        int numberOfDoubleParameters = Integer.parseInt(methodInfo[1]);
         double result = Double.MIN_VALUE;
         Method method = null;
         try {

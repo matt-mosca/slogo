@@ -20,7 +20,7 @@ public abstract class AbstractCommand implements Command{
 
     @Override
     public double execute(Double... arguments) throws IllegalAccessException, InvocationTargetException {
-        METHOD_TO_INVOKE.setAccessible(true);
+    		METHOD_TO_INVOKE.setAccessible(true);
         return (double) METHOD_TO_INVOKE.invoke(this, arguments);
     }
 }
