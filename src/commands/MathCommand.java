@@ -2,12 +2,15 @@ package commands;
 
 import java.util.Random;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class MathCommand extends AbstractCommand {
 
     private final Random RANDOM_NUMBER_GENERATOR;
 
-    public MathCommand(Class thisClass, String methodToInvoke, int numberOfDoubleParameters) throws NoSuchMethodException {
-        super(thisClass, methodToInvoke, numberOfDoubleParameters);
+    public MathCommand(Class thisClass, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
+        super(thisClass, methodToInvoke, parameters);
         RANDOM_NUMBER_GENERATOR = new Random();
     }
 

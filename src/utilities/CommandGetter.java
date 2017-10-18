@@ -50,13 +50,11 @@ public class CommandGetter {
 
 	public String[] getCommandInfo(String command) throws IllegalArgumentException {
 		String commandInfo;
-		System.out.println(commandMap.keySet());
 		if (!commandMap.containsKey(command)
 				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
 			throw new IllegalArgumentException();
 		}
-		System.out.println(commandInfo);
-		return commandInfo.split(",");
+		return commandInfo.split(";");
 	}
 
 	public int getNumOperandsForCommand(String command) throws IllegalArgumentException {

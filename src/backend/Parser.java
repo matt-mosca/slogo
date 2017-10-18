@@ -6,16 +6,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.sun.java.accessibility.util.Translator;
 import utilities.CommandGetter;
 
 public class Parser {
-
+/*
 	public static final String DELIMITER_REGEX = "\\s+";
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 	public static final String DEFAULT_LANGUAGE_PROPERTIES = "languages/English.properties";
 
-	private Translator translator;
+	/private Translator translator;
 	private CommandGetter commandGetter;
 	private Map<String, CommandType> commandNamesToTypes;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
@@ -104,5 +105,5 @@ public class Parser {
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
-
+*/
 }

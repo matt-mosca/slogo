@@ -5,24 +5,17 @@ import apis.Command;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Map;
 
+/**
+ * @author Ben Schwennesen
+ */
 public abstract class AbstractCommand implements Command{
 
     private final Method METHOD_TO_INVOKE;
 
-    private final Class commandType;
-
-    public AbstractCommand(Class commandType, String methodToInvoke, int numberOfDoubleParameters) throws NoSuchMethodException {
-        this.commandType = commandType;
-        Class[] doubleArguments = new Class[numberOfDoubleParameters];
-        Arrays.fill(doubleArguments, double.class);
-        METHOD_TO_INVOKE = commandType.getDeclaredMethod(methodToInvoke, doubleArguments);
-    }
-
-    @Override
-    public Collection getAllValidCommands() {
-        return Arrays.asList(commandType.getDeclaredMethods());
+    public AbstractCommand(Class commandType, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
+        METHOD_TO_INVOKE = commandType.getDeclaredMethod(methodToInvoke, parameters);
     }
 
     @Override

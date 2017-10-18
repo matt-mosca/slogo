@@ -1,9 +1,12 @@
 package commands;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class LogicCommand extends AbstractCommand {
 
-    public LogicCommand (Class thisClass, String methodToInvoke, int numberOfDoubleParameters) throws NoSuchMethodException {
-        super(thisClass, methodToInvoke, numberOfDoubleParameters);
+    public LogicCommand (Class thisClass, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
+        super(thisClass, methodToInvoke, parameters);
     }
 
     private double less (double leftValue, double rightValue) {
