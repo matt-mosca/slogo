@@ -16,7 +16,7 @@ public class Constant extends AbstractCommand {
 		setValue(value);
 	}
 
-	private double getValue(double value) { return value; }
+	private double getValue() { return value; }
 	
 	private void setValue(double value) {
 		this.value = value;
