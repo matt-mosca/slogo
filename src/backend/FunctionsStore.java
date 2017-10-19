@@ -47,6 +47,7 @@ public class FunctionsStore {
         return getDeclaredVariablesInScope(GLOBAL);
     }
 
+    // TODO - What about escaping variables? i.e. variables from outer scopes?
     public Set<Map.Entry> getDeclaredVariablesInScope(String scope) {
         Set<Map.Entry> declaredVariables = new HashSet<>();
         declaredVariables.addAll(functionVariables.get(GLOBAL).entrySet());

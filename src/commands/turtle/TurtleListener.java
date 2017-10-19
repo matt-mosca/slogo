@@ -59,10 +59,14 @@ public class TurtleListener {
 		angleProp.setValue(rad);
 	}
 
+	// TODO - is there an instantaneous change in display upon setting pen-up/down?
+	// If so, need front end to expose a public API method for showing / hiding pen
 	void setPenUp(boolean penUp) {
 		this.penUp = penUp;
 	}
 
+	// TODO - need front end to expose public API method for showing / hiding turtle
+	// Call that method here
 	void setShowing(boolean showing) {
 		this.showing = showing;
 	}

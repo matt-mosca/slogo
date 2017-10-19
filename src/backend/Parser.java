@@ -16,6 +16,8 @@ public class Parser {
 	public static final String DELIMITER_REGEX = "\\s+";
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
+	public static final String VARIABLE_ARGS_START_DELIMITER = "(";
+	public static final String VARIABLE_ARGS_END_DELIMITER = ")";
 
 	private CommandGetter commandGetter;
 	private Reflector reflector;
@@ -70,20 +72,14 @@ public class Parser {
 		if (index >= commands.length) {
 			return null;
 		}
-		String commandName = commands[index];
-		if (isNumeric(commandName)) {
-			// TODO - change below (just a temp fix to make things compile with my (Ben) changes)
-			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue");
-			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
-			return new SyntaxNode(constant);
+		SyntaxNode root;
+		if (commands[index].equals(VARIABLE_ARGS_START_DELIMITER)) {
+			int variableArgsCommandEndIndex = findVariableArgsEndpoint(commands, index);
+			return makeExpTreeForVariableParameters(commands, index + 1, variableArgsCommandEndIndex);
 		}
-		// TODO - Check variable store for user-defined variables first
-
-		// Account for localization
-		AbstractCommand command = commandGetter.getCommandFromName(commandName.toLowerCase());
-		// TODO - need to update this to handle arbitrary args (as in (sum 10 10 10...) )
-		int numChildren = (command.takesVariableArguments() ? 2 : command.getNumberOfArguments());
-		SyntaxNode root = new SyntaxNode(command);
+		root = makeSyntaxNodeForCommand(commands[index]);
+		AbstractCommand rootCommand = root.getCommand();
+		int numChildren = rootCommand.getNumberOfArguments();
 		index++;
 		SyntaxNode nextChild;
 		for (int child = 0; child < numChildren; child++) {
@@ -94,8 +90,46 @@ public class Parser {
 		return root;
 	}
 
+	private SyntaxNode makeSyntaxNodeForCommand(String commandName) throws NoSuchMethodException,
+			InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+		if (isNumeric(commandName)) {
+			// TODO - change below (just a temp fix to make things compile with my (Ben)
+			// changes)
+			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue");
+			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
+			return new SyntaxNode(constant);
+		}
+		// TODO - Check variable store for user-defined variables first
+
+		// Account for localization
+		AbstractCommand command = commandGetter.getCommandFromName(commandName.toLowerCase());
+		SyntaxNode root = new SyntaxNode(command);
+		return root;
+	}
+
+	private SyntaxNode makeExpTreeForVariableParameters(String[] commands, int startIndex, int endIndex)
+			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException,
+			ClassNotFoundException {
+		if (commands == null || startIndex >= commands.length || startIndex > endIndex || endIndex >= commands.length) {
+			throw new IllegalArgumentException();
+		}
+		SyntaxNode root = makeSyntaxNodeForCommand(commands[startIndex]);
+		if (!root.getCommand().takesVariableArguments()) {
+			throw new IllegalArgumentException();
+		}
+		int index = startIndex + 1;
+		SyntaxNode nextChild;
+		while (index < endIndex) {
+			nextChild = makeExpTree(commands, index);
+			root.addChild(nextChild);
+			index += nextChild.getSize();
+		}
+		return root;
+	}
+
 	// Handled differently based on type of command
-	private double parseSyntaxTree(SyntaxNode tree) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	private double parseSyntaxTree(SyntaxNode tree)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if (tree == null) {
 			throw new IllegalArgumentException();
 		}
@@ -123,8 +157,25 @@ public class Parser {
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
+	
+	private int findVariableArgsEndpoint(String[] commands, int startIndex) throws IllegalArgumentException {
+		if (commands == null || startIndex < 0 || startIndex >= commands.length) {
+			throw new IllegalArgumentException();
+		}
+		int indentation = 0;
+		int index = startIndex;
+		while (index < commands.length) {
+			if (commands[index].equals(VARIABLE_ARGS_START_DELIMITER)) {
+				indentation ++;
+			} else if (commands[index].equals(VARIABLE_ARGS_END_DELIMITER)) {
+				if (--indentation == 0) {
+					return index;
+				}
+			}
+		}
+		throw new IllegalArgumentException();
+	}
 
 	// Move to either utilities or to AbstractCommand as static method?
-
 
 }

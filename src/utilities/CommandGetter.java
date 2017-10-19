@@ -30,13 +30,12 @@ public class CommandGetter {
 	private final int COMMAND_METHOD_NAME_INDEX = 1;
 	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;
 
-
 	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
 		try {
-			//File file = new File(COMMAND_INFO_FILE);
+			// File file = new File(COMMAND_INFO_FILE);
 			InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
-			//InputStream commandPropertiesStream = new FileInputStream(f);
+			// InputStream commandPropertiesStream = new FileInputStream(f);
 			COMMAND_PROPERTIES.load(commandPropertiesStream);
 		} catch (IOException fileNotFound) {
 			// need frontend method to launch failure dialog box
@@ -66,7 +65,7 @@ public class CommandGetter {
 		}
 		return commandInfo.split("/");
 	}
-	
+
 	private void fillCommandMap() {
 		commandMap.clear();
 		Set<String> baseCommands = languageProperties.stringPropertyNames();
@@ -79,14 +78,14 @@ public class CommandGetter {
 		}
 	}
 
-	public AbstractCommand getCommandFromName(String command) throws ClassNotFoundException,
-			NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+	public AbstractCommand getCommandFromName(String command) throws ClassNotFoundException, NoSuchMethodException,
+			InvocationTargetException, IllegalAccessException, InstantiationException {
 		String[] commandInfo = getCommandInfo(command);
 		Class commandType = Class.forName(commandInfo[0]);
-		Class[] commandConstructorParameterClasses = new Class[] {Method.class};
+		Class[] commandConstructorParameterClasses = new Class[] { Method.class };
 		Method commandMethod = getMethodFromCommandInfo(commandType, commandInfo);
-		return (AbstractCommand) commandType
-				.getConstructor(commandConstructorParameterClasses).newInstance(commandMethod);
+		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses)
+				.newInstance(commandMethod);
 	}
 
 	private Method getMethodFromCommandInfo(Class commandType, String[] commandInfo)
@@ -98,11 +97,13 @@ public class CommandGetter {
 
 	private Class[] getParameterClasses(String[] argumentTypeStrings) throws ClassNotFoundException {
 		if (argumentTypeStrings.length == 0) {
-			return new Class[]{};
+			return new Class[] {};
 		}
 		Class[] commandParameterClasses;
 		commandParameterClasses = new Class[argumentTypeStrings.length];
 		for (int i = 0; i < argumentTypeStrings.length; i++) {
+			// Why are doubles treated specially here? wouldn't the 'else' part work for
+			// doubles too?
 			if (argumentTypeStrings[i].equals(DOUBLE_CLASS_NAME)) {
 				commandParameterClasses[i] = double.class;
 			} else {
@@ -111,5 +112,5 @@ public class CommandGetter {
 		}
 		return commandParameterClasses;
 	}
-	
+
 }
