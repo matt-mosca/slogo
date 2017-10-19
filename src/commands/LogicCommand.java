@@ -1,12 +1,14 @@
 package commands;
 
+import java.lang.reflect.Method;
+
 /**
  * @author Ben Schwennesen
  */
 public class LogicCommand extends AbstractCommand {
 
-    public LogicCommand (Class thisClass, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
-        super(thisClass, methodToInvoke, parameters);
+    public LogicCommand (Method methodToInvoke) {
+        super(methodToInvoke);
     }
 
     private double less (double leftValue, double rightValue) {

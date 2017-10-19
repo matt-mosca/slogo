@@ -1,16 +1,15 @@
 package backend;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import apis.Command;
 import utilities.CommandGetter;
 import commands.AbstractCommand;
 import commands.Constant;
-import commands.MathCommand;
+import utilities.Reflector;
 
 public class Parser {
 
@@ -19,11 +18,13 @@ public class Parser {
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 
 	private CommandGetter commandGetter;
+	private Reflector reflector;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
 
 	public Parser() {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
+		reflector = new Reflector();
 	}
 
 	public boolean validateCommand(String command) {
@@ -37,6 +38,7 @@ public class Parser {
 			return true;
 		} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
 				| InstantiationException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -71,15 +73,24 @@ public class Parser {
 		}
 		String commandName = commands[index];
 		if (isNumeric(commandName)) {
-			Constant constant = new Constant(Double.parseDouble(commandName));
+			// TODO - change below (just a temp fix to make things compile with my (Ben) changes)
+			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue");
+			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
 			return new SyntaxNode(constant);
 		}
 		// TODO - Check variable store for user-defined variables first
 
 		// Account for localization
-		String[] commandInfo = commandGetter.getCommandInfo(commandName);
+		String[] commandInfo = commandGetter.getCommandInfo(commandName.toLowerCase());
 		AbstractCommand command = getCommandFromInfo(commandInfo);
-		int numChildren = Integer.parseInt(commandInfo[2]);
+		int numChildren;
+		if (commandInfo.length < 3) {
+			// ==> constant (pi) command
+			numChildren = 0;
+		} else {
+			// TODO - need to update this to handle arbitrary args (as in (sum 10 10 10...) )
+			numChildren = (commandInfo[2].contains("[") ? 2 : commandInfo[2].split(",").length);
+		}
 		SyntaxNode root = new SyntaxNode(command);
 		index++;
 		SyntaxNode nextChild;
@@ -96,14 +107,24 @@ public class Parser {
 		if (tree == null) {
 			throw new IllegalArgumentException();
 		}
-		Double[] operands = new Double[tree.getChildren().size()];
+		double[] operands = new double[tree.getChildren().size()];
 		List<SyntaxNode> children = tree.getChildren();
 		for (int childIndex = 0; childIndex < children.size(); childIndex++) {
 			SyntaxNode child = children.get(childIndex);
 			operands[childIndex] = parseSyntaxTree(child);
 		}
 		// FOR DEBUGGING, return directly in future without printing
-		double result = tree.getCommand().execute(operands);
+		double result;
+		// TODO - make this more elegant (Ben temp fix)
+		if (operands.length == 0) {
+			result = tree.getCommand().execute(null);
+		} else if (operands.length == 1) {
+			result = tree.getCommand().execute(operands[0]);
+		} else if (operands.length == 2 && !tree.getCommand().takesVariableArguments()) {
+			result = tree.getCommand().execute(operands[0], operands[1]);
+		} else {
+			result = tree.getCommand().execute(operands);
+		}
 		return result;
 	}
 
@@ -114,11 +135,10 @@ public class Parser {
 	// Move to either utilities or to AbstractCommand as static method?
 	private AbstractCommand getCommandFromInfo(String[] commandInfo) throws ClassNotFoundException,
 			NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-		int numChildren = Integer.parseInt(commandInfo[2]);
 		Class commandType = Class.forName(commandInfo[0]);
-		Class[] commandConstructorParameterClasses = new Class[] { Class.class, String.class, int.class };
-		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses).newInstance(commandType,
-				commandInfo[1], numChildren);
+		Class[] commandConstructorParameterClasses = new Class[] {Method.class};
+		Method commandMethod = reflector.getMethodFromCommandInfo(commandType, commandInfo);
+		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses).newInstance(commandMethod);
 	}
 
 }

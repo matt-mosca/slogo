@@ -3,13 +3,14 @@ package commands.turtle;
 import apis.TurtleDisplay;
 import commands.AbstractCommand;
 
+import java.lang.reflect.Method;
+
 public class TurtleCommand extends AbstractCommand {
 
 	private TurtleListener turtleListener = TurtleListener.getInstance();
 	
-	public TurtleCommand(Class commandType, String methodToInvoke, int numberOfDoubleParameters)
-			throws NoSuchMethodException {
-		super(commandType, methodToInvoke, numberOfDoubleParameters);
+	public TurtleCommand(Method methodToInvoke) {
+		super(methodToInvoke);
 	}
 
 	private double forward(double pixels) {

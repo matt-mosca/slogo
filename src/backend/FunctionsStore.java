@@ -40,13 +40,16 @@ public class FunctionsStore {
         functionCommands.put(functionName, commandList);
     }
 
-    public void addVariable(String variableName, Double variableValue) {
+    /*public void addVariable(String variableName, Double variableValue) {
         addVariable(GLOBAL, variableName, variableValue);
-    }
+    }*/
 
-    public void addVariable(String functionName, String variableName, Double variableValue) {
-        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(functionName, new HashMap<>());
-        functionVariableMap.put(variableName, variableValue);
+    public double storeVariables(String scope, String[] names, double[] values) {
+        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(scope, new HashMap<>());
+        for (int i = 0; i < names.length; i++) {
+            functionVariableMap.put(names[i], values[i]);
+        }
+        return values[values.length-1];
     }
 
     /* GETTERS */
