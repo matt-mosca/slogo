@@ -85,7 +85,7 @@ public class Parser {
 		for (int child = 0; child < numChildren; child++) {
 			nextChild = makeExpTree(commands, index);
 			root.addChild(nextChild);
-			index += nextChild.getSize();
+			index += getTokensConsumed(nextChild);
 		}
 		return root;
 	}
@@ -122,8 +122,9 @@ public class Parser {
 		while (index < endIndex) {
 			nextChild = makeExpTree(commands, index);
 			root.addChild(nextChild);
-			index += nextChild.getSize();
+			index += getTokensConsumed(nextChild);
 		}
+		root.setHasVariableArgs(true);
 		return root;
 	}
 
@@ -174,6 +175,10 @@ public class Parser {
 			}
 		}
 		throw new IllegalArgumentException();
+	}
+	
+	private int getTokensConsumed(SyntaxNode root) {
+		return root.hasVariableArgs() ? root.getSize() + 2 : root.getSize();
 	}
 
 	// Move to either utilities or to AbstractCommand as static method?

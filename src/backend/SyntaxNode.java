@@ -9,6 +9,8 @@ public class SyntaxNode {
 	private AbstractCommand command;
 	private List<SyntaxNode> children;
 	private int size;
+	// TODO - get rid of this if possible
+	private boolean hasVariableArgs;
 
 	SyntaxNode(AbstractCommand command) {
 		this.command = command;
@@ -21,6 +23,10 @@ public class SyntaxNode {
 		size += child.getSize();
 	}
 
+	void setHasVariableArgs(boolean value) {
+		hasVariableArgs = value;
+	}
+	
 	AbstractCommand getCommand() {
 		return command;
 	}
@@ -31,6 +37,10 @@ public class SyntaxNode {
 
 	int getSize() {
 		return size;
+	}
+	
+	boolean hasVariableArgs() {
+		return hasVariableArgs;
 	}
 
 }
