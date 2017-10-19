@@ -38,7 +38,6 @@ public class Parser {
 			return true;
 		} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
 				| InstantiationException e) {
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -81,16 +80,9 @@ public class Parser {
 		// TODO - Check variable store for user-defined variables first
 
 		// Account for localization
-		String[] commandInfo = commandGetter.getCommandInfo(commandName.toLowerCase());
-		AbstractCommand command = getCommandFromInfo(commandInfo);
-		int numChildren;
-		if (commandInfo.length < 3) {
-			// ==> constant (pi) command
-			numChildren = 0;
-		} else {
-			// TODO - need to update this to handle arbitrary args (as in (sum 10 10 10...) )
-			numChildren = (commandInfo[2].contains("[") ? 2 : commandInfo[2].split(",").length);
-		}
+		AbstractCommand command = commandGetter.getCommandFromName(commandName.toLowerCase());
+		// TODO - need to update this to handle arbitrary args (as in (sum 10 10 10...) )
+		int numChildren = (command.takesVariableArguments() ? 2 : command.getNumberOfArguments());
 		SyntaxNode root = new SyntaxNode(command);
 		index++;
 		SyntaxNode nextChild;
@@ -133,12 +125,6 @@ public class Parser {
 	}
 
 	// Move to either utilities or to AbstractCommand as static method?
-	private AbstractCommand getCommandFromInfo(String[] commandInfo) throws ClassNotFoundException,
-			NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-		Class commandType = Class.forName(commandInfo[0]);
-		Class[] commandConstructorParameterClasses = new Class[] {Method.class};
-		Method commandMethod = reflector.getMethodFromCommandInfo(commandType, commandInfo);
-		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses).newInstance(commandMethod);
-	}
+
 
 }

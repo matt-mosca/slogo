@@ -27,22 +27,11 @@ public class FunctionsStore {
         functionCommands.put(GLOBAL, new ArrayList<>());
     }
 
-    /*public void addNewFunction(String functionName) {
-        functionVariables.put(functionName, new HashMap<>());
-        functionCommands.put(functionName, new ArrayList<>());
-    }*/
-
-    /*SETTERS*/
-
     public void addCommands(String functionName, Command... commands) {
         List<Command> commandList = functionCommands.getOrDefault(functionName, new ArrayList<>());
         commandList.addAll(Arrays.asList(commands));
         functionCommands.put(functionName, commandList);
     }
-
-    /*public void addVariable(String variableName, Double variableValue) {
-        addVariable(GLOBAL, variableName, variableValue);
-    }*/
 
     public double storeVariables(String scope, String[] names, double[] values) {
         Map<String, Double> functionVariableMap = functionVariables.getOrDefault(scope, new HashMap<>());
@@ -58,11 +47,11 @@ public class FunctionsStore {
         return getDeclaredVariablesInScope(GLOBAL);
     }
 
-    public Set<Map.Entry> getDeclaredVariablesInScope(String functionName) {
+    public Set<Map.Entry> getDeclaredVariablesInScope(String scope) {
         Set<Map.Entry> declaredVariables = new HashSet<>();
         declaredVariables.addAll(functionVariables.get(GLOBAL).entrySet());
-        if (functionVariables.containsKey(functionName)) {
-            declaredVariables.addAll(functionVariables.get(functionName).entrySet());
+        if (functionVariables.containsKey(scope)) {
+            declaredVariables.addAll(functionVariables.get(scope).entrySet());
         }
         return declaredVariables;
     }
