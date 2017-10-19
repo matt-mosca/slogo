@@ -1,6 +1,7 @@
 package backend;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,9 @@ public class Parser {
 		}
 		String commandName = commands[index];
 		if (isNumeric(commandName)) {
-			Constant constant = new Constant(Double.parseDouble(commandName));
+			// TODO - change below (just a temp fix to make things compile with my (Ben) changes)
+			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue", double.class);
+			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
 			return new SyntaxNode(constant);
 		}
 		// TODO - Check variable store for user-defined variables first

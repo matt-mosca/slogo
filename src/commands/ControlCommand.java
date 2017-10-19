@@ -1,9 +1,10 @@
 package commands;
 
+import java.lang.reflect.Method;
+
 public class ControlCommand extends AbstractCommand {
 
-    public ControlCommand (Class thisClass, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
-        super(thisClass, methodToInvoke, parameters);
-
+    public ControlCommand (Method methodToInvoke) {
+        super(methodToInvoke);
     }
 }

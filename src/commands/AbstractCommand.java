@@ -13,14 +13,19 @@ import java.util.Map;
 public abstract class AbstractCommand implements Command{
 
     private final Method METHOD_TO_INVOKE;
+    private Object[] arguments;
 
-    public AbstractCommand(Class commandType, String methodToInvoke, Class[] parameters) throws NoSuchMethodException {
-        METHOD_TO_INVOKE = commandType.getDeclaredMethod(methodToInvoke, parameters);
+    public AbstractCommand(Method methodToInvoke)  {
+        METHOD_TO_INVOKE = methodToInvoke;
     }
 
+    /*public void takeArguments(Object... arguments) {
+        this.arguments = arguments;
+    }*/
+
     @Override
-    public double execute(Double... arguments) throws IllegalAccessException, InvocationTargetException {
-    		METHOD_TO_INVOKE.setAccessible(true);
+    public double execute(Object... arguments) throws IllegalAccessException, InvocationTargetException {
+        METHOD_TO_INVOKE.setAccessible(true);
         return (double) METHOD_TO_INVOKE.invoke(this, arguments);
     }
 }

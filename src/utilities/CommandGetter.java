@@ -52,7 +52,7 @@ public class CommandGetter {
 				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
 			throw new IllegalArgumentException();
 		}
-		return commandInfo.split(",");
+		return commandInfo.split("/");
 	}
 	
 	private void fillCommandMap() {
