@@ -28,6 +28,10 @@ public abstract class AbstractCommand implements Command{
         return false;
     }
 
+    public int getNumberOfArguments() {
+        return METHOD_TO_INVOKE.getParameterTypes().length;
+    }
+
     @Override
     public double execute(@Nullable Object... arguments) throws IllegalAccessException, InvocationTargetException {
         METHOD_TO_INVOKE.setAccessible(true);
