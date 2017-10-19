@@ -3,6 +3,7 @@ package test;
 import apis.Command;
 import backend.FunctionsStore;
 import utilities.CommandGetter;
+import utilities.Reflector;
 
 import java.lang.reflect.Method;
 
@@ -17,21 +18,8 @@ public class ReflectionTesting {
         double result = Double.MIN_VALUE;
         try {
             Class commandType = Class.forName(methodInfo[0]);
-            Class[] commandParameterClasses;
-            if (methodInfo.length  < 3) {
-                commandParameterClasses = new Class[]{};
-            } else {
-                String[] argumentTypeStrings = methodInfo[2].split(",");
-                commandParameterClasses = new Class[argumentTypeStrings.length];
-                for (int i = 0; i < argumentTypeStrings.length; i++) {
-                    if (argumentTypeStrings[i].equals("java.lang.Double")) {
-                        commandParameterClasses[i] = double.class;
-                    } else {
-                        commandParameterClasses[i] = Class.forName(argumentTypeStrings[i]);
-                    }
-                }
-            }
-            Method methodToInvoke = commandType.getDeclaredMethod(methodInfo[1], commandParameterClasses);
+            Reflector reflector = new Reflector();
+            Method methodToInvoke = reflector.getMethodFromCommandInfo(commandType, methodInfo);
             Command command = (Command) commandType
                     .getConstructor(CONSTRUCTOR_PARAMETER_CLASSES)
                     .newInstance(methodToInvoke);
