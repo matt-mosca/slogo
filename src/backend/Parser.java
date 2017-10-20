@@ -5,7 +5,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import commands.IterationCommand;
+import commands.NewCommand;
 import utilities.CommandGetter;
 import commands.AbstractCommand;
 import commands.Constant;
@@ -20,13 +23,13 @@ public class Parser {
 	public static final String VARIABLE_ARGS_END_DELIMITER = ")";
 
 	private CommandGetter commandGetter;
-	private Reflector reflector;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
+	private FunctionsStore functionsStore;
 
 	public Parser() {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		reflector = new Reflector();
+		functionsStore = new FunctionsStore();
 	}
 
 	public boolean validateCommand(String command) {
@@ -88,6 +91,32 @@ public class Parser {
 			index += getTokensConsumed(nextChild);
 		}
 		return root;
+	}
+
+	/**
+	 * My new idea is to use reflection to choose which method to make nodes with (e.g. "for" will lead to this)
+	 * @param tokens
+	 * @param index
+	 * @return
+	 */
+	private SyntaxNode makeForLoopNode(String[] tokens, int index)
+			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+			InvocationTargetException, IllegalAccessException {
+		// todo - dont use assert, do something better
+		assert tokens[++index].equals("[");
+		String indexVariableName = tokens[++index];
+		double start = Double.parseDouble(tokens[++index]),
+				end = Double.parseDouble(tokens[++index]),
+				increment = Double.parseDouble(tokens[++index]);
+		assert tokens[++index].equals("]");
+		assert tokens[++index].equals("[");
+		functionsStore.storeVariable(indexVariableName, start);
+		Entry<String, Double> indexVariable = functionsStore.getVariable(indexVariableName);
+		SyntaxNode subtree = makeExpTree(tokens, index);
+		NewCommand forCommand = new IterationCommand(indexVariable, end, increment, subtree);
+		//return new SyntaxNode(forCommand);
+		// todo - refactoring to make above work
+		return null;
 	}
 
 	private SyntaxNode makeSyntaxNodeForCommand(String commandName) throws NoSuchMethodException,
