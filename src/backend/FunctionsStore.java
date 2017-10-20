@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -39,6 +41,24 @@ public class FunctionsStore {
             functionVariableMap.put(names[i], values[i]);
         }
         return values[values.length-1];
+    }
+
+    public void addAllVariablesFromOuterScope(String outerScope, String innerScope) {
+        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(innerScope, new HashMap<>());
+        functionVariableMap.putAll(functionVariables.getOrDefault(outerScope, new HashMap<>()));
+    }
+
+    public void removeAllVariablesFromOuterScope(String outerScope, String innerScope) {
+        Set<Entry<String, Double>> outerVariables =
+                functionVariables.getOrDefault(outerScope, new HashMap<>()).entrySet();
+        Iterator<Entry<String, Double>> innerVariablesIterator =
+                functionVariables.getOrDefault(innerScope, new HashMap<>()).entrySet().iterator();
+        while (innerVariablesIterator.hasNext()) {
+            Entry<String, Double> innerVariable = innerVariablesIterator.next();
+            if (outerVariables.contains(innerVariable)) {
+                innerVariablesIterator.remove();
+            }
+        }
     }
 
     /* GETTERS */
