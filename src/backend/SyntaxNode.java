@@ -1,10 +1,12 @@
 package backend;
 
 import commands.AbstractCommand;
+
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SyntaxNode {
+public abstract class SyntaxNode {
 
 	private AbstractCommand command;
 	private List<SyntaxNode> children;
@@ -12,11 +14,15 @@ public class SyntaxNode {
 	// TODO - get rid of this if possible
 	private boolean hasVariableArgs;
 
-	SyntaxNode(AbstractCommand command) {
+	protected SyntaxNode(AbstractCommand command)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		this.command = command;
 		children = new ArrayList<>();
 		this.size = 1;
 	}
+
+	// Handled differently based on type of command
+	public abstract double parseSyntaxTree() throws InvocationTargetException, IllegalAccessException;
 
 	void addChild(SyntaxNode child) {
 		children.add(child);
@@ -26,7 +32,7 @@ public class SyntaxNode {
 	void setHasVariableArgs(boolean value) {
 		hasVariableArgs = value;
 	}
-	
+
 	AbstractCommand getCommand() {
 		return command;
 	}
@@ -38,9 +44,11 @@ public class SyntaxNode {
 	int getSize() {
 		return size;
 	}
-	
+
 	boolean hasVariableArgs() {
 		return hasVariableArgs;
 	}
+	
+	public abstract double execute() throws IllegalAccessException, InvocationTargetException;
 
 }

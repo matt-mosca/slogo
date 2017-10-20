@@ -9,6 +9,7 @@ import java.util.Map;
 import utilities.CommandGetter;
 import commands.AbstractCommand;
 import commands.Constant;
+import commands.ControlCommand;
 import utilities.Reflector;
 
 public class Parser {
@@ -51,7 +52,7 @@ public class Parser {
 				syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
 			}
 			SyntaxNode tree = syntaxTrees.get(formattedCommand);
-			parseSyntaxTree(tree);
+			tree.parseSyntaxTree();
 		} catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException
 				| InstantiationException e) {
 			throw new IllegalArgumentException();
@@ -97,13 +98,15 @@ public class Parser {
 			// changes)
 			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue");
 			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
-			return new SyntaxNode(constant);
+			return new ValueNode(constant);
 		}
 		// TODO - Check variable store for user-defined variables first
 
 		// Account for localization
 		AbstractCommand command = commandGetter.getCommandFromName(commandName.toLowerCase());
-		SyntaxNode root = new SyntaxNode(command);
+		// Make either ValueNode or CommandNode based on info about the commandName
+		SyntaxNode root = command instanceof ControlCommand ? new ControlNode((ControlCommand) command)
+				: new ValueNode(command);
 		return root;
 	}
 
@@ -128,37 +131,10 @@ public class Parser {
 		return root;
 	}
 
-	// Handled differently based on type of command
-	private double parseSyntaxTree(SyntaxNode tree)
-			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-		if (tree == null) {
-			throw new IllegalArgumentException();
-		}
-		double[] operands = new double[tree.getChildren().size()];
-		List<SyntaxNode> children = tree.getChildren();
-		for (int childIndex = 0; childIndex < children.size(); childIndex++) {
-			SyntaxNode child = children.get(childIndex);
-			operands[childIndex] = parseSyntaxTree(child);
-		}
-		// FOR DEBUGGING, return directly in future without printing
-		double result;
-		// TODO - make this more elegant (Ben temp fix)
-		if (operands.length == 0) {
-			result = tree.getCommand().execute(null);
-		} else if (operands.length == 1) {
-			result = tree.getCommand().execute(operands[0]);
-		} else if (operands.length == 2 && !tree.getCommand().takesVariableArguments()) {
-			result = tree.getCommand().execute(operands[0], operands[1]);
-		} else {
-			result = tree.getCommand().execute(operands);
-		}
-		return result;
-	}
-
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
-	
+
 	private int findVariableArgsEndpoint(String[] commands, int startIndex) throws IllegalArgumentException {
 		if (commands == null || startIndex < 0 || startIndex >= commands.length) {
 			throw new IllegalArgumentException();
@@ -167,7 +143,7 @@ public class Parser {
 		int index = startIndex;
 		while (index < commands.length) {
 			if (commands[index].equals(VARIABLE_ARGS_START_DELIMITER)) {
-				indentation ++;
+				indentation++;
 			} else if (commands[index].equals(VARIABLE_ARGS_END_DELIMITER)) {
 				if (--indentation == 0) {
 					return index;
@@ -176,7 +152,7 @@ public class Parser {
 		}
 		throw new IllegalArgumentException();
 	}
-	
+
 	private int getTokensConsumed(SyntaxNode root) {
 		return root.hasVariableArgs() ? root.getSize() + 2 : root.getSize();
 	}

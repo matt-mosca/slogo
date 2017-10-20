@@ -2,9 +2,16 @@ package commands;
 
 import java.lang.reflect.Method;
 
-public class ControlCommand extends AbstractCommand {
+import backend.ControlNode;
+
+public abstract class ControlCommand extends AbstractCommand {
 
     public ControlCommand (Method methodToInvoke) {
         super(methodToInvoke);
+    }
+        
+    public double execute(ControlNode tree) {
+    		// TODO
+    		return 0.0;
     }
 }
