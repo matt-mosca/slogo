@@ -55,7 +55,7 @@ public class Parser {
 				syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
 			}
 			SyntaxNode tree = syntaxTrees.get(formattedCommand);
-			tree.parseSyntaxTree();
+			tree.execute();
 		} catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException
 				| InstantiationException e) {
 			throw new IllegalArgumentException();
@@ -100,7 +100,7 @@ public class Parser {
 	 * @param index
 	 * @return
 	 */
-	private SyntaxNode makeForLoopNode(String[] tokens, int index)
+	private ControlNode makeForLoopNode(String[] tokens, int index)
 			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
 			InvocationTargetException, IllegalAccessException {
 		// todo - dont use assert, do something better
@@ -114,9 +114,9 @@ public class Parser {
 		functionsStore.storeVariable(indexVariableName, start);
 		Entry<String, Double> indexVariable = functionsStore.getVariable(indexVariableName);
 		SyntaxNode subtree = makeExpTree(tokens, index);
-		NewCommand forCommand = new IterationCommand(indexVariable, end, increment, subtree);
-		//return new SyntaxNode(forCommand);
-		// todo - refactoring to make above work
+		//Method forMethod = commandGetter.getCommand)
+		ControlCommand forCommand = new IterationCommand(null, indexVariable, end, increment, subtree);
+		//return new ControlNode(forCommand);
 		return null;
 	}
 
@@ -130,7 +130,7 @@ public class Parser {
 			return new ValueNode(constant);
 		}
 		// TODO - Check variable store for user-defined variables first
-
+		
 		// Account for localization
 		AbstractCommand command = commandGetter.getCommandFromName(commandName.toLowerCase());
 		// Make either ValueNode or CommandNode based on info about the commandName

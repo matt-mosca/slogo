@@ -21,9 +21,6 @@ public abstract class SyntaxNode {
 		this.size = 1;
 	}
 
-	// Handled differently based on type of command
-	public abstract double parseSyntaxTree() throws InvocationTargetException, IllegalAccessException;
-
 	void addChild(SyntaxNode child) {
 		children.add(child);
 		size += child.getSize();
@@ -50,7 +47,5 @@ public abstract class SyntaxNode {
 	}
 	
 	public abstract double execute() throws IllegalAccessException, InvocationTargetException;
-
-	public double execute() { return 0.0; }
 
 }

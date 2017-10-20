@@ -7,35 +7,35 @@ import java.lang.reflect.Method;
  */
 public class LogicCommand extends AbstractCommand {
 
-    public LogicCommand (Method methodToInvoke) {
-        super(methodToInvoke);
-    }
+	public LogicCommand(Method methodToInvoke) {
+		super(methodToInvoke);
+	}
 
-    private double less (double leftValue, double rightValue) {
-        return leftValue < rightValue ? 1 : 0;
-    }
+	private double less(double... operands) {
+		return operands[0] < operands[1] ? 1 : 0;
+	}
 
-    private double greater (double leftValue, double rightValue) {
-        return leftValue > rightValue ? 1 : 0;
-    }
+	private double greater(double... operands) {
+		return operands[0] > operands[1] ? 1 : 0;
+	}
 
-    private double equal (double leftValue, double rightValue) {
-        return leftValue == rightValue ? 1 : 0;
-    }
+	private double equal(double... operands) {
+		return operands[0] == operands[1] ? 1 : 0;
+	}
 
-    private double notEqual (double leftValue, double rightValue) {
-        return leftValue != rightValue ? 1 : 0;
-    }
+	private double notEqual(double... operands) {
+		return operands[0] != operands[1] ? 1 : 0;
+	}
 
-    private double and (double leftValue, double rightValue) {
-        return leftValue != 0 &&  rightValue != 0 ? 1 : 0;
-    }
+	private double and(double... operands) {
+		return operands[0] != 0 && operands[1] != 0 ? 1 : 0;
+	}
 
-    private double or (double leftValue, double rightValue) {
-        return leftValue != 0 ||  rightValue != 0 ? 1 : 0;
-    }
+	private double or(double... operands) {
+		return operands[0] != 0 || operands[1] != 0 ? 1 : 0;
+	}
 
-    private double not (double value) {
-        return value == 0 ? 1 : 0;
-    }
+	private double not(double... operands) {
+		return operands[0] == 0 ? 1 : 0;
+	}
 }

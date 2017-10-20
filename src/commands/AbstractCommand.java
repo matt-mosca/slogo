@@ -35,9 +35,12 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public double execute(@Nullable Object... arguments) throws IllegalAccessException, InvocationTargetException {
+	public double execute(double ... arguments) throws IllegalAccessException, InvocationTargetException {
 		METHOD_TO_INVOKE.setAccessible(true);
+		return (double) METHOD_TO_INVOKE.invoke(this, arguments);
+		/*
 		return arguments != null ? (double) METHOD_TO_INVOKE.invoke(this, arguments)
 				: (double) METHOD_TO_INVOKE.invoke(this);
+		*/
 	}
 }

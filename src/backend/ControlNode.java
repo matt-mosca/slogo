@@ -15,12 +15,6 @@ public class ControlNode extends SyntaxNode {
 	}
 
 	@Override
-	public double parseSyntaxTree() throws InvocationTargetException, IllegalAccessException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public double execute() throws IllegalAccessException, InvocationTargetException {
 		// TODO Auto-generated method stub
 		return controlCommand.execute(this); // TEMP;

@@ -1,26 +1,31 @@
 package commands;
 
+import backend.ControlNode;
 import backend.SyntaxNode;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map.Entry;
 
-public class IterationCommand extends NewCommand {
+public class IterationCommand extends ControlCommand {
 
     private Entry<String, Double> iterationVariable;
     private final double END;
     private final double INCREMENT;
     private SyntaxNode subtree;
 
-    public IterationCommand(Entry<String, Double> iterationVariable, double end, double increment, SyntaxNode subtree) {
-        this.iterationVariable = iterationVariable;
+    public IterationCommand(Method methodToInvoke, Entry<String, Double> iterationVariable, double end, double increment, SyntaxNode subtree) {
+    		super(methodToInvoke);
+    		this.iterationVariable = iterationVariable;
         this.END = end;
         this.INCREMENT = increment;
         this.subtree = subtree;
     }
 
-    double execute() {
+    public double execute(ControlNode controlNode) throws IllegalAccessException, InvocationTargetException {
         double result = 0.0;
-        for (double i = iterationVariable.getValue(); i < END; i += INCREMENT) {
+        double start = iterationVariable.getValue();
+        for (double i = start; i < END; i += INCREMENT) {
             iterationVariable.setValue(i);
             result = subtree.execute();
         }
