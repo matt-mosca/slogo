@@ -51,4 +51,6 @@ public abstract class SyntaxNode {
 	
 	public abstract double execute() throws IllegalAccessException, InvocationTargetException;
 
+	public double execute() { return 0.0; }
+
 }
