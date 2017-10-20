@@ -2,18 +2,13 @@ package backend;
 
 import apis.Command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+
 
 /**
- *
+ * TODO - many commands/nodes need access to the function/var store... how to give them access without making this a
+ * TODO - ... static utility class or giving each command/node a copy?
  * TODO - Change (some?) methods to package-private??
  * @author Ben Schwennesen
  */
@@ -22,11 +17,15 @@ public class FunctionsStore {
     Map<String, Map<String, Double>> functionVariables = new HashMap<>();
     Map<String, List<Command>> functionCommands = new HashMap<>();
 
-    private static final String GLOBAL = "global";
+    private Stack<String> scopeStack = new Stack<>();
+
+    private String currentScope;
+    public static final String GLOBAL = "global";
 
     public FunctionsStore() {
         functionVariables.put(GLOBAL, new HashMap<>());
         functionCommands.put(GLOBAL, new ArrayList<>());
+        currentScope = GLOBAL;
     }
 
     public void addCommands(String functionName, Command... commands) {
@@ -35,46 +34,61 @@ public class FunctionsStore {
         functionCommands.put(functionName, commandList);
     }
 
-    public double storeVariables(String scope, String[] names, double[] values) {
-        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(scope, new HashMap<>());
+    public double storeVariables(String[] names, double[] values) {
+        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
         for (int i = 0; i < names.length; i++) {
             functionVariableMap.put(names[i], values[i]);
         }
         return values[values.length-1];
     }
 
-    public void addAllVariablesFromOuterScope(String outerScope, String innerScope) {
-        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(innerScope, new HashMap<>());
-        functionVariableMap.putAll(functionVariables.getOrDefault(outerScope, new HashMap<>()));
+    public double storeVariable(String name, double value) {
+        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
+        functionVariableMap.put(name, value);
+        return value;
     }
 
-    public void removeAllVariablesFromOuterScope(String outerScope, String innerScope) {
+    public void enterScope(String newScope) {
+        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(newScope, new HashMap<>());
+        functionVariableMap.putAll(functionVariables.getOrDefault(currentScope, new HashMap<>()));
+        scopeStack.push(currentScope);
+        currentScope = newScope;
+    }
+
+    public void exitScope() {
+        String lastScope = (scopeStack.isEmpty() ? GLOBAL : scopeStack.pop());
         Set<Entry<String, Double>> outerVariables =
-                functionVariables.getOrDefault(outerScope, new HashMap<>()).entrySet();
+                functionVariables.getOrDefault(lastScope, new HashMap<>()).entrySet();
         Iterator<Entry<String, Double>> innerVariablesIterator =
-                functionVariables.getOrDefault(innerScope, new HashMap<>()).entrySet().iterator();
+                functionVariables.getOrDefault(currentScope, new HashMap<>()).entrySet().iterator();
         while (innerVariablesIterator.hasNext()) {
             Entry<String, Double> innerVariable = innerVariablesIterator.next();
             if (outerVariables.contains(innerVariable)) {
                 innerVariablesIterator.remove();
             }
         }
+        currentScope = lastScope;
     }
-
     /* GETTERS */
 
-    public Set<Map.Entry> getDeclaredVariables() {
-        return getDeclaredVariablesInScope(GLOBAL);
+    public Set<Entry<String, Double>> getCurrentVariables() {
+        return functionVariables.get(currentScope).entrySet();
     }
 
-    // TODO - What about escaping variables? i.e. variables from outer scopes?
-    public Set<Map.Entry> getDeclaredVariablesInScope(String scope) {
-        Set<Map.Entry> declaredVariables = new HashSet<>();
-        declaredVariables.addAll(functionVariables.get(GLOBAL).entrySet());
-        if (functionVariables.containsKey(scope)) {
-            declaredVariables.addAll(functionVariables.get(scope).entrySet());
+    // this will be costly but can allow the user to modify a variable without access to this class
+    public Entry<String, Double> getVariable(String name) {
+        if (!functionVariables.get(currentScope).containsKey(name)) {
+            functionVariables.get(currentScope).put(name, 0.0);
         }
-        return declaredVariables;
+        Iterator<Entry<String, Double>> entryIterator = functionVariables.get(currentScope).entrySet().iterator();
+        while(entryIterator.hasNext()) {
+            Entry<String, Double> entry = entryIterator.next();
+            if (entry.getKey().equals(name)) {
+                return entry;
+            }
+        }
+        // this will never happen
+        return null;
     }
 
     public Set<String> getDeclaredFunctions() {
@@ -83,5 +97,19 @@ public class FunctionsStore {
 
     public List<Command> getFunctionCommands(String functionName)  {
         return functionCommands.getOrDefault(functionName, new ArrayList<>());
+    }
+
+    public double getVariableValue(String variableName) {
+        return functionVariables.get(currentScope).get(variableName);
+    }
+
+    public static void main (String[] args) {
+        Map<Integer, Integer> test = new HashMap<>();
+        test.put(1,1);
+        test.put(2,2);
+        for (Entry<Integer, Integer> entry : test.entrySet()) {
+            entry.setValue(0);
+        }
+        System.out.println(test);
     }
 }
