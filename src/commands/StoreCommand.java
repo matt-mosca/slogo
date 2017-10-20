@@ -10,7 +10,7 @@ public class StoreCommand extends AbstractCommand {
         super(methodToInvoke);
     }
 
-    private double storeVariables(FunctionsStore functions, String scope, String[] names, double[] values) {
-        return functions.storeVariables(scope, names, values);
+    private double storeVariables(FunctionsStore functions, String[] names, double[] values) {
+        return functions.storeVariables(names, values);
     }
 }

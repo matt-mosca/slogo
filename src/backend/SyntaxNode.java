@@ -43,4 +43,6 @@ public class SyntaxNode {
 		return hasVariableArgs;
 	}
 
+	public double execute() { return 0.0; }
+
 }
