@@ -1,9 +1,8 @@
 package utilities;
 
+import backend.Parser;
 import commands.AbstractCommand;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -30,13 +29,25 @@ public class CommandGetter {
 	private final int COMMAND_METHOD_NAME_INDEX = 1;
 	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;
 
+
+
+	private final String COMMAND_PARSING_FILE = "CommandParsing.properties";
+	private final Class PARSER_CLASS = Parser.class;
+	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {String[].class, int.class};
+	private final Properties COMMAND_PARSING_PROPERTIES;
+
 	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
+		COMMAND_PARSING_PROPERTIES = new Properties();
 		try {
 			// File file = new File(COMMAND_INFO_FILE);
 			InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
 			// InputStream commandPropertiesStream = new FileInputStream(f);
 			COMMAND_PROPERTIES.load(commandPropertiesStream);
+
+			InputStream commandParsingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_PARSING_FILE);
+			COMMAND_PARSING_PROPERTIES.load(commandParsingStream);
+
 		} catch (IOException fileNotFound) {
 			// need frontend method to launch failure dialog box
 			System.out.println("Missing File!"); // TEMP
@@ -113,4 +124,13 @@ public class CommandGetter {
 		return commandParameterClasses;
 	}
 
+	public Method getMethodFromCommandName(String commandName) throws NoSuchMethodException {
+		String methodName;
+		commandName = commandName.toLowerCase();
+		if (!commandMap.containsKey(commandName)
+				|| (methodName = COMMAND_PARSING_PROPERTIES.getProperty(commandMap.get(commandName))) == null) {
+			throw new IllegalArgumentException();
+		}
+		return PARSER_CLASS.getDeclaredMethod(methodName, PARSE_METHOD_ARGUMENT_CLASSES);
+	}
 }

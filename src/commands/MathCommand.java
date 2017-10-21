@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * @author Ben Schwennesen
  */
-public class MathCommand extends AbstractCommand {
+public class MathCommand extends AbstractCommandOld {
 
 	private final Random RANDOM_NUMBER_GENERATOR;
 
