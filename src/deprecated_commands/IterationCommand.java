@@ -1,10 +1,8 @@
-package commands;
+package deprecated_commands;
 
-import backend.ControlNode;
 import backend.SyntaxNode;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map.Entry;
 
 public class IterationCommand extends ControlCommand {

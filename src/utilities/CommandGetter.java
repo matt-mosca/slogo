@@ -1,11 +1,9 @@
 package utilities;
 
 import backend.Parser;
-import commands.AbstractCommand;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +12,7 @@ import java.util.Set;
 
 public class CommandGetter {
 
-	private final String COMMAND_INFO_FILE = "Commands.properties";
+	private final String COMMAND_INFO_FILE = "CommandNodes.properties";
 	private final String LANGUAGES_PROPERTIES_FOLDER = "languages/";
 	private final String PROPERTIES_SUFFIX = ".properties";
 	public static final String DEFAULT_LANGUAGE = "English";
@@ -22,14 +20,12 @@ public class CommandGetter {
 	private Properties languageProperties;
 	private Map<String, String> commandMap = new HashMap<>();
 
-	private final String DOUBLE_CLASS_NAME = "java.lang.Double";
+	/*private final String DOUBLE_CLASS_NAME = "java.lang.Double";
 	private final String CLASS_TYPE_DELIMITER = ",";
 
 	private final int COMMAND_CLASS_NAME_INDEX = 0;
 	private final int COMMAND_METHOD_NAME_INDEX = 1;
-	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;
-
-
+	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;*/
 
 	private final String COMMAND_PARSING_FILE = "CommandParsing.properties";
 	private final Class PARSER_CLASS = Parser.class;
@@ -47,34 +43,20 @@ public class CommandGetter {
 
 			InputStream commandParsingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_PARSING_FILE);
 			COMMAND_PARSING_PROPERTIES.load(commandParsingStream);
+			setLanguage(DEFAULT_LANGUAGE);
 
 		} catch (IOException fileNotFound) {
-			// need frontend method to launch failure dialog box
+			// TODO - need frontend method to launch failure dialog box
 			System.out.println("Missing File!"); // TEMP
 		}
 		languageProperties = new Properties();
-		setLanguage(DEFAULT_LANGUAGE);
 	}
 
-	public void setLanguage(String language) {
+	public void setLanguage(String language) throws IOException  {
 		InputStream properties = getClass().getClassLoader()
 				.getResourceAsStream(LANGUAGES_PROPERTIES_FOLDER + language + PROPERTIES_SUFFIX);
-		try {
-			languageProperties.load(properties);
-		} catch (IOException fileNotFound) {
-			// need frontend method to launch failure dialog box
-		}
+		languageProperties.load(properties);
 		fillCommandMap();
-	}
-
-	private String[] getCommandInfo(String command) throws IllegalArgumentException {
-		String commandInfo;
-		command = command.toLowerCase();
-		if (!commandMap.containsKey(command)
-				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
-			throw new IllegalArgumentException();
-		}
-		return commandInfo.split("/");
 	}
 
 	private void fillCommandMap() {
@@ -87,6 +69,17 @@ public class CommandGetter {
 				commandMap.put(alias.replace("\\", ""), baseCommand);
 			}
 		}
+	}
+
+	/*
+	private String[] getCommandInfo(String command) throws IllegalArgumentException {
+		String commandInfo;
+		command = command.toLowerCase();
+		if (!commandMap.containsKey(command)
+				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
+			throw new IllegalArgumentException();
+		}
+		return commandInfo.split("/");
 	}
 
 	public AbstractCommand getCommandFromName(String command) throws ClassNotFoundException, NoSuchMethodException,
@@ -122,15 +115,21 @@ public class CommandGetter {
 			}
 		}
 		return commandParameterClasses;
+	}*/
+
+	public Class getCommandNodeClass(String commandName) throws ClassNotFoundException {
+		String canonicalName = getCanonicalName(commandName);
+		String commandNodeClassName = COMMAND_PROPERTIES.getProperty(canonicalName);
+		return Class.forName(commandNodeClassName);
 	}
 
-	public Method getMethodFromCommandName(String commandName) throws NoSuchMethodException {
-		String methodName;
-		commandName = commandName.toLowerCase();
-		if (!commandMap.containsKey(commandName)
-				|| (methodName = COMMAND_PARSING_PROPERTIES.getProperty(commandMap.get(commandName))) == null) {
-			throw new IllegalArgumentException();
-		}
+	public Method getParsingMethod(String commandName) throws NoSuchMethodException {
+		String canonicalName = getCanonicalName(commandName);
+		String methodName = COMMAND_PARSING_PROPERTIES.getProperty(canonicalName);
 		return PARSER_CLASS.getDeclaredMethod(methodName, PARSE_METHOD_ARGUMENT_CLASSES);
+	}
+
+	private String getCanonicalName (String command) {
+		return commandMap.getOrDefault(command.toLowerCase(), "");
 	}
 }

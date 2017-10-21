@@ -1,4 +1,4 @@
-package commands.turtle;
+package deprecated_commands.turtle;
 
 import apis.TurtleDisplay;
 import javafx.beans.property.DoubleProperty;

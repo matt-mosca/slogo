@@ -1,16 +1,16 @@
 package backend;
 
+import deprecated_commands.AbstractCommand;
+import deprecated_commands.Constant;
+import deprecated_commands.ControlCommand;
+import deprecated_commands.IterationCommand;
+import utilities.CommandGetter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import commands.AbstractCommand;
-import commands.IterationCommand;
-import utilities.CommandGetter;
-import commands.Constant;
-import commands.ControlCommand;
 
 public class Parser {
 

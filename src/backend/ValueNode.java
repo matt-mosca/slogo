@@ -2,22 +2,19 @@ package backend;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import commands.AbstractCommand;
 
 public abstract class ValueNode implements SyntaxNode {
 
 	List<SyntaxNode> children;
 	
-	protected ValueNode() throws InvocationTargetException, IllegalAccessException {
+	protected ValueNode() {
 		children = new ArrayList<>();
 	}
 	
 	// Execute in post-order
 	@Override
-	public double execute() throws IllegalAccessException, InvocationTargetException {
+	public double execute() {
 		double[] arguments = new double[children.size()];
 		for (int index = 0; index < arguments.length; index ++) {
 			arguments[index] = children.get(index).execute();
@@ -25,7 +22,7 @@ public abstract class ValueNode implements SyntaxNode {
 		return executeSelf(arguments);
 	}
 	
-	public abstract double executeSelf(double ... arguments) throws IllegalAccessException, InvocationTargetException;
+	public abstract double executeSelf(double ... arguments);
 	
 	public void addChild(SyntaxNode child) {
 		children.add(child);

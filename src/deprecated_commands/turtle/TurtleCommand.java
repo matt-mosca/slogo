@@ -1,6 +1,6 @@
-package commands.turtle;
+package deprecated_commands.turtle;
 
-import commands.AbstractCommandOld;
+import deprecated_commands.AbstractCommandOld;
 
 import java.lang.reflect.Method;
 

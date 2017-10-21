@@ -1,4 +1,4 @@
-package commands;
+package deprecated_commands;
 
 import java.lang.reflect.Method;
 

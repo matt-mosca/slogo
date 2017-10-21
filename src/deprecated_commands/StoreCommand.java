@@ -1,4 +1,4 @@
-package commands;
+package deprecated_commands;
 
 import backend.FunctionsStore;
 
