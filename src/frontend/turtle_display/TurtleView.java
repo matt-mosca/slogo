@@ -1,5 +1,6 @@
 package frontend.turtle_display;
 
+import java.util.ArrayList;
 import java.util.List;
 import apis.TurtleDisplay;
 
@@ -7,6 +8,7 @@ public class TurtleView implements TurtleDisplay{
 	private List<TurtlePen> displayedTurtles;
 	
 	public TurtleView() {
+		displayedTurtles = new ArrayList<TurtlePen>();
 		TurtlePen original = new TurtlePen();
 		displayedTurtles.add(original);
 	}
@@ -35,4 +37,13 @@ public class TurtleView implements TurtleDisplay{
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
     	displayedTurtles.get(turtleIndex).rotateTurtle(newAngle);
     }
+    
+    public TurtlePen addTurtle() {
+    	TurtlePen newAddition = new TurtlePen();
+    	displayedTurtles.add(newAddition);
+    	return newAddition;
+    }
+    
+    //Make method that takes in the turtle display pane and attaches the TurtlePen objects in the 
+    //list to that pane
 }
