@@ -1,22 +1,14 @@
 package frontend.turtle_display;
 
+import java.util.List;
 import apis.TurtleDisplay;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class TurtleView implements TurtleDisplay{
-	public static final String DEFAULT_TURTLE = "";
-	
-	private ImageView turtlePen;
-	private double xCoordinate;
-	private double yCoordinate;
+	private List<TurtlePen> displayedTurtles;
 	
 	public TurtleView() {
-		String imageName = DEFAULT_TURTLE;
-		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
-		turtlePen = new ImageView(image); 
-		xCoordinate = 0;
-		yCoordinate = 0;
+		TurtlePen original = new TurtlePen();
+		displayedTurtles.add(original);
 	}
 	
 	/**
@@ -26,9 +18,9 @@ public class TurtleView implements TurtleDisplay{
      * @param xCoordinate - the new x-coordinate of the turtle
      * @param yCoordinate - the new y-coordinate of the turtle
      */
-    public void move(int turtleIndex, double xCoord, double yCoord) {
-    	xCoordinate = xCoord;
-    	yCoordinate = yCoord;
+    public void move(int turtleIndex, double newXCoord, double newYCoord) {
+    	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
+    	displayedTurtles.get(turtleIndex).moveTurtle(newXCoord, newYCoord);
     }
 
     /**
@@ -39,7 +31,8 @@ public class TurtleView implements TurtleDisplay{
      * @param turtleIndex - identifies which turtle within the turtle collection to rotate
      * @param angle - the direction the turtle's image should point toward
      */
-    public void rotate(int turtleIndex, double angle) {
-    	
+    public void rotate(int turtleIndex, double newAngle) {
+    	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
+    	displayedTurtles.get(turtleIndex).rotateTurtle(newAngle);
     }
 }
