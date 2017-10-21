@@ -3,13 +3,13 @@ package backend.control_nodes;
 import backend.SyntaxNode;
 import sun.awt.SunHints;
 
-public class ConditionalNode extends implements SyntaxNode  {
+public class IfNode implements SyntaxNode  {
 
     private SyntaxNode conditionExpression;
 
     private SyntaxNode trueBranch;
 
-    public ConditionalNode(SyntaxNode conditionExpression, SyntaxNode trueBranch) {
+    public IfNode(SyntaxNode conditionExpression, SyntaxNode trueBranch) {
         this.conditionExpression = conditionExpression;
     }
 
@@ -20,7 +20,8 @@ public class ConditionalNode extends implements SyntaxNode  {
     @Override
     public double execute() {
         if (isTrue()) {
-            executeTrueBranch();
+            return executeTrueBranch();
         }
+        return 0;
     }
 }
