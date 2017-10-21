@@ -1,4 +1,4 @@
-package commands;
+package deprecated_commands;
 
 import java.lang.reflect.Method;
 import java.util.Random;
@@ -41,10 +41,6 @@ public class MathCommand extends AbstractCommandOld {
 
 	private double remainder(double... operands) {
 		return operands[0] % operands[1];
-	}
-
-	private double minus(double... operands) {
-		return operands[0] - operands[1];
 	}
 
 	private double unaryMinus(double... operands) {

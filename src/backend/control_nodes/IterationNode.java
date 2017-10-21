@@ -1,6 +1,7 @@
-package backend;
+package backend.control_nodes;
 
-import java.lang.reflect.InvocationTargetException;
+import backend.FunctionsStore;
+import backend.SyntaxNode;
 
 public class IterationNode extends DataAccessingNode {
 
@@ -9,16 +10,16 @@ public class IterationNode extends DataAccessingNode {
     private final double INCREMENT;
     private SyntaxNode subtree;
 
-    public IterationNode(FunctionsStore functionsStore, String iterationVariable,
+    public IterationNode(FunctionsStore store, String iterationVariable,
                          double end, double increment, SyntaxNode subtree) {
-        super(functionsStore);
+        super(store);
         this.iterationVariable = iterationVariable;
         this.END = end;
         this.INCREMENT = increment;
         this.subtree = subtree;
     }
 
-    public double execute() throws IllegalAccessException, InvocationTargetException {
+    public double execute() {
         double result = 0.0;
         double start = getVariableValue(iterationVariable);
         for (double i = start; i < END; i += INCREMENT) {

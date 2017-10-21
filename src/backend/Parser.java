@@ -1,9 +1,9 @@
 package backend;
 
-import commands.AbstractCommand;
-import commands.Constant;
-import commands.ControlCommand;
-import commands.IterationCommand;
+import deprecated_commands.AbstractCommand;
+import deprecated_commands.Constant;
+import deprecated_commands.ControlCommand;
+import deprecated_commands.IterationCommand;
 import utilities.CommandGetter;
 
 import java.lang.reflect.InvocationTargetException;
