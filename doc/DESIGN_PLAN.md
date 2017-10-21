@@ -84,9 +84,9 @@ The user will enter commands in a command box (a text field) along the left side
 ##### Display.java interface (front end external)
 
 The front end external API supports 3 use-cases:
-* Move the image of the Turtle
-* Rotating the image of the Turtle
-* Adding a variable or command
+1. Move the image of the Turtle
+2. Rotating the image of the Turtle
+3. Adding a variable or command
 
 The TurtleDisplay class handles  use-cases 1 and 2 above, displaying the changes in the Turtle’s orientation and position prompted by the commands entered by the user. Our team decided that a Turtle’s movement should be separate from its rotation because the movement requires the Turtle’s position whereas the rotation requires its orientation.
 
@@ -155,10 +155,10 @@ public interface CommandDisplay {
 ##### Frontend Internal
 
 The front end internal API supports 4 use-cases:
-Draw the path the Turtle has taken
-Create GUI items to be assigned properties and interacted with on the display windows
-Print command to console
-Print error to console
+1. Draw the path the Turtle has taken
+2. Create GUI items to be assigned properties and interacted with on the display windows
+3. Print command to console
+4. Print error to console
 
 The Drawer class handles use-case 1, creating the Turtle’s path to be displayed. 
 
@@ -321,10 +321,10 @@ public interface VariableStore {
 
 The backend internal API supports 4 main use-cases:
 
-1) Decompose and delegate the parsing & execution logic of commands by type
-2) Manipulate Turtle Model based on commands
-3) Allow parser to save validated user-defined commands and variables
-4) Allow parser to fetch the value of a user-defined command or variable if it exists
+1. Decompose and delegate the parsing & execution logic of commands by type
+2. Manipulate Turtle Model based on commands
+3. Allow parser to save validated user-defined commands and variables
+4. Allow parser to fetch the value of a user-defined command or variable if it exists
 
 The MathParser, TurtleCommandParser and LogicParser handle use-case 1), decomposing the complex logic of parsing and execution into parts based on the types of the sub-commands within the input string. While it is expected that these class's functions may require calls to each other's functions (due to the recursive nature of parsing), the logic of each function is encapsulated in the respective classes.
 
