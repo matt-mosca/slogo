@@ -2,7 +2,6 @@ package backend;
 
 import java.lang.reflect.InvocationTargetException;
 
-import commands.AbstractCommand;
 import commands.ControlCommand;
 
 public class ControlNode extends SyntaxNode {
@@ -17,7 +16,7 @@ public class ControlNode extends SyntaxNode {
 	@Override
 	public double execute() throws IllegalAccessException, InvocationTargetException {
 		// TODO Auto-generated method stub
-		return controlCommand.execute(this); // TEMP;
+		return controlCommand.execute(); // TEMP;
 	}
 
 }

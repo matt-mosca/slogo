@@ -20,6 +20,6 @@ public class ValueNode extends SyntaxNode {
 		for (int index = 0; index < arguments.length; index ++) {
 			arguments[index] = children.get(index).execute();
 		}
-		return getCommand().execute(arguments);
+		return getCommand().execute();
 	}
 }

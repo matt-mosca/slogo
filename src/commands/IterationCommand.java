@@ -14,15 +14,14 @@ public class IterationCommand extends ControlCommand {
     private final double INCREMENT;
     private SyntaxNode subtree;
 
-    public IterationCommand(Method methodToInvoke, Entry<String, Double> iterationVariable, double end, double increment, SyntaxNode subtree) {
-    		super(methodToInvoke);
-    		this.iterationVariable = iterationVariable;
+    public IterationCommand(Entry<String, Double> iterationVariable, double end, double increment, SyntaxNode subtree) {
+        this.iterationVariable = iterationVariable;
         this.END = end;
         this.INCREMENT = increment;
         this.subtree = subtree;
     }
 
-    public double execute(ControlNode controlNode) throws IllegalAccessException, InvocationTargetException {
+    public double execute() throws IllegalAccessException, InvocationTargetException {
         double result = 0.0;
         double start = iterationVariable.getValue();
         for (double i = start; i < END; i += INCREMENT) {

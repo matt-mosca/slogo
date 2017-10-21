@@ -4,7 +4,7 @@ import backend.FunctionsStore;
 
 import java.lang.reflect.Method;
 
-public class StoreCommand extends AbstractCommand {
+public class StoreCommand extends AbstractCommandOld {
 
     public StoreCommand (Method methodToInvoke) {
         super(methodToInvoke);
