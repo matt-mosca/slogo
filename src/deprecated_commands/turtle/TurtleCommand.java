@@ -1,11 +1,10 @@
-package commands.turtle;
+package deprecated_commands.turtle;
 
-import apis.TurtleDisplay;
-import commands.AbstractCommand;
+import deprecated_commands.AbstractCommandOld;
 
 import java.lang.reflect.Method;
 
-public class TurtleCommand extends AbstractCommand {
+public class TurtleCommand extends AbstractCommandOld {
 
 	private TurtleListener turtleListener = TurtleListener.getInstance();
 	

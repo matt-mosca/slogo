@@ -16,7 +16,7 @@ public interface Command {
     /**
      * Execute the command the object represents, as passed at construction time.
      */
-    double execute(Object... arguments) throws IllegalAccessException, InvocationTargetException;
+    double execute(double... arguments) throws IllegalAccessException, InvocationTargetException;
     // TODO - DOCUMENT THE CHANGE ABOVE
 }
 

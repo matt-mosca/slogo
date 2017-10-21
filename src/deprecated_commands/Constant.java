@@ -1,4 +1,4 @@
-package commands;
+package deprecated_commands;
 
 import java.lang.reflect.Method;
 
@@ -12,9 +12,11 @@ public class Constant extends AbstractCommand {
 		//super(Constant.class, SET_VALUE, Constant.class.getMethod(SET_VALUE, double.class).getParameterCount());
 		//super(setValue().);
 		//setValue(value);
-		super(methodToInvoke);
+		//super(methodToInvoke);
 		setValue(value);
 	}
+
+	public double execute() {return value;}
 
 	private double getValue() { return value; }
 	
