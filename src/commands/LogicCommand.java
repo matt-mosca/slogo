@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 /**
  * @author Ben Schwennesen
  */
-public class LogicCommand extends AbstractCommand {
+public class LogicCommand extends AbstractCommandOld {
 
 	public LogicCommand(Method methodToInvoke) {
 		super(methodToInvoke);

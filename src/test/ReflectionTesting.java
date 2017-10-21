@@ -2,6 +2,7 @@ package test;
 
 import apis.Command;
 import backend.FunctionsStore;
+import commands.AbstractCommand;
 import utilities.CommandGetter;
 import utilities.Reflector;
 
@@ -16,8 +17,8 @@ public class ReflectionTesting {
         CommandGetter getter = new CommandGetter();
         double result = Double.MIN_VALUE;
         try {
-            Command command = getter.getCommandFromName("make".toLowerCase());
-            result = command.execute(new FunctionsStore(), "global", new String[]{"a","b"}, new double[]{1.1,2.3});
+            AbstractCommand command = getter.getCommandFromName("make".toLowerCase());
+            // result = command.execute(new FunctionsStore(), "global", new String[]{"a","b"}, new double[]{1.1,2.3});
         } catch (Exception e) {
             e.printStackTrace(); // for testing only!!!
         }
