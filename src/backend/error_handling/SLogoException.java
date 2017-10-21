@@ -5,11 +5,11 @@ import javafx.beans.property.StringProperty;
 import utilities.ExceptionMessageGetter;
 
 /**
- * Not thrown; message is displayed in frontend.
+ * Message is displayed in frontend.
  *
  * @author Ben Schwennesen
  */
-public abstract class SLogoException {
+public abstract class SLogoException extends Throwable {
 
     private StringProperty message = new SimpleStringProperty();
 
@@ -17,7 +17,7 @@ public abstract class SLogoException {
         registerExceptionListener();
     }
 
-    void setMessageUsingInstanceName() {
+    public void registerMessage() {
         setMessage(ExceptionMessageGetter.getMessage(this.getClass().getName()));
     }
 

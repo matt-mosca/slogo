@@ -18,7 +18,7 @@ public class UndefinedVariableException extends SLogoException {
     }
 
     @Override
-    void setMessageUsingInstanceName() {
+    public void registerMessage() {
         setMessage(ExceptionMessageGetter.getMessage(this.getClass().getName()) + UNDEFINED_VARIABLE_REFERENCE);
     }
 }

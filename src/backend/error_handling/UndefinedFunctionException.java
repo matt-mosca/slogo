@@ -18,7 +18,7 @@ public class UndefinedFunctionException extends SLogoException {
     }
 
     @Override
-    void setMessageUsingInstanceName() {
+    public void registerMessage() {
         setMessage(ExceptionMessageGetter.getMessage(this.getClass().getName()) + UNDEFINED_FUNCTION_REFERENCE);
     }
 }
