@@ -5,11 +5,11 @@ import apis.Command;
 import java.util.*;
 import java.util.Map.Entry;
 
-
 /**
  * TODO - many commands/nodes need access to the function/var store... how to give them access without making this a
  * TODO - ... static utility class or giving each command/node a copy?
  * TODO - Change (some?) methods to package-private??
+ *
  * @author Ben Schwennesen
  */
 public class FunctionsStore {
@@ -34,15 +34,7 @@ public class FunctionsStore {
         functionCommands.put(functionName, commandList);
     }
 
-    public double storeVariables(String[] names, double[] values) {
-        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
-        for (int i = 0; i < names.length; i++) {
-            functionVariableMap.put(names[i], values[i]);
-        }
-        return values[values.length-1];
-    }
-
-    public double storeVariable(String name, double value) {
+    public double setVariable(String name, double value) {
         Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
         functionVariableMap.put(name, value);
         return value;

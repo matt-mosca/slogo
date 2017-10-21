@@ -139,7 +139,7 @@ public class Parser {
 		if (!(tokens[++index].equals("]") && tokens[++index].equals("["))) {
 			throw new IllegalArgumentException();
 		}
-		functionsStore.storeVariable(indexVariableName, start);
+		functionsStore.setVariable(indexVariableName, start);
 		Entry<String, Double> indexVariable = functionsStore.getVariable(indexVariableName);
 		SyntaxNode subtree = makeExpTree(tokens, ++index);
 		ControlCommand forCommand = new IterationCommand(indexVariable, end, increment, subtree);
