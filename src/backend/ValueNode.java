@@ -24,6 +24,10 @@ public abstract class ValueNode implements SyntaxNode {
 	
 	public abstract double executeSelf(double ... arguments);
 	
+	public abstract int getDefaultNumberOfArguments();
+	
+	public abstract boolean canTakeVariableNumberOfArguments();
+	
 	public void addChild(SyntaxNode child) {
 		children.add(child);
 	}

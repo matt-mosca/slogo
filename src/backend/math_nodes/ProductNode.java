@@ -1,8 +1,8 @@
 package backend.math_nodes;
 
-import backend.ValueNode;
+import backend.VarArgNode;
 
-public class ProductNode extends ValueNode {
+public class ProductNode extends VarArgNode {
 
     @Override
     public double executeSelf(double... operands) {

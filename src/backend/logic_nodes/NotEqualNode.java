@@ -1,10 +1,10 @@
 package backend.logic_nodes;
 
-import backend.ValueNode;
+import backend.TwoArgNode;
 
-public class NotEqualNode extends ValueNode {
+public class NotEqualNode extends TwoArgNode {
 
     @Override
     public double executeSelf(double... operands) { return operands[0] != operands[1] ? 1 : 0; }
-
+    
 }

@@ -1,10 +1,10 @@
 package backend.math_nodes;
 
-import backend.ValueNode;
+import backend.OneArgNode;
 
-public class CosineNode extends ValueNode {
+public class CosineNode extends OneArgNode {
 
     @Override
     public double executeSelf(double... operands) { return Math.cos(operands[0]); }
-
+    
 }

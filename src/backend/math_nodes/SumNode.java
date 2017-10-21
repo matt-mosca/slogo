@@ -1,8 +1,8 @@
 package backend.math_nodes;
 
-import backend.ValueNode;
+import backend.VarArgNode;
 
-public class SumNode extends ValueNode {
+public class SumNode extends VarArgNode {
 
     @Override
     public double executeSelf(double... operands) {
@@ -12,5 +12,5 @@ public class SumNode extends ValueNode {
         }
         return sum;
     }
-
+    
 }
