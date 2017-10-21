@@ -26,5 +26,18 @@ public class TurtlePen {
 	
 	public void rotateTurtle(double newAngle) {
 		angle = newAngle;
+		turtleImage.setRotate(newAngle - turtleImage.getRotate());
+	}
+	
+	public double getXCoordinate() {
+		return xCoordinate;
+	}
+	
+	public double getYCoordinate() {
+		return yCoordinate;
+	}
+	
+	public double getAngle() { 
+		return angle;
 	}
 }
