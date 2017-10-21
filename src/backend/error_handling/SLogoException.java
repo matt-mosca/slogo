@@ -32,9 +32,4 @@ public abstract class SLogoException {
             System.out.println(newValue);
         }));
     }
-
-    public static void main(String[] args) {
-        SLogoException e = new ProjectBuildException();
-        e.setMessageUsingInstanceName();
-    }
 }
