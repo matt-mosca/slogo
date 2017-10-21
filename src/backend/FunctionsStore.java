@@ -2,8 +2,15 @@ package backend;
 
 import apis.Command;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * TODO - many commands/nodes need access to the function/var store... how to give them access without making this a

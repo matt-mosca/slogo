@@ -1,13 +1,9 @@
 package commands;
 
 import apis.Command;
-import com.sun.istack.internal.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.SQLSyntaxErrorException;
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * @author Ben Schwennesen

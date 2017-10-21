@@ -1,7 +1,7 @@
 package apis;
 
-import java.util.Map.Entry;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Stores the variables declared by the user in the frontend using a HashMap.

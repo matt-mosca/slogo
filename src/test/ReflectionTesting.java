@@ -1,10 +1,7 @@
 package test;
 
-import apis.Command;
-import backend.FunctionsStore;
 import commands.AbstractCommand;
 import utilities.CommandGetter;
-import utilities.Reflector;
 
 import java.lang.reflect.Method;
 
