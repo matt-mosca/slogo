@@ -84,9 +84,9 @@ The user will enter commands in a command box (a text field) along the left side
 ##### Display.java interface (front end external)
 
 The front end external API supports 3 use-cases:
-Move the image of the Turtle
-Rotating the image of the Turtle
-Adding a variable or command
+* Move the image of the Turtle
+* Rotating the image of the Turtle
+* Adding a variable or command
 
 The TurtleDisplay class handles  use-cases 1 and 2 above, displaying the changes in the Turtle’s orientation and position prompted by the commands entered by the user. Our team decided that a Turtle’s movement should be separate from its rotation because the movement requires the Turtle’s position whereas the rotation requires its orientation.
 
