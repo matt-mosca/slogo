@@ -3,6 +3,8 @@ package frontend.turtle_display;
 import java.util.ArrayList;
 import java.util.List;
 import apis.TurtleDisplay;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 public class TurtleView implements TurtleDisplay{
 	private List<TurtlePen> displayedTurtles;
@@ -44,6 +46,16 @@ public class TurtleView implements TurtleDisplay{
     	return newAddition;
     }
     
+    public void showTurtles(Pane layout) {
+    	GridPane turtleWindow = (GridPane) layout;
+    	for(int i = 0; i < displayedTurtles.size(); i++) {
+    		turtleWindow.add(displayedTurtles.get(i).getImage(), 1, 1);
+    	}
+    }
+    
+    private double translateCoord(double coordFromCenter) {
+    	return 0;
+    }
     //Make method that takes in the turtle display pane and attaches the TurtlePen objects in the 
     //list to that pane
 }

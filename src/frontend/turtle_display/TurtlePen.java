@@ -40,4 +40,8 @@ public class TurtlePen {
 	public double getAngle() { 
 		return angle;
 	}
+	
+	public ImageView getImage() {
+		return turtleImage;
+	}
 }
