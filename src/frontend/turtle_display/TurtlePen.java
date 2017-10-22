@@ -7,24 +7,27 @@ public class TurtlePen {
 	public static final String DEFAULT_TURTLE = "Cartoon-Turtle.png";
 	
 	private ImageView turtleImage;
-	private double xCoordinate;
-	private double yCoordinate;
+	private double xCoordinateOnScene;
+	private double yCoordinateOnScene;
 	private double angle;
 	
-	public TurtlePen() {
+	public TurtlePen(double xCoord, double yCoord) {
 		String imageName = DEFAULT_TURTLE;
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
 		turtleImage = new ImageView(image);
-		ImageView turtleImage = new ImageView(image); 
 		turtleImage.setFitWidth(20);
 		turtleImage.setFitHeight(25);
-		xCoordinate = 0;
-		yCoordinate = 0;
+		xCoordinateOnScene = xCoord;
+		yCoordinateOnScene = yCoord;
+		turtleImage.setX(xCoord);
+		turtleImage.setY(yCoord);
 	}
 	
 	public void moveTurtle(double newXCoord, double newYCoord) {
-		xCoordinate = newXCoord;
-		yCoordinate = newYCoord;
+		xCoordinateOnScene = newXCoord;
+		yCoordinateOnScene = newYCoord;
+		turtleImage.setX(newXCoord);
+		turtleImage.setY(newYCoord);
 	}
 	
 	public void rotateTurtle(double newAngle) {
@@ -33,11 +36,11 @@ public class TurtlePen {
 	}
 	
 	public double getXCoordinate() {
-		return xCoordinate;
+		return xCoordinateOnScene;
 	}
 	
 	public double getYCoordinate() {
-		return yCoordinate;
+		return yCoordinateOnScene;
 	}
 	
 	public double getAngle() { 
