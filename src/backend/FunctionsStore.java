@@ -1,28 +1,24 @@
 package backend;
 
-import apis.Command;
+import backend.error_handling.UndefinedFunctionException;
+import backend.error_handling.UndefinedVariableException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 
 /**
- * TODO - many commands/nodes need access to the function/var store... how to give them access without making this a
- * TODO - ... static utility class or giving each command/node a copy?
- * TODO - Change (some?) methods to package-private??
  *
  * @author Ben Schwennesen
  */
 public class FunctionsStore {
 
     Map<String, Map<String, Double>> functionVariables = new HashMap<>();
-    Map<String, List<Command>> functionCommands = new HashMap<>();
+    Map<String, Set<String>> scopeMap = new HashMap<>();
+    Map<String, SyntaxNode> functionRoots = new HashMap<>();
 
     private Stack<String> scopeStack = new Stack<>();
 
@@ -31,14 +27,11 @@ public class FunctionsStore {
 
     public FunctionsStore() {
         functionVariables.put(GLOBAL, new HashMap<>());
-        functionCommands.put(GLOBAL, new ArrayList<>());
         currentScope = GLOBAL;
     }
 
-    public void addCommands(String functionName, Command... commands) {
-        List<Command> commandList = functionCommands.getOrDefault(functionName, new ArrayList<>());
-        commandList.addAll(Arrays.asList(commands));
-        functionCommands.put(functionName, commandList);
+    public void addFunction(String functionName, SyntaxNode functionRoot) {
+        functionRoots.put(functionName, functionRoot);
     }
 
     public double setVariable(String name, double value) {
@@ -48,67 +41,55 @@ public class FunctionsStore {
     }
 
     public void enterScope(String newScope) {
-        Map<String, Double> functionVariableMap = functionVariables.getOrDefault(newScope, new HashMap<>());
-        functionVariableMap.putAll(functionVariables.getOrDefault(currentScope, new HashMap<>()));
+        Set<String> scopes = scopeMap.getOrDefault(newScope, new HashSet<>());
+        scopes.add(newScope);
+        scopes.addAll(scopeMap.getOrDefault(currentScope, new HashSet<>()));
+        scopeMap.put(newScope, scopes);
         scopeStack.push(currentScope);
         currentScope = newScope;
     }
 
     public void exitScope() {
         String lastScope = (scopeStack.isEmpty() ? GLOBAL : scopeStack.pop());
-        Set<Entry<String, Double>> outerVariables =
-                functionVariables.getOrDefault(lastScope, new HashMap<>()).entrySet();
-        Iterator<Entry<String, Double>> innerVariablesIterator =
-                functionVariables.getOrDefault(currentScope, new HashMap<>()).entrySet().iterator();
-        while (innerVariablesIterator.hasNext()) {
-            Entry<String, Double> innerVariable = innerVariablesIterator.next();
-            if (outerVariables.contains(innerVariable)) {
-                innerVariablesIterator.remove();
-            }
-        }
+        Set<String> outerScopes = scopeMap.getOrDefault(lastScope, new HashSet<>());
+        outerScopes.removeAll(scopeMap.getOrDefault(currentScope, new HashSet<>()));
         currentScope = lastScope;
     }
     /* GETTERS */
 
-    public Set<Entry<String, Double>> getCurrentVariables() {
-        return functionVariables.get(currentScope).entrySet();
-    }
+    public boolean existsVariable(String name) { return functionVariables.get(currentScope).containsKey(name); }
+    public boolean existsFunction(String name) { return functionRoots.containsKey(name); }
 
-    // this will be costly but can allow the user to modify a variable without access to this class
-    public Entry<String, Double> getVariable(String name) {
-        if (!functionVariables.get(currentScope).containsKey(name)) {
-            functionVariables.get(currentScope).put(name, 0.0);
+    public Set<Entry<String, Double>> getCurrentVariables() {
+        Set<Entry<String, Double>> availableVariables = new HashSet<>();
+        Set<String> currentFunctionScopes = scopeMap.getOrDefault(currentScope, new HashSet<>());
+        for (String currentFunctionScopeMember : currentFunctionScopes) {
+            availableVariables.addAll(
+                    functionVariables
+                            .getOrDefault(currentFunctionScopeMember, new HashMap<>())
+                            .entrySet());
         }
-        Iterator<Entry<String, Double>> entryIterator = functionVariables.get(currentScope).entrySet().iterator();
-        while(entryIterator.hasNext()) {
-            Entry<String, Double> entry = entryIterator.next();
-            if (entry.getKey().equals(name)) {
-                return entry;
-            }
-        }
-        // this will never happen
-        return null;
+        return availableVariables;
     }
 
     public Set<String> getDeclaredFunctions() {
         return functionVariables.keySet();
     }
 
-    public List<Command> getFunctionCommands(String functionName)  {
-        return functionCommands.getOrDefault(functionName, new ArrayList<>());
-    }
-
-    public double getVariableValue(String variableName) {
-        return functionVariables.get(currentScope).get(variableName);
-    }
-
-    public static void main (String[] args) {
-        Map<Integer, Integer> test = new HashMap<>();
-        test.put(1,1);
-        test.put(2,2);
-        for (Entry<Integer, Integer> entry : test.entrySet()) {
-            entry.setValue(0);
+    public SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
+        if (!existsFunction(functionName)) {
+            throw new UndefinedFunctionException(functionName);
+            // TODO -- do this where these are caught -- functionNotFound.registerMessage();
+        } else {
+            return functionRoots.get(functionName);
         }
-        System.out.println(test);
+    }
+
+    public double getVariableValue(String variableName) throws UndefinedVariableException {
+        if (!existsVariable(variableName)) {
+            throw new UndefinedVariableException(variableName);
+            // TODO -- do this where these are caught -- variableNotFound.registerMessage();
+        }
+        return functionVariables.get(currentScope).get(variableName);
     }
 }

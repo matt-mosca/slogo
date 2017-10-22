@@ -15,7 +15,8 @@ public abstract class DataAccessingNode implements SyntaxNode {
         return store.getVariableValue(name);
     }
 
-    protected void setVariable(String name, double value) {
+    protected double setVariable(String name, Double value) {
         store.setVariable(name, value);
+        return value;
     }
 }

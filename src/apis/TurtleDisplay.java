@@ -13,7 +13,7 @@ public interface TurtleDisplay {
      * @param xCoordinate - the new x-coordinate of the turtle
      * @param yCoordinate - the new y-coordinate of the turtle
      */
-    void move(int turtleIndex, double xCoordinate, double yCoordinate);
+    void move(int turtleIndex, double xCoord, double yCoord);
 
     /**
      * Change the direction to which the turtle's image points. Since coordinates are handled in the backend, this
