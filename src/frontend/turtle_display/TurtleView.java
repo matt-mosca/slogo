@@ -3,19 +3,34 @@ package frontend.turtle_display;
 import java.util.ArrayList;
 import java.util.List;
 import apis.TurtleDisplay;
+import frontend.window_setup.IDEWindow;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 
 public class TurtleView implements TurtleDisplay{
-	public final double WIDTH = 100;
-	public final double HEIGHT = 100;
-	
 	private List<TurtlePen> displayedTurtles;
+	private Rectangle turtleField;
+	private Pane layout;
+	private double fieldCenterX;
+	private double fieldCenterY;
+	private double fieldCenterXOnScene;
+	private double fieldCenterYOnScene;
 	
 	public TurtleView() {
 		displayedTurtles = new ArrayList<TurtlePen>();
-		TurtlePen original = new TurtlePen();
+		TurtlePen original = new TurtlePen(fieldCenterX, fieldCenterY);
 		displayedTurtles.add(original);
+		IDEWindow window = new IDEWindow();
+		turtleField = window.getTurtleField();
+		layout = (BorderPane) window.getPane();
+		fieldCenterX = turtleField.getX() + turtleField.getWidth() / 2;
+		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2;
+	}
+	
+	public void displayInitialTurtle() {
+		showTurtle(displayedTurtles.get(0));
 	}
 	
 	/**
@@ -27,7 +42,9 @@ public class TurtleView implements TurtleDisplay{
      */
     public void move(int turtleIndex, double newXCoord, double newYCoord) {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
-    	displayedTurtles.get(turtleIndex).moveTurtle(newXCoord, newYCoord);
+    	double xCoordOnScene = translateXCoord(newXCoord);
+    	double yCoordOnScene = translateYCoord(newYCoord);
+    	displayedTurtles.get(turtleIndex).moveTurtle(xCoordOnScene, yCoordOnScene);
     }
 
     /**
@@ -44,20 +61,42 @@ public class TurtleView implements TurtleDisplay{
     }
     
     public TurtlePen addTurtle() {
-    	TurtlePen newAddition = new TurtlePen();
+    	TurtlePen newAddition = new TurtlePen(fieldCenterX, fieldCenterY);
     	displayedTurtles.add(newAddition);
+    	showTurtle(newAddition);
     	return newAddition;
     }
     
-    public void showTurtles(Pane layout) {
-    	GridPane turtleWindow = (GridPane) layout;
-    	for(int i = 0; i < displayedTurtles.size(); i++) {
-    		turtleWindow.add(displayedTurtles.get(i).getImage(), 1, 1);
-    	}
+    public void showTurtle(TurtlePen turtle) {
+    	layout.getChildren().add(turtle.getImage());
+    	System.out.println("Check");
     }
     
-    private double translateCoord(double coordFromCenter) {
-    	return 0;
+//    public void displayTurtles(Pane layout) {
+//    	BorderPane turtleWindow = (BorderPane) layout;
+//    	for(int i = 0; i < displayedTurtles.size(); i++) {
+//    		
+//    	}
+//    }
+    
+    /**
+     * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
+     * on the scene
+     * @param coordFromCenter
+     * @return x-coordinate along the field
+     */
+    private double translateXCoord(double xCoordFromCenter) {
+    	return fieldCenterX + xCoordFromCenter;
+    }
+    
+    /**
+     * Translates the y-coordinate relative to the center (input from backend) into the y-coordinate
+     * on the scene
+     * @param coordFromCenter
+     * @return x-coordinate along the field
+     */
+    private double translateYCoord(double yCoordFromCenter) {
+    	return fieldCenterY - yCoordFromCenter;
     }
     //Make method that takes in the turtle display pane and attaches the TurtlePen objects in the 
     //list to that pane

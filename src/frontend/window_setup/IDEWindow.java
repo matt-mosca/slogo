@@ -1,5 +1,6 @@
 package frontend.window_setup;
 
+import frontend.turtle_display.TurtleView;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -61,5 +62,19 @@ public class IDEWindow {
 	
 	public void setUpWindow(Stage primary) {
 		primary.setScene(primaryScene);
+		setUpTurtleField();
+	}
+	
+	private void setUpTurtleField() {
+		TurtleView field = new TurtleView();
+		field.displayInitialTurtle();
+	}
+	
+	public Rectangle getTurtleField() {
+		return turtleField;
+	}
+	
+	public Pane getPane() {
+		return borderLayout;
 	}
 }
