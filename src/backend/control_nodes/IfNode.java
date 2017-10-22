@@ -1,8 +1,12 @@
 package backend.control_nodes;
 
 import backend.SyntaxNode;
+import backend.error_handling.SLogoException;
 import sun.awt.SunHints;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class IfNode implements SyntaxNode  {
 
     private SyntaxNode conditionExpression;
@@ -13,12 +17,12 @@ public class IfNode implements SyntaxNode  {
         this.conditionExpression = conditionExpression;
     }
 
-    protected boolean isTrue() { return conditionExpression.execute() == 1; }
+    protected boolean isTrue() throws SLogoException{ return conditionExpression.execute() == 1; }
 
-    protected double executeTrueBranch() { return trueBranch.execute(); }
+    protected double executeTrueBranch() throws SLogoException { return trueBranch.execute(); }
 
     @Override
-    public double execute() {
+    public double execute() throws SLogoException{
         if (isTrue()) {
             return executeTrueBranch();
         }

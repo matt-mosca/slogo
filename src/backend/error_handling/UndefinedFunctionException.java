@@ -9,16 +9,10 @@ import utilities.ExceptionMessageGetter;
  *
  * @author Ben Schwennesen
  */
-public class UndefinedFunctionException extends SLogoException {
+public class UndefinedFunctionException extends SyntaxCausedException {
 
-    private final String UNDEFINED_FUNCTION_REFERENCE;
-
-    public UndefinedFunctionException(String functionRefenceToken) {
-        UNDEFINED_FUNCTION_REFERENCE = functionRefenceToken;
+    public UndefinedFunctionException(String badFunctionReferennceToken) {
+        super(badFunctionReferennceToken);
     }
 
-    @Override
-    public void registerMessage() {
-        setMessage(ExceptionMessageGetter.getMessage(this.getClass().getName()) + UNDEFINED_FUNCTION_REFERENCE);
-    }
 }

@@ -1,22 +1,19 @@
 package backend.control_nodes;
 
-import backend.FunctionsStore;
+import backend.ScopedStorage;
 import backend.SyntaxNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public abstract class DataAccessingNode implements SyntaxNode {
 
-    private FunctionsStore store;
+    private ScopedStorage store;
 
-    public DataAccessingNode(FunctionsStore store) {
+    public DataAccessingNode(ScopedStorage store) {
         this.store = store;
     }
 
-    protected double getVariableValue(String name) {
-        return store.getVariableValue(name);
-    }
+    protected ScopedStorage getStore() { return store; }
 
-    protected double setVariable(String name, Double value) {
-        store.setVariable(name, value);
-        return value;
-    }
 }

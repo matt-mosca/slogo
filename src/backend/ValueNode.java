@@ -1,5 +1,7 @@
 package backend;
 
+import backend.error_handling.SLogoException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ public abstract class ValueNode implements SyntaxNode {
 	
 	// Execute in post-order
 	@Override
-	public double execute() {
+	public double execute() throws SLogoException {
 		double[] arguments = new double[children.size()];
 		for (int index = 0; index < arguments.length; index ++) {
 			arguments[index] = children.get(index).execute();
@@ -22,7 +24,7 @@ public abstract class ValueNode implements SyntaxNode {
 		return executeSelf(arguments);
 	}
 	
-	public abstract double executeSelf(double ... arguments);
+	public abstract double executeSelf(double ... arguments) throws SLogoException;
 	
 	public abstract int getDefaultNumberOfArguments();
 	

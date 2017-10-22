@@ -1,17 +1,19 @@
 package backend;
 
+import backend.error_handling.SLogoException;
+
 // TODO - consider sub-classing SyntaxNode directly?
 public class VariableNode extends NoArgNode {
-	FunctionsStore functionStore;
+	ScopedStorage functionStore;
 	String varName;
 
-	public VariableNode(FunctionsStore functionStore, String varName) {
+	public VariableNode(ScopedStorage functionStore, String varName) {
 		this.functionStore = functionStore;
 		this.varName = varName;
 	}
 	
 	@Override
-	public double executeSelf(double... arguments) {
+	public double executeSelf(double... arguments) throws SLogoException {
 		return functionStore.getVariableValue(varName);
 	}
 	

@@ -1,7 +1,10 @@
 package backend;
 
+import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedFunctionException;
 import backend.error_handling.UndefinedVariableException;
+import backend.math_nodes.ConstantNode;
+import com.sun.istack.internal.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,10 +14,9 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
- *
  * @author Ben Schwennesen
  */
-public class FunctionsStore {
+public class ScopedStorage {
 
     Map<String, Map<String, Double>> functionVariables = new HashMap<>();
     Map<String, Set<String>> scopeMap = new HashMap<>();
@@ -25,16 +27,29 @@ public class FunctionsStore {
     private String currentScope;
     public static final String GLOBAL = "global";
 
-    public FunctionsStore() {
+    private final int STORAGE_SUCCESS = 1;
+
+    public ScopedStorage() {
         functionVariables.put(GLOBAL, new HashMap<>());
         currentScope = GLOBAL;
     }
 
-    public void addFunction(String functionName, SyntaxNode functionRoot) {
+    public double addFunction(String functionName, SyntaxNode functionRoot) {
         functionRoots.put(functionName, functionRoot);
+        return STORAGE_SUCCESS;
     }
 
-    public double setVariable(String name, double value) {
+    /**
+     *
+     *
+     * Value is passed as null before tree is executed so that a variable's existence can be confirmed before the
+     * command where its value is stored is execute.
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    public double setVariable(String name, @Nullable Double value) {
         Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
         functionVariableMap.put(name, value);
         return value;
@@ -79,7 +94,6 @@ public class FunctionsStore {
     public SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
         if (!existsFunction(functionName)) {
             throw new UndefinedFunctionException(functionName);
-            // TODO -- do this where these are caught -- functionNotFound.registerMessage();
         } else {
             return functionRoots.get(functionName);
         }
@@ -88,7 +102,6 @@ public class FunctionsStore {
     public double getVariableValue(String variableName) throws UndefinedVariableException {
         if (!existsVariable(variableName)) {
             throw new UndefinedVariableException(variableName);
-            // TODO -- do this where these are caught -- variableNotFound.registerMessage();
         }
         return functionVariables.get(currentScope).get(variableName);
     }
