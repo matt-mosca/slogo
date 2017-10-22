@@ -2,6 +2,9 @@ package backend.math_nodes;
 
 import backend.VarArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class ProductNode extends VarArgNode {
 
     @Override
