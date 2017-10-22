@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class TurtlePen {
-	public static final String DEFAULT_TURTLE = "";
+	public static final String DEFAULT_TURTLE = "Cartoon-Turtle.png";
 	
 	private ImageView turtleImage;
 	private double xCoordinate;
@@ -14,7 +14,10 @@ public class TurtlePen {
 	public TurtlePen() {
 		String imageName = DEFAULT_TURTLE;
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
-		turtleImage = new ImageView(image); 
+		turtleImage = new ImageView(image);
+		ImageView turtleImage = new ImageView(image); 
+		turtleImage.setFitWidth(20);
+		turtleImage.setFitHeight(25);
 		xCoordinate = 0;
 		yCoordinate = 0;
 	}
