@@ -1,20 +1,30 @@
 package backend;
 
 import backend.error_handling.SLogoException;
+import backend.error_handling.UndefinedVariableException;
 
 // TODO - consider sub-classing SyntaxNode directly?
 public class VariableNode extends NoArgNode {
-	ScopedStorage functionStore;
+	ScopedStorage store;
 	String varName;
 
-	public VariableNode(ScopedStorage functionStore, String varName) {
-		this.functionStore = functionStore;
+	public VariableNode(ScopedStorage scopedStorage, String varName) {
+		this.store = scopedStorage;
 		this.varName = varName;
 	}
-	
-	@Override
-	public double executeSelf(double... arguments) throws SLogoException {
-		return functionStore.getVariableValue(varName);
+
+	public double executeSelf(double... arguments) {
+		// Since parser checks in tree construction whether the variable exists
+		// the only time the catch block is entered is when the variable is declared
+		// but a value has not been assigned
+		// such as in MAKE, SET, etc.
+		// in such a case, its instantaneous value does not matter
+		// since it is about to be overwritten
+		try {
+			return store.getVariableValue(varName);
+		} catch (UndefinedVariableException e) {
+			return 0;
+		}
 	}
 	
 }

@@ -15,23 +15,27 @@ public class TurtleView implements TurtleDisplay{
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
-	private double fieldCenterXOnScene;
-	private double fieldCenterYOnScene;
 	
-	public TurtleView() {
+	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
+		layout = border;
+		turtleField = field;
+//		fieldCenterX = turtleField.getX() + turtleField.getWidth() / 2;
+//		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2;
+		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2 - TurtlePen.DEFAULT_WIDTH / 2;
+		fieldCenterY = IDEWindow.TOP_HEIGHT / 2 + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
 		TurtlePen original = new TurtlePen(fieldCenterX, fieldCenterY);
 		displayedTurtles.add(original);
-		IDEWindow window = new IDEWindow();
-		turtleField = window.getTurtleField();
-		layout = (BorderPane) window.getPane();
-		fieldCenterX = turtleField.getX() + turtleField.getWidth() / 2;
-		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2;
 	}
 	
 	public void displayInitialTurtle() {
 		showTurtle(displayedTurtles.get(0));
 	}
+	
+	public void showTurtle(TurtlePen turtle) {
+    	layout.getChildren().add(turtle.getImage());
+//    	System.out.println("Check");
+    }
 	
 	/**
      * Move a turtle's image to a new location within the pane.
@@ -65,11 +69,6 @@ public class TurtleView implements TurtleDisplay{
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
     	return newAddition;
-    }
-    
-    public void showTurtle(TurtlePen turtle) {
-    	layout.getChildren().add(turtle.getImage());
-    	System.out.println("Check");
     }
     
 //    public void displayTurtles(Pane layout) {

@@ -32,9 +32,4 @@ public abstract class SLogoException extends Throwable {
             System.out.println(newValue);
         }));
     }
-
-    public static void main(String[] args) {
-        SLogoException e = new BadNumberOfArgumentsException("equals?", 2);
-        e.registerMessage();
-    }
 }
