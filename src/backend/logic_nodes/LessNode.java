@@ -2,6 +2,9 @@ package backend.logic_nodes;
 
 import backend.TwoArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class LessNode extends TwoArgNode {
 
     @Override

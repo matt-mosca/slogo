@@ -2,6 +2,9 @@ package backend.math_nodes;
 
 import backend.TwoArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class PowerNode extends TwoArgNode {
 
     @Override

@@ -1,8 +1,12 @@
 package backend.control_nodes;
 
-import backend.FunctionsStore;
+import backend.ScopedStorage;
 import backend.SyntaxNode;
+import backend.error_handling.SLogoException;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class IterationNode extends DataAccessingNode {
 
     private String iterationVariable;
@@ -10,7 +14,7 @@ public class IterationNode extends DataAccessingNode {
     private final double INCREMENT;
     private SyntaxNode subtree;
 
-    public IterationNode(FunctionsStore store, String iterationVariable,
+    public IterationNode(ScopedStorage store, String iterationVariable,
                          double end, double increment, SyntaxNode subtree) {
         super(store);
         this.iterationVariable = iterationVariable;
@@ -19,11 +23,11 @@ public class IterationNode extends DataAccessingNode {
         this.subtree = subtree;
     }
 
-    public double execute() {
+    public double execute() throws SLogoException {
         double result = 0.0;
-        double start = getVariableValue(iterationVariable);
+        double start = getStore().getVariableValue(iterationVariable);
         for (double i = start; i < END; i += INCREMENT) {
-            setVariable(iterationVariable, i);
+            getStore().setVariable(iterationVariable, i);
             result = subtree.execute();
         }
         return result;

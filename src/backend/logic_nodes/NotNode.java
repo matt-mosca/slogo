@@ -2,6 +2,9 @@ package backend.logic_nodes;
 
 import backend.OneArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class NotNode extends OneArgNode {
 
     @Override

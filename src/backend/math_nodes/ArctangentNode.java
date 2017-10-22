@@ -2,6 +2,9 @@ package backend.math_nodes;
 
 import backend.OneArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class ArctangentNode extends OneArgNode {
 
     @Override
