@@ -5,12 +5,19 @@ import deprecated_commands.Constant;
 import deprecated_commands.ControlCommand;
 import deprecated_commands.IterationCommand;
 import utilities.CommandGetter;
+import utilities.PeekingIterator;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import backend.control_nodes.IterationNode;
+import backend.math_nodes.ConstantNode;
 
 public class Parser {
 
@@ -37,7 +44,8 @@ public class Parser {
 		// Avoid repeated computation for just differing whitespace
 		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
 		try {
-			syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
+			syntaxTrees.put(formattedCommand,
+					makeExpTree(new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
 			return true;
 		} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
 				| InstantiationException e) {
@@ -50,7 +58,8 @@ public class Parser {
 		try {
 			String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
 			if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
-				syntaxTrees.put(formattedCommand, makeExpTree(command.split(DELIMITER_REGEX), 0));
+				syntaxTrees.put(formattedCommand, makeExpTree(
+						new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
 			}
 			SyntaxNode tree = syntaxTrees.get(formattedCommand);
 			tree.execute();
@@ -62,70 +71,88 @@ public class Parser {
 
 	// To support switching of language through front end
 	public void setLanguage(String language) {
-		commandGetter.setLanguage(language);
-	}
-
-	private SyntaxNode makeExpTree(String[] commands, int index)
-			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException {
-		if (commands == null) {
+		try {
+			commandGetter.setLanguage(language);
+		} catch (IOException e) {
+			// Can only be because language passed in is not supported
 			throw new IllegalArgumentException();
 		}
-		if (index >= commands.length) {
+	}
+
+	// Top-level parsing command which chooses appropriate parsing command for
+	// construction of next node
+	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException,
+			NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
+		if (it == null) {
+			throw new IllegalArgumentException();
+		}
+		if (!it.hasNext()) { // Done parsing
 			return null;
 		}
-		SyntaxNode root;
-		if (commands[index].equals(VARIABLE_ARGS_START_DELIMITER)) {
-			int variableArgsCommandEndIndex = findVariableArgsEndpoint(commands, index);
-			return makeExpTreeForVariableParameters(commands, index + 1, variableArgsCommandEndIndex);
+		String nextToken = it.peek();
+		if (nextToken.equals(VARIABLE_ARGS_START_DELIMITER)) {
+			it.next();
+			return makeExpTreeForVariableParameters(it);
 		}
-		return makeSyntaxNodeForCommand(commands[index], commands, index);
+		if (isNumeric(nextToken)) {
+			return new ConstantNode(Double.parseDouble(nextToken));
+		}
+		// Need to check for user-declared methods here
+		// TODO - check if variable exists using Ben's new variableExists() method
+		if (functionsStore.getVariable(nextToken) != null) {
+			return new VariableNode(functionsStore, nextToken);
+		}
+		// Dispatch appropriate method
+		Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
+		return (SyntaxNode) nextParsingMethod.invoke(this, it);
 	}
 
-	private SyntaxNode makeStandardNode(String[] commands, int index) throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException {
-		//AbstractCommand rootCommand = root.getCommand();
-		System.out.println(commands[index]);
-		AbstractCommand command = commandGetter.getCommandFromName(commands[index]);
-		SyntaxNode root = new ValueNode(command);
-		//int numChildren = rootCommand.getNumberOfArguments();
-		index++;
+	private ValueNode makeValueNode(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException,
+			NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
+		if (it == null || !it.hasNext()) {
+			throw new IllegalArgumentException();
+		}
+		String commandName = it.next();
+		// Use reflection to invoke right command constructor
+		Class commandClass = commandGetter.getCommandNodeClass(commandName);
+		ValueNode valueNode = (ValueNode) commandClass.getConstructor(null).newInstance();
+		int numChildren = valueNode.getDefaultNumberOfArguments();
 		SyntaxNode nextChild;
-		for (int child = 0; child < 2; child++) {
-			nextChild = makeExpTree(commands, index);
-			root.addChild(nextChild);
-			index += getTokensConsumed(nextChild);
+		for (int child = 0; child < numChildren; child++) {
+			nextChild = makeExpTree(it);
+			valueNode.addChild(nextChild);
 		}
-		return root;
+		return valueNode;
 	}
 
-	private SyntaxNode makeSyntaxNodeForCommand(String commandName, String[] tokens, int index) throws NoSuchMethodException,
+	/*
+	private SyntaxNode makeSyntaxNodeForCommand(PeekingIterator<String> it) throws NoSuchMethodException,
 			InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
 		if (isNumeric(commandName)) {
-			// TODO - change below (just a temp fix to make things compile with my (Ben)
-			// changes)
-			Method methodToInvoke = Constant.class.getDeclaredMethod("getValue");
-			Constant constant = new Constant(methodToInvoke, Double.parseDouble(commandName));
-			return new ValueNode(constant);
+			return new ConstantNode(Double.parseDouble(commandName));
 		}
 		// TODO - Check variable store for user-defined variables first
 		// Account for localization
-		//AbstractCommandOld command = commandGetter.getCommandFromName(commandName.toLowerCase());
+		// AbstractCommandOld command =
+		// commandGetter.getCommandFromName(commandName.toLowerCase());
 		Method commandParsingMethod = commandGetter.getMethodFromCommandName(commandName.toLowerCase());
 		SyntaxNode root = (SyntaxNode) commandParsingMethod.invoke(this, tokens, ++index);
 		// Make either ValueNode or CommandNode based on info about the commandName
-		/*SyntaxNode root = command instanceof ControlCommand ? new ControlNode((ControlCommand) command)
-				: new ValueNode(command);*/
 		return root;
 	}
+	*/
 
 	/**
-	 * My new idea is to use reflection to choose which method to make nodes with (e.g. "for" will lead to this)
+	 * My new idea is to use reflection to choose which method to make nodes with
+	 * (e.g. "for" will lead to this)
+	 * 
 	 * @param tokens
 	 * @param index
 	 * @return
 	 */
-	private ControlNode makeForLoopNode(String[] tokens, int index)
+	
+	/*
+	private IterationNode makeForLoopNode(PeekingIterator<String> it)
 			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
 			InvocationTargetException, IllegalAccessException {
 		// todo - dont use assert, do something better
@@ -133,8 +160,7 @@ public class Parser {
 			throw new IllegalArgumentException();
 		}
 		String indexVariableName = tokens[++index];
-		double start = Double.parseDouble(tokens[++index]),
-				end = Double.parseDouble(tokens[++index]),
+		double start = Double.parseDouble(tokens[++index]), end = Double.parseDouble(tokens[++index]),
 				increment = Double.parseDouble(tokens[++index]);
 		if (!(tokens[++index].equals("]") && tokens[++index].equals("["))) {
 			throw new IllegalArgumentException();
@@ -145,54 +171,33 @@ public class Parser {
 		ControlCommand forCommand = new IterationCommand(indexVariable, end, increment, subtree);
 		return new ControlNode(forCommand);
 	}
+	*/
 
-	private SyntaxNode makeExpTreeForVariableParameters(String[] commands, int startIndex, int endIndex)
-			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException,
-			ClassNotFoundException {
-		if (commands == null || startIndex >= commands.length || startIndex > endIndex || endIndex >= commands.length) {
+	// Only ValueNodes can have variable params
+	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws NoSuchMethodException,
+			InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
-		SyntaxNode root = makeSyntaxNodeForCommand(commands[startIndex], commands, startIndex);
-		/*if (!root.getCommand().takesVariableArguments()) {
+		// Retrive just the root node corresponding to this command
+		// it advanced by one token
+		ValueNode root = makeValueNode(it);
+		// TODO
+		if (!root.canTakeVariableNumberOfArguments()) {
 			throw new IllegalArgumentException();
-		}*/
-		int index = startIndex + 1;
+		}
 		SyntaxNode nextChild;
-		while (index < endIndex) {
-			nextChild = makeExpTree(commands, index);
+		while (!it.peek().equals(VARIABLE_ARGS_END_DELIMITER)) {
+			nextChild = makeExpTree(it);
 			root.addChild(nextChild);
-			index += getTokensConsumed(nextChild);
 		}
-		root.setHasVariableArgs(true);
+		// Consume ')' token
+		it.next();
 		return root;
 	}
 
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
-
-	private int findVariableArgsEndpoint(String[] commands, int startIndex) throws IllegalArgumentException {
-		if (commands == null || startIndex < 0 || startIndex >= commands.length) {
-			throw new IllegalArgumentException();
-		}
-		int indentation = 0;
-		int index = startIndex;
-		while (index < commands.length) {
-			if (commands[index].equals(VARIABLE_ARGS_START_DELIMITER)) {
-				indentation++;
-			} else if (commands[index].equals(VARIABLE_ARGS_END_DELIMITER)) {
-				if (--indentation == 0) {
-					return index;
-				}
-			}
-		}
-		throw new IllegalArgumentException();
-	}
-
-	private int getTokensConsumed(SyntaxNode root) {
-		return root.hasVariableArgs() ? root.getSize() + 2 : root.getSize();
-	}
-
-	// Move to either utilities or to AbstractCommandOld as static method?
 
 }
