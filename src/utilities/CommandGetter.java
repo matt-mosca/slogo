@@ -20,13 +20,6 @@ public class CommandGetter {
 	private Properties languageProperties;
 	private Map<String, String> commandMap = new HashMap<>();
 
-	/*private final String DOUBLE_CLASS_NAME = "java.lang.Double";
-	private final String CLASS_TYPE_DELIMITER = ",";
-
-	private final int COMMAND_CLASS_NAME_INDEX = 0;
-	private final int COMMAND_METHOD_NAME_INDEX = 1;
-	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;*/
-
 	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
 	private final Class PARSER_CLASS = Parser.class;
 	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {PeekingIterator.class};
@@ -37,9 +30,7 @@ public class CommandGetter {
 		COMMAND_PARSING_PROPERTIES = new Properties();
 		languageProperties = new Properties();
 		try {
-			// File file = new File(COMMAND_INFO_FILE);
 			InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
-			// InputStream commandPropertiesStream = new FileInputStream(f);
 			COMMAND_PROPERTIES.load(commandPropertiesStream);
 
 			InputStream commandParsingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_PARSING_FILE);
@@ -70,52 +61,6 @@ public class CommandGetter {
 			}
 		}
 	}
-
-	/*
-	private String[] getCommandInfo(String command) throws IllegalArgumentException {
-		String commandInfo;
-		command = command.toLowerCase();
-		if (!commandMap.containsKey(command)
-				|| (commandInfo = COMMAND_PROPERTIES.getProperty(commandMap.get(command))) == null) {
-			throw new IllegalArgumentException();
-		}
-		return commandInfo.split("/");
-	}
-
-	public AbstractCommand getCommandFromName(String command) throws ClassNotFoundException, NoSuchMethodException,
-			InvocationTargetException, IllegalAccessException, InstantiationException {
-		String[] commandInfo = getCommandInfo(command);
-		Class commandType = Class.forName(commandInfo[0]);
-		Class[] commandConstructorParameterClasses = new Class[] { Method.class };
-		Method commandMethod = getMethodFromCommandInfo(commandType, commandInfo);
-		return (AbstractCommand) commandType.getConstructor(commandConstructorParameterClasses)
-				.newInstance(commandMethod);
-	}
-
-	private Method getMethodFromCommandInfo(Class commandType, String[] commandInfo)
-			throws ClassNotFoundException, NoSuchMethodException {
-		String[] argumentTypeStrings = commandInfo[COMMAND_METHOD_PARAMETERS_CLASSES_INDEX].split(CLASS_TYPE_DELIMITER);
-		Class[] commandParameterClasses = getParameterClasses(argumentTypeStrings);
-		return commandType.getDeclaredMethod(commandInfo[COMMAND_METHOD_NAME_INDEX], commandParameterClasses);
-	}
-
-	private Class[] getParameterClasses(String[] argumentTypeStrings) throws ClassNotFoundException {
-		if (argumentTypeStrings.length == 0) {
-			return new Class[] {};
-		}
-		Class[] commandParameterClasses;
-		commandParameterClasses = new Class[argumentTypeStrings.length];
-		for (int i = 0; i < argumentTypeStrings.length; i++) {
-			// Why are doubles treated specially here? wouldn't the 'else' part work for
-			// doubles too?
-			if (argumentTypeStrings[i].equals(DOUBLE_CLASS_NAME)) {
-				commandParameterClasses[i] = double.class;
-			} else {
-				commandParameterClasses[i] = Class.forName(argumentTypeStrings[i]);
-			}
-		}
-		return commandParameterClasses;
-	}*/
 
 	public Class getCommandNodeClass(String commandName) throws ClassNotFoundException {
 		String canonicalName = getCanonicalName(commandName);
