@@ -7,6 +7,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 public class TurtleView implements TurtleDisplay{
+	public final double WIDTH = 100;
+	public final double HEIGHT = 100;
+	
 	private List<TurtlePen> displayedTurtles;
 	
 	public TurtleView() {
