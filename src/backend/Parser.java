@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import backend.control_nodes.IterationNode;
+import backend.control_nodes.VariableDefinitionNode;
 import backend.math_nodes.ConstantNode;
 
 public class Parser {
@@ -89,7 +90,7 @@ public class Parser {
 		}
 		RootNode rootNode = new RootNode();
 		while (it.hasNext()) {
-			//System.out.println("Adding a child to root");
+			// System.out.println("Adding a child to root");
 			rootNode.addChild(makeExpTree(it));
 		}
 		System.out.println("Constructed Syntax Tree");
@@ -100,7 +101,7 @@ public class Parser {
 	// construction of next node
 	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException,
 			NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
-		//System.out.println("Making expTree");
+		// System.out.println("Making expTree");
 		if (!it.hasNext()) { // Done parsing
 			return null;
 		}
@@ -112,8 +113,10 @@ public class Parser {
 		}
 		if (isNumeric(nextToken)) {
 			it.next();
+			System.out.print("Numeric, making ConstantNode");
 			return new ConstantNode(Double.parseDouble(nextToken));
 		}
+		System.out.println("Not numeric");
 		// Need to check for user-declared methods here
 		if (functionsStore.existsVariable(nextToken)) {
 			it.next();
@@ -150,25 +153,20 @@ public class Parser {
 		return valueNode;
 	}
 
-	/*
-	 * private SyntaxNode makeSyntaxNodeForCommand(PeekingIterator<String> it)
-	 * throws NoSuchMethodException, InstantiationException, IllegalAccessException,
-	 * InvocationTargetException, ClassNotFoundException { if
-	 * (isNumeric(commandName)) { return new
-	 * ConstantNode(Double.parseDouble(commandName)); } // TODO - Check variable
-	 * store for user-defined variables first // Account for localization //
-	 * AbstractCommandOld command = //
-	 * commandGetter.getCommandFromName(commandName.toLowerCase()); Method
-	 * commandParsingMethod =
-	 * commandGetter.getMethodFromCommandName(commandName.toLowerCase()); SyntaxNode
-	 * root = (SyntaxNode) commandParsingMethod.invoke(this, tokens, ++index); //
-	 * Make either ValueNode or CommandNode based on info about the commandName
-	 * return root; }
-	 */
+	private VariableDefinitionNode makeVariableDefinitionNode(PeekingIterator<String> it)
+			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+			InvocationTargetException, IllegalAccessException {
+		System.out.println("Making VariableDefinitionNode");
+		// Consume the MAKE / SET token
+		it.next();
+		// Extract the variable name
+		String varName = it.next();
+		// Resolve the expression into a tree
+		SyntaxNode expr = makeExpTree(it);
+		return new VariableDefinitionNode(functionsStore, varName, expr);
+	}
 
 	/**
-	 * My new idea is to use reflection to choose which method to make nodes with
-	 * (e.g. "for" will lead to this)
 	 * 
 	 * @param tokens
 	 * @param index

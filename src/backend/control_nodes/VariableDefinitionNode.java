@@ -13,7 +13,7 @@ public class VariableDefinitionNode extends DataAccessingNode {
         this.expression = expression;
         VARIABLE_NAME = name;
         // store the variable so that the parser knows it's been defined (but not yet set until execution)
-        setVariable(VARIABLE_NAME, null);
+        setVariable(VARIABLE_NAME, 0.0);
     }
     @Override
     public double execute() {
