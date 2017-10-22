@@ -3,6 +3,7 @@ package frontend.window_setup;
 import java.io.File;
 
 import apis.ButtonFactory;
+import apis.TextAreaFactory;
 import apis.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
 import javafx.animation.Timeline;
@@ -10,7 +11,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -50,10 +54,12 @@ public class IDEWindow {
 	private HBox topBox;
 	private HBox bottomBox;
 	private TextField commandTextField; //Need to make right panel
+	private TextArea commandTextArea;
 	private TextField bGColorTextField;
 	private TextField penColorTextField;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
+	private boolean isError = false;
 	
 	private Stage helpStage = new Stage();
 	private static final int FRAMES_PER_SECOND = 2;
@@ -65,7 +71,7 @@ public class IDEWindow {
 	private Group rightGroup = new Group();
 	private GridPane console = new GridPane();
 	
-	public static final int OFFSET = 20;
+	public static final int OFFSET = 8;
 	private static final Color BACKGROUND = Color.BLACK;
 	private static final String TITLE = "SLogo";
 	private Group splash = new Group();
@@ -76,8 +82,10 @@ public class IDEWindow {
 	private static final int HORIZONTAL_SIZE = 575;
 	ButtonFactory buttonMaker = new ButtonFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
+	TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private Image turtlePic;
 	private int count = 0;
+	private int commandCount = 0;
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -86,11 +94,20 @@ public class IDEWindow {
 //		turtleGrid = new GridPane();
 //		turtleGrid.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
 		leftBox = new VBox();
+		leftBox.setPadding(new Insets(OFFSET));
+		leftBox.setSpacing(OFFSET);
 //		left.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
 		rightBox = new VBox();
+		rightBox.setPadding(new Insets(OFFSET));
+		rightBox.setSpacing(OFFSET);
 //		right.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
 		topBox = new HBox();
+		topBox.setPadding(new Insets(OFFSET));
+		topBox.setSpacing(OFFSET);
+		
 		bottomBox = new HBox();
+		bottomBox.setPadding(new Insets(OFFSET));
+		bottomBox.setSpacing(OFFSET);
 		
 		console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
@@ -103,7 +120,8 @@ public class IDEWindow {
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		makeButtons(primaryStage);
-		//makeButtons();
+		
+		//primaryScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		
 		borderLayout.setCenter(turtleField);
 		borderLayout.setLeft(leftBox);
@@ -124,31 +142,69 @@ public class IDEWindow {
 	
 	private void makeButtons(Stage s) {
 		
+		Text enterCommand = new Text("Enter Command");
+		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
-		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
-		topBox.getChildren().add(topGroup);
-		bottomBox.getChildren().add(bottomGroup);
-		leftBox.getChildren().add(leftGroup);
-		rightBox.getChildren().add(rightGroup);
+		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
+		commandTextArea = textAreaMaker.makeReturnableTextArea(e->storeCommand(), leftGroup, "Command");
+		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
+		
+		topBox.getChildren().addAll(topGroup.getChildren());
+		bottomBox.getChildren().addAll(bottomGroup.getChildren());
+		leftBox.getChildren().addAll(leftGroup.getChildren());
+		rightBox.getChildren().addAll(rightGroup.getChildren());
 		bGColorTextField = textFieldMaker.makeReturnableTextField(e->changeBGColor(), topGroup, "BackGround Color");
-		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");
-		//bottomBox.getChildren().add(bottomGroup);
+		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");	
 	}
 	
 	private void changeBGColor() {
 		bGColorTextField.getText();
 	}
 	
+	private void enterCommand() {
+		Text history = new Text(commandTextArea.getText()+"\n");
+		System.out.println(commandTextArea.getText());
+		count++;
+		if(isError) {
+			console.add(history, 0, count);
+			System.out.println(commandTextArea.getText());
+		}
+		else {
+			history.setFill(Color.RED);
+			console.add(history, 0, count);
+			isError = false;
+		}
+		commandTextArea.setText("");
+	}
+	
 	private void changePenColor() {
 		penColorTextField.getText();
 	}
 	
+	/*private void enterCount() {
+		Text history = new Text(commandTextArea.getText()+"\n");
+		count++;
+		if(!isError) {
+			console.add(history, 0, count);
+		}
+		else {
+			history.setFill(Color.RED);
+			console.add(history, 0, count);
+		}
+	}*/
+
 	private void storeCommand()
 	{
-		Text history = new Text(commandTextField.getText()+"\n");
+		Text history = new Text(commandTextArea.getText()+"\n");
 		count++;
-		console.add(history, 0, count);
+		if(isError) {
+			console.add(history, 0, count);
+		}
+		else {
+			history.setFill(Color.RED);
+			console.add(history, 0, count);
+		}
 	}
 	
 	private void openFile(Stage s) {
@@ -156,7 +212,7 @@ public class IDEWindow {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			Image turtlePic = new Image(fileLocation);  
+			turtlePic = new Image(fileLocation);  
 		}
 	}
 	/**
@@ -189,6 +245,17 @@ public class IDEWindow {
 		helpStage.show();
 	}
 	
+	 /*private void handleKeyInput (KeyCode code) {
+	    	//Move the top paddle to the right
+	        if (code == KeyCode.ENTER) {
+	           System.out.print("help");
+	        }
+	 }*/
+	
+	public void takeError() {
+		isError = true;
+	}
+	
 	public Rectangle getTurtleField() {
 		return turtleField;
 	}
@@ -198,3 +265,4 @@ public class IDEWindow {
 	}
 	
 }
+
