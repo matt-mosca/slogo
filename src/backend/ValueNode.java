@@ -2,7 +2,6 @@ package backend;
 
 import backend.error_handling.SLogoException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 

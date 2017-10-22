@@ -2,7 +2,6 @@ package backend.control_nodes;
 
 import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
-import sun.awt.SunHints;
 
 /**
  * @author Ben Schwennesen

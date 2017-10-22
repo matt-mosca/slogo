@@ -1,9 +1,7 @@
 package backend;
 
-import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedFunctionException;
 import backend.error_handling.UndefinedVariableException;
-import backend.math_nodes.ConstantNode;
 import com.sun.istack.internal.Nullable;
 
 import java.util.HashMap;

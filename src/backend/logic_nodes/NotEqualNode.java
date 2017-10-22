@@ -1,6 +1,5 @@
 package backend.logic_nodes;
 
-import backend.TwoArgNode;
 import backend.VarArgNode;
 
 /**

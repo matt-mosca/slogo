@@ -1,7 +1,5 @@
 package backend.error_handling;
 
-import utilities.ExceptionMessageGetter;
-
 /**
  *
  *

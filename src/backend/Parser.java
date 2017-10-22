@@ -1,11 +1,10 @@
 package backend;
 
-import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
-import com.sun.org.apache.xpath.internal.operations.Variable;
+import backend.math_nodes.ConstantNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -15,8 +14,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import backend.math_nodes.ConstantNode;
 
 public class Parser {
 
