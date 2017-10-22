@@ -12,8 +12,8 @@ import java.util.Set;
 
 public class CommandGetter {
 
-	private final String COMMAND_INFO_FILE = "CommandNodes.properties";
-	private final String LANGUAGES_PROPERTIES_FOLDER = "languages/";
+	private final String COMMAND_INFO_FILE = "resources/CommandNodes.properties";
+	private final String LANGUAGES_PROPERTIES_FOLDER = "resources/languages/";
 	private final String PROPERTIES_SUFFIX = ".properties";
 	public static final String DEFAULT_LANGUAGE = "English";
 	private final Properties COMMAND_PROPERTIES;
@@ -27,14 +27,15 @@ public class CommandGetter {
 	private final int COMMAND_METHOD_NAME_INDEX = 1;
 	private final int COMMAND_METHOD_PARAMETERS_CLASSES_INDEX = 2;*/
 
-	private final String COMMAND_PARSING_FILE = "CommandParsing.properties";
+	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
 	private final Class PARSER_CLASS = Parser.class;
-	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {String[].class, int.class};
+	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {PeekingIterator.class};
 	private final Properties COMMAND_PARSING_PROPERTIES;
 
 	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
 		COMMAND_PARSING_PROPERTIES = new Properties();
+		languageProperties = new Properties();
 		try {
 			// File file = new File(COMMAND_INFO_FILE);
 			InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
@@ -49,7 +50,6 @@ public class CommandGetter {
 			// TODO - need frontend method to launch failure dialog box
 			System.out.println("Missing File!"); // TEMP
 		}
-		languageProperties = new Properties();
 	}
 
 	public void setLanguage(String language) throws IOException  {
@@ -124,8 +124,10 @@ public class CommandGetter {
 	}
 
 	public Method getParsingMethod(String commandName) throws NoSuchMethodException {
+		System.out.println("Getting parsing method");
 		String canonicalName = getCanonicalName(commandName);
 		String methodName = COMMAND_PARSING_PROPERTIES.getProperty(canonicalName);
+		System.out.println("Canonical Name: " + canonicalName + "; " + methodName);
 		return PARSER_CLASS.getDeclaredMethod(methodName, PARSE_METHOD_ARGUMENT_CLASSES);
 	}
 
