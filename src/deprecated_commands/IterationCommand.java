@@ -24,7 +24,7 @@ public class IterationCommand extends ControlCommand {
         double start = iterationVariable.getValue();
         for (double i = start; i < END; i += INCREMENT) {
             iterationVariable.setValue(i);
-            result = subtree.execute();
+            //result = subtree.execute();
         }
         return result;
     }

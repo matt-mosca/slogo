@@ -1,9 +1,9 @@
 package backend;
 
-import java.lang.reflect.InvocationTargetException;
+import backend.error_handling.SLogoException;
 
 public interface SyntaxNode {
 	
-	public abstract double execute();
+	public abstract double execute() throws SLogoException;
 
 }

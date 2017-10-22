@@ -1,9 +1,10 @@
 package backend;
 
-import deprecated_commands.AbstractCommand;
-import deprecated_commands.Constant;
-import deprecated_commands.ControlCommand;
-import deprecated_commands.IterationCommand;
+import backend.error_handling.ProjectBuildException;
+import backend.error_handling.SLogoException;
+import backend.error_handling.UndefinedCommandException;
+import backend.error_handling.VariableArgumentsException;
+import backend.math_nodes.ConstantNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -12,12 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import backend.control_nodes.IterationNode;
-import backend.math_nodes.ConstantNode;
+import backend.control_nodes.VariableDefinitionNode;
 
 public class Parser {
 
@@ -29,12 +27,12 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
-	private FunctionsStore functionsStore;
+	private ScopedStorage scopedStorage;
 
 	public Parser() {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		functionsStore = new FunctionsStore();
+		scopedStorage = new ScopedStorage();
 	}
 
 	public boolean validateCommand(String command) {
@@ -48,14 +46,13 @@ public class Parser {
 					new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
 			System.out.println("Validated command!");
 			return true;
-		} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException
-				| InstantiationException e) {
-			e.printStackTrace();
+		} catch (SLogoException badSyntaxException) {
+			badSyntaxException.registerMessage();
 			return false;
 		}
 	}
 
-	public void executeCommand(String command) throws IllegalArgumentException {
+	public void executeCommand(String command) {
 		try {
 			String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
 			if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
@@ -64,9 +61,8 @@ public class Parser {
 			}
 			SyntaxNode tree = syntaxTrees.get(formattedCommand);
 			tree.execute();
-		} catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException
-				| InstantiationException e) {
-			throw new IllegalArgumentException();
+		} catch (SLogoException slogoException) {
+			slogoException.registerMessage();
 		}
 	}
 
@@ -76,20 +72,19 @@ public class Parser {
 			commandGetter.setLanguage(language);
 		} catch (IOException e) {
 			// Can only be because language passed in is not supported
-			throw new IllegalArgumentException();
+			SLogoException badLanguage = new ProjectBuildException();
+			badLanguage.registerMessage();
 		}
 	}
 
 	// Top-Level parsing command that can add disjoint commands to root
-	private SyntaxNode constructSyntaxTree(PeekingIterator<String> it)
-			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException {
+	private SyntaxNode constructSyntaxTree(PeekingIterator<String> it) throws SLogoException {
 		if (it == null) {
 			throw new IllegalArgumentException();
 		}
 		RootNode rootNode = new RootNode();
 		while (it.hasNext()) {
-			//System.out.println("Adding a child to root");
+			// System.out.println("Adding a child to root");
 			rootNode.addChild(makeExpTree(it));
 		}
 		System.out.println("Constructed Syntax Tree");
@@ -98,9 +93,8 @@ public class Parser {
 
 	// Parsing command which chooses appropriate parsing command for
 	// construction of next node
-	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException,
-			NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
-		//System.out.println("Making expTree");
+	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws SLogoException {
+		// System.out.println("Making expTree");
 		if (!it.hasNext()) { // Done parsing
 			return null;
 		}
@@ -112,22 +106,29 @@ public class Parser {
 		}
 		if (isNumeric(nextToken)) {
 			it.next();
+			System.out.print("Numeric, making ConstantNode");
 			return new ConstantNode(Double.parseDouble(nextToken));
 		}
+		System.out.println("Not numeric");
 		// Need to check for user-declared methods here
-		if (functionsStore.existsVariable(nextToken)) {
+		// TODO - check if variable exists using Ben's new variableExists() method
+		if (scopedStorage.existsVariable(nextToken)) {
 			it.next();
-			return new VariableNode(functionsStore, nextToken);
+			return new VariableNode(scopedStorage, nextToken);
 		}
 		// Dispatch appropriate method
-		System.out.println("Retrieving appropriate parsing method");
-		Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
-		System.out.println("Next parsing method: " + nextParsingMethod.getName());
-		return (SyntaxNode) nextParsingMethod.invoke(this, it);
+		try {
+			System.out.println("Retrieving appropriate parsing method");
+			Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
+			System.out.println("Next parsing method: " + nextParsingMethod.getName());
+			return (SyntaxNode) nextParsingMethod.invoke(this, it);
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException badCommand) {
+			throw new UndefinedCommandException(nextToken);
+		}
+
 	}
 
-	private ValueNode makeValueNode(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException,
-			NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
+	private ValueNode makeValueNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ValueNode");
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
@@ -135,41 +136,39 @@ public class Parser {
 		String commandName = it.next();
 		// Use reflection to invoke right command constructor
 		System.out.println("Getting appropriate command constructor");
-		Class commandClass = commandGetter.getCommandNodeClass(commandName);
-		System.out.println("Command class: " + commandClass.getName());
-		ValueNode valueNode = (ValueNode) commandClass.getConstructor(null).newInstance();
-		int numChildren = valueNode.getDefaultNumberOfArguments();
-		System.out.println("No. of children: " + numChildren);
-		SyntaxNode nextChild;
-		for (int child = 0; child < numChildren; child++) {
-			System.out.println("Preparing to append child to ValueNode");
-			nextChild = makeExpTree(it);
-			valueNode.addChild(nextChild);
-			System.out.println("Added child no. " + child + " to ValueNode");
+		try {
+			Class commandClass = commandGetter.getCommandNodeClass(commandName);
+			System.out.println("Command class: " + commandClass.getName());
+			ValueNode valueNode = (ValueNode) commandClass.getConstructor(null).newInstance();
+			int numChildren = valueNode.getDefaultNumberOfArguments();
+			System.out.println("No. of children: " + numChildren);
+			SyntaxNode nextChild;
+			for (int child = 0; child < numChildren; child++) {
+				System.out.println("Preparing to append child to ValueNode");
+				nextChild = makeExpTree(it);
+				valueNode.addChild(nextChild);
+				System.out.println("Added child no. " + child + " to ValueNode");
+			}
+			return valueNode;
+		} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+				| InvocationTargetException | InstantiationException e) {
+			throw new UndefinedCommandException(commandName);
 		}
-		return valueNode;
+	}
+
+	private VariableDefinitionNode makeVariableDefinitionNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making VariableDefinitionNode");
+		// Consume the MAKE / SET token
+		it.next();
+		// Extract the variable name
+		String varName = it.next();
+		// Resolve the expression into a tree
+		SyntaxNode expr = makeExpTree(it);
+		return new VariableDefinitionNode(scopedStorage, varName, expr);
 	}
 
 	/*
-	 * private SyntaxNode makeSyntaxNodeForCommand(PeekingIterator<String> it)
-	 * throws NoSuchMethodException, InstantiationException, IllegalAccessException,
-	 * InvocationTargetException, ClassNotFoundException { if
-	 * (isNumeric(commandName)) { return new
-	 * ConstantNode(Double.parseDouble(commandName)); } // TODO - Check variable
-	 * store for user-defined variables first // Account for localization //
-	 * AbstractCommandOld command = //
-	 * commandGetter.getCommandFromName(commandName.toLowerCase()); Method
-	 * commandParsingMethod =
-	 * commandGetter.getMethodFromCommandName(commandName.toLowerCase()); SyntaxNode
-	 * root = (SyntaxNode) commandParsingMethod.invoke(this, tokens, ++index); //
-	 * Make either ValueNode or CommandNode based on info about the commandName
-	 * return root; }
-	 */
-
-	/**
-	 * My new idea is to use reflection to choose which method to make nodes with
-	 * (e.g. "for" will lead to this)
-	 * 
+	 *
 	 * @param tokens
 	 * @param index
 	 * @return
@@ -193,19 +192,20 @@ public class Parser {
 	 * ControlNode(forCommand); }
 	 */
 
+
 	// Only ValueNodes can have variable params
-	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws NoSuchMethodException,
-			InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
 		// Retrive just the root node corresponding to this command
 		// it advanced by one token
+		String commandName = it.peek();
 		ValueNode root = makeValueNode(it);
 		// TODO
-		if (!root.canTakeVariableNumberOfArguments()) {
-			throw new IllegalArgumentException();
+		if (root == null || !root.canTakeVariableNumberOfArguments()) {
+			throw new VariableArgumentsException(commandName);
 		}
 		SyntaxNode nextChild;
 		while (!it.peek().equals(VARIABLE_ARGS_END_DELIMITER)) {

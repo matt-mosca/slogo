@@ -2,6 +2,9 @@ package backend.math_nodes;
 
 import backend.SyntaxNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class PiNode implements SyntaxNode {
 
     @Override
