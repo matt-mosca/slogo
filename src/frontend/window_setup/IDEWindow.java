@@ -1,5 +1,6 @@
 package frontend.window_setup;
 
+import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -58,6 +59,9 @@ public class IDEWindow {
 		borderLayout.setRight(right);
 		borderLayout.setTop(top);
 		borderLayout.setBottom(bottom);
+		
+//		TurtlePen turtle = new TurtlePen(300, 300);
+//		borderLayout.getChildren().add(turtle.getImage());
 	}
 	
 	public void setUpWindow(Stage primary) {
@@ -66,7 +70,7 @@ public class IDEWindow {
 	}
 	
 	private void setUpTurtleField() {
-		TurtleView field = new TurtleView();
+		TurtleView field = new TurtleView(borderLayout, turtleField);
 		field.displayInitialTurtle();
 	}
 	
