@@ -10,9 +10,13 @@ public class TextFieldFactory implements GUIFactory {
 	@Override
 	public void makeGUIItem(EventHandler<ActionEvent> handle, Group root, String name) 
 	{
-		TextField sampleText = new TextField();
-		sampleText.setPromptText(name);
-		sampleText.setOnAction(handle);
-		root.getChildren().add(sampleText);	
+		TextField sampleText = makeReturnableTextField(handle,root,name);	
+	}
+	public TextField makeReturnableTextField(EventHandler<ActionEvent> handle, Group root, String name) {
+		TextField returnText = new TextField();
+		returnText.setPromptText(name);
+		returnText.setOnAction(handle);
+		root.getChildren().add(returnText);
+		return returnText;
 	}
 }
