@@ -16,7 +16,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import backend.control_nodes.DoTimesNode;
 import backend.control_nodes.IterationNode;
+import backend.control_nodes.RepeatNode;
 import backend.control_nodes.VariableDefinitionNode;
 import backend.math_nodes.ConstantNode;
 
@@ -165,6 +167,31 @@ public class Parser {
 		SyntaxNode expr = makeExpTree(it);
 		return new VariableDefinitionNode(functionsStore, varName, expr);
 	}
+	
+	private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+	InvocationTargetException, IllegalAccessException {
+		System.out.println("Making RepeatNode");
+		// Consume the REPEAT token
+		it.next();
+		SyntaxNode numberOfTimesToRepeat = makeExpTree(it);
+		SyntaxNode exprToRepeat = makeExpTree(it);
+		return new RepeatNode(functionsStore, numberOfTimesToRepeat, exprToRepeat);
+	}
+	
+	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
+	InvocationTargetException, IllegalAccessException {
+		System.out.println("Making DoTimesNode");
+		// Consume the DOTIMES token
+		it.next();
+		String varName = it.next();
+		SyntaxNode limitExp = makeExpTree(it);
+		SyntaxNode exprToRepeat = makeExpTree(it);
+		// Error will be resolved when limit arg type is changed to SyntaxNode in DoTimesNode constructor
+		return new DoTimesNode(functionsStore, varName, limitExp, exprToRepeat);
+	}
+	
+	private 
+	
 
 	/**
 	 * 
