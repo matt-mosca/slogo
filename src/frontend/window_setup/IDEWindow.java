@@ -86,6 +86,7 @@ public class IDEWindow {
 	private Image turtlePic;
 	private int count = 0;
 	private int commandCount = 0;
+	private String errorMessage;
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -166,11 +167,12 @@ public class IDEWindow {
 		Text history = new Text(commandTextArea.getText()+"\n");
 		System.out.println(commandTextArea.getText());
 		count++;
-		if(isError) {
+		if(!isError) {
 			console.add(history, 0, count);
 			System.out.println(commandTextArea.getText());
 		}
 		else {
+			history.setText(errorMessage);
 			history.setFill(Color.RED);
 			console.add(history, 0, count);
 			isError = false;
@@ -252,8 +254,9 @@ public class IDEWindow {
 	        }
 	 }*/
 	
-	public void takeError() {
+	public void takeError(String error) {
 		isError = true;
+		errorMessage = error;
 	}
 	
 	public Rectangle getTurtleField() {
