@@ -2,6 +2,7 @@ package backend.control_nodes;
 
 import backend.ScopedStorage;
 import backend.SyntaxNode;
+import backend.math_nodes.ConstantNode;
 
 /**
  * DOTIMES [ variable limit ] [ command(s) ] -- runs command(s) for each value specified in the range, i.e., from
@@ -13,10 +14,11 @@ import backend.SyntaxNode;
  */
 public class DoTimesNode extends IterationNode {
 
-    private static final double INCREMENT_BY = 1;
+    private static final SyntaxNode START_EXPRESSION = new ConstantNode(1);
+    private static final SyntaxNode INCREMENT_EXPRESSION = new ConstantNode(1);
 
-    public DoTimesNode(ScopedStorage store, String iterationVariable, double limit, SyntaxNode subtree) {
-        super(store, iterationVariable, limit, INCREMENT_BY, subtree);
+    public DoTimesNode(ScopedStorage store, String iterationVariable, SyntaxNode limitExpression, SyntaxNode subtree) {
+        super(store, iterationVariable, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
     }
 
 }
