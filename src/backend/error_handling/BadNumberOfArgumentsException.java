@@ -16,9 +16,9 @@ public class BadNumberOfArgumentsException extends SLogoException {
     }
 
     @Override
-    public void registerMessage() {
+    public String getMessage() {
         String className = this.getClass().getName();
-        setMessage(String.format(ExceptionMessageGetter.getMessage(className),
-                EXPECTED_NUMBER_OF_ARGUMENTS, FUNCTION_NAME));
+        return String.format(ExceptionMessageGetter.getMessage(className),
+                EXPECTED_NUMBER_OF_ARGUMENTS, FUNCTION_NAME);
     }
 }
