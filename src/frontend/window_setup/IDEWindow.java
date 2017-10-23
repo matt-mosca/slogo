@@ -63,8 +63,8 @@ public class IDEWindow {
 	private TextArea commandTextArea;
 	//private TextField bGColorTextField;
 	private TextField penColorTextField;
-	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH+20;
-	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT+20;
+	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
+	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	private boolean isError = false;
 	
 	private Stage helpStage = new Stage();
@@ -95,6 +95,8 @@ public class IDEWindow {
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
+		borderLayout.setPrefSize(totalWidth, totalHeight);
+		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
 //		turtleField = new Rectangle();
