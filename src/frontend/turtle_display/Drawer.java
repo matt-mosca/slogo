@@ -7,9 +7,19 @@ import javafx.scene.shape.Line;
 
 public class Drawer {
 	private Paint drawColor;
+	private boolean penDown;
 	
 	public Drawer() { 
 		drawColor = Color.BLACK;
+		penDown = true;
+	}
+	
+	public void pickUpPen() {
+		penDown = false;
+	}
+	
+	public void putDownPen() {
+		penDown = true;
 	}
 	
 	public void changeDrawColor(Paint color) {
@@ -17,8 +27,10 @@ public class Drawer {
 	}
 	
 	public void drawLine(double startX, double startY, double endX, double endY, Pane layout) {
-		Line lineToDraw = new Line(startX, startY, endX, endY);
-		lineToDraw.setFill(drawColor);
-		layout.getChildren().add(lineToDraw);
+		if(penDown) {
+			Line lineToDraw = new Line(startX, startY, endX, endY);
+			lineToDraw.setFill(drawColor);
+			layout.getChildren().add(lineToDraw);
+		}
 	}
 }
