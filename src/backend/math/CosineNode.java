@@ -1,4 +1,4 @@
-package backend.math_nodes;
+package backend.math;
 
 import backend.OneArgNode;
 

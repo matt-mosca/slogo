@@ -1,6 +1,5 @@
-package backend.control_nodes;
+package backend.control;
 
-import backend.ScopedStorage;
 import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 

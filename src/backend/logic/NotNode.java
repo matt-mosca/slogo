@@ -1,4 +1,4 @@
-package backend.logic_nodes;
+package backend.logic;
 
 import backend.OneArgNode;
 

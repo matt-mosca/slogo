@@ -1,6 +1,6 @@
-package backend;
+package backend.control;
 
-import backend.error_handling.SLogoException;
+import backend.NoArgNode;
 import backend.error_handling.UndefinedVariableException;
 
 // TODO - consider sub-classing SyntaxNode directly?

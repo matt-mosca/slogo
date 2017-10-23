@@ -1,5 +1,6 @@
-package backend;
+package backend.control;
 
+import backend.SyntaxNode;
 import backend.error_handling.UndefinedFunctionException;
 import backend.error_handling.UndefinedVariableException;
 
@@ -23,7 +24,7 @@ public class ScopedStorage {
     private Stack<String> scopeStack = new Stack<>();
 
     private String currentScope;
-    public static final String GLOBAL = "global";
+    private static final String GLOBAL = "global";
 
     private final int STORAGE_SUCCESS = 1;
 
@@ -32,7 +33,7 @@ public class ScopedStorage {
         currentScope = GLOBAL;
     }
 
-    public double addFunction(String functionName, SyntaxNode functionRoot) {
+    double addFunction(String functionName, SyntaxNode functionRoot) {
         functionRoots.put(functionName, functionRoot);
         return STORAGE_SUCCESS;
     }
@@ -44,13 +45,13 @@ public class ScopedStorage {
      * @param value
      * @return
      */
-    public double setVariable(String name, double value) {
+    double setVariable(String name, double value) {
         Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
         functionVariableMap.put(name, value);
         return value;
     }
 
-    public void enterScope(String newScope) {
+    void enterScope(String newScope) {
         Set<String> scopes = scopeMap.getOrDefault(newScope, new HashSet<>());
         scopes.add(newScope);
         scopes.addAll(scopeMap.getOrDefault(currentScope, new HashSet<>()));
@@ -79,12 +80,13 @@ public class ScopedStorage {
                             .getOrDefault(currentFunctionScopeMember, new HashMap<>())
                             .entrySet());
         }
+
         return availableVariables;
     }
 
-    public Set<String> getDeclaredFunctions() {
+    /* public Set<String> getDeclaredFunctions() {
         return functionVariables.keySet();
-    }
+    }*/
 
     SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
         if (!existsFunction(functionName)) {
