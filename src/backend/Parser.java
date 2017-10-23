@@ -9,6 +9,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
+import backend.turtle.TurtleFactory;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -20,10 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import backend.control.DoTimesNode;
-import backend.control.FunctionDefinitionNode;
-import backend.control.IfElseNode;
-import backend.control.IfNode;
-import backend.control.IterationNode;
+import backend.control.LoopNode;
 import backend.control.RepeatNode;
 import backend.control.VariableDefinitionNode;
 
@@ -37,9 +35,10 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
+	private TurtleFactory turtleManager;
 	private ScopedStorage scopedStorage;
 
-	public Parser() {
+	public Parser(TurtleFactory turtleManager) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
 		scopedStorage = new ScopedStorage();
@@ -190,7 +189,7 @@ public class Parser {
 		return new DoTimesNode(scopedStorage, varName, limitExp, exprToRepeat);
 	}
 
-	private IterationNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
+	private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ForLoopNode");
 		// Consume the FOR token
 		it.next();
@@ -199,7 +198,7 @@ public class Parser {
 		SyntaxNode endExp = makeExpTree(it);
 		SyntaxNode incrExp = makeExpTree(it);
 		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new IterationNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
+		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
 	}
 
 	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {

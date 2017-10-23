@@ -6,14 +6,14 @@ import backend.error_handling.SLogoException;
 /**
  * @author Ben Schwennesen
  */
-public class IterationNode extends DataAccessingNode {
+public class LoopNode extends DataAccessingNode {
 
     private String iterationVariable;
     private SyntaxNode startExpression, endExpression, incrementExpression, subtree;
 
-    public IterationNode(ScopedStorage store, String iterationVariable,
-                         SyntaxNode startExpression, SyntaxNode endExpression,
-                         SyntaxNode incrementExpression, SyntaxNode subtree) {
+    public LoopNode(ScopedStorage store, String iterationVariable,
+                    SyntaxNode startExpression, SyntaxNode endExpression,
+                    SyntaxNode incrementExpression, SyntaxNode subtree) {
         super(store);
         this.iterationVariable = iterationVariable;
         this.startExpression = startExpression;
@@ -23,6 +23,7 @@ public class IterationNode extends DataAccessingNode {
     }
 
     public double execute() throws SLogoException {
+        getStore().enterAnonymousScope();
         double result = 0.0;
         double start = startExpression.execute(),
                 end = endExpression.execute(),
@@ -31,6 +32,7 @@ public class IterationNode extends DataAccessingNode {
             getStore().setVariable(iterationVariable, i);
             result = subtree.execute();
         }
+        getStore().exitScope();
         return result;
     }
 }
