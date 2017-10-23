@@ -15,8 +15,6 @@ public class TextAreaFactory implements GUIFactory {
 	}
 	public TextArea makeReturnableTextArea(EventHandler<ActionEvent> handle, Group root, String name) {
 		TextArea returnText = new TextArea();
-		//returnText.setPromptText(name);
-		//returnText.setOnAction(handle);
 		root.getChildren().add(returnText);
 		return returnText;
 	}
