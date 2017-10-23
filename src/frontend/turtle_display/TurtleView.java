@@ -18,9 +18,10 @@ public class TurtleView implements TurtleDisplay{
 		displayedTurtles = new ArrayList<TurtlePen>();
 		layout = border;
 		turtleField = field;
-		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2 - TurtlePen.DEFAULT_WIDTH / 2;
-		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
-		TurtlePen original = new TurtlePen(fieldCenterX, fieldCenterY);
+		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
+		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
+		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
+				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
 	}
 	
@@ -63,7 +64,7 @@ public class TurtleView implements TurtleDisplay{
     }
     
     public TurtlePen addTurtle() {
-    	TurtlePen newAddition = new TurtlePen(fieldCenterX, fieldCenterY);
+    	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
     	return newAddition;
