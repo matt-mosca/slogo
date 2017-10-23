@@ -1,7 +1,6 @@
 package frontend.window_setup;
 
 import java.io.File;
-
 import apis.ButtonFactory;
 import apis.ColorPickerFactory;
 import apis.TextAreaFactory;
@@ -24,6 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -38,6 +38,7 @@ public class IDEWindow {
 	private static Paint penColor = Color.BLACK;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
+	public static final double TURTLEFIELD_DEPTH = 0;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double RIGHT_WIDTH = 150;
@@ -51,7 +52,8 @@ public class IDEWindow {
 	private Scene primaryScene;
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
-	private GridPane turtleGrid;
+//	private Box turtleRegion;
+	private HBox turtleRegion;
 	private VBox leftBox;
 	private VBox rightBox;
 	private HBox topBox;
@@ -92,8 +94,12 @@ public class IDEWindow {
 		borderLayout = new BorderPane();
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-//		turtleGrid = new GridPane();
-//		turtleGrid.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+//		turtleField = new Rectangle();
+//		turtleField.setFill(STANDARD_AREA_COLOR);
+//		turtleRegion = new Box(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, TURTLEFIELD_DEPTH);
+		turtleRegion = new HBox();
+		turtleRegion.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+		turtleRegion.setStyle("-fx-background-color: white;"); //do not use arbitrary white here, make constant
 		leftBox = new VBox();
 		leftBox.setPadding(new Insets(OFFSET));
 		leftBox.setSpacing(OFFSET);
@@ -110,7 +116,6 @@ public class IDEWindow {
 		bottomBox.setPadding(new Insets(OFFSET));
 		bottomBox.setSpacing(OFFSET);
 		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
-		
 		console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
 		//console.setVgap(2);
@@ -124,6 +129,7 @@ public class IDEWindow {
 		makeButtons(primaryStage);
 		
 		borderLayout.setCenter(turtleField);
+//		borderLayout.setCenter(turtleRegion);
 		borderLayout.setLeft(leftBox);
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
@@ -137,12 +143,11 @@ public class IDEWindow {
 	}
 	
 	private void setUpTurtleField() {
-		TurtleView field = new TurtleView(borderLayout, turtleField);
+		TurtleView field = new TurtleView(borderLayout, turtleField, turtleRegion);
 		field.displayInitialTurtle();
 	}
 	
 	private void makeButtons(Stage s) {
-		
 		Text enterCommand = new Text("Enter Command");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");

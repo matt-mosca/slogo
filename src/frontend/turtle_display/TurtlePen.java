@@ -9,8 +9,8 @@ public class TurtlePen {
 	public static final double DEFAULT_HEIGHT = 25;
 	
 	private ImageView turtleImage;
-	private double xCoordinateOnScene;
-	private double yCoordinateOnScene;
+	private double xCoordinateOnRegion;
+	private double yCoordinateOnRegion;
 	private double angle;
 	
 	public TurtlePen(double xCoord, double yCoord) {
@@ -19,15 +19,15 @@ public class TurtlePen {
 		turtleImage = new ImageView(image);
 		turtleImage.setFitWidth(DEFAULT_WIDTH);
 		turtleImage.setFitHeight(DEFAULT_HEIGHT);
-		xCoordinateOnScene = xCoord;
-		yCoordinateOnScene = yCoord;
+		xCoordinateOnRegion = xCoord;
+		yCoordinateOnRegion = yCoord;
 		turtleImage.setX(xCoord);
 		turtleImage.setY(yCoord);
 	}
 	
 	public void moveTurtle(double newXCoord, double newYCoord) {
-		xCoordinateOnScene = newXCoord;
-		yCoordinateOnScene = newYCoord;
+		xCoordinateOnRegion = newXCoord;
+		yCoordinateOnRegion = newYCoord;
 		turtleImage.setX(newXCoord);
 		turtleImage.setY(newYCoord);
 	}
@@ -38,11 +38,11 @@ public class TurtlePen {
 	}
 	
 	public double getXCoordinate() {
-		return xCoordinateOnScene;
+		return xCoordinateOnRegion;
 	}
 	
 	public double getYCoordinate() {
-		return yCoordinateOnScene;
+		return yCoordinateOnRegion;
 	}
 	
 	public double getAngle() { 
