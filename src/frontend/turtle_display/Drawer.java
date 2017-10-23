@@ -18,6 +18,7 @@ public class Drawer {
 	
 	public void drawLine(double startX, double startY, double endX, double endY, Pane layout) {
 		Line lineToDraw = new Line(startX, startY, endX, endY);
+		lineToDraw.setFill(drawColor);
 		layout.getChildren().add(lineToDraw);
 	}
 }
