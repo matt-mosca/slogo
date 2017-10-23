@@ -1,9 +1,11 @@
 package backend;
 
+import backend.control.FunctionDefinitionNode;
+import backend.control.IfElseNode;
+import backend.control.IfNode;
 import backend.control.ScopedStorage;
 import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
-import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
@@ -207,7 +209,7 @@ public class Parser {
 		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
 		SyntaxNode trueBranch = makeExpTree(it);
-		return new IfNode(conditionExpression, trueBranch);
+		return new IfNode(scopedStorage, conditionExpression, trueBranch);
 	}
 	
 	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
@@ -217,7 +219,7 @@ public class Parser {
 		SyntaxNode conditionExpression = makeExpTree(it);
 		SyntaxNode trueBranch = makeExpTree(it);
 		SyntaxNode elseBranch = makeExpTree(it);
-		return new IfElseNode(conditionExpression, trueBranch, elseBranch);
+		return new IfElseNode(scopedStorage, conditionExpression, trueBranch, elseBranch);
 	}
 	
 	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
