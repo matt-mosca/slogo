@@ -14,6 +14,11 @@ public class Drawer {
 		penDown = true;
 	}
 	
+	public Drawer(Paint color, boolean down) {
+		drawColor = color;
+		penDown = down;
+	}
+	
 	public void pickUpPen() {
 		penDown = false;
 	}
