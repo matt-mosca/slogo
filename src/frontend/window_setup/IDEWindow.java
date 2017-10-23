@@ -168,7 +168,7 @@ public class IDEWindow {
 	}
 	
 	private void setUpTurtleField() {
-		TurtleView field = new TurtleView(borderLayout, turtleField, turtleRegion);
+		TurtleView field = new TurtleView(borderLayout, turtleField);
 		field.displayInitialTurtle();
 	}
 	
