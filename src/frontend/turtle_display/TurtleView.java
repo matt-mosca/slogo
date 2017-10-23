@@ -69,6 +69,9 @@ public class TurtleView implements TurtleDisplay{
     	return newAddition;
     }
     
+    public void movePenUp() {
+    }
+    
     /**
      * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
      * on the scene
