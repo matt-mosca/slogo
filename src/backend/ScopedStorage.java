@@ -40,14 +40,11 @@ public class ScopedStorage {
     /**
      *
      *
-     * Value is passed as null before tree is executed so that a variable's existence can be confirmed before the
-     * command where its value is stored is execute.
-     *
      * @param name
      * @param value
      * @return
      */
-    public double setVariable(String name, @Nullable Double value) {
+    public double setVariable(String name, double value) {
         Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
         functionVariableMap.put(name, value);
         return value;
@@ -89,7 +86,7 @@ public class ScopedStorage {
         return functionVariables.keySet();
     }
 
-    public SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
+    SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
         if (!existsFunction(functionName)) {
             throw new UndefinedFunctionException(functionName);
         } else {
@@ -97,7 +94,7 @@ public class ScopedStorage {
         }
     }
 
-    public double getVariableValue(String variableName) throws UndefinedVariableException {
+    double getVariableValue(String variableName) throws UndefinedVariableException {
         if (!existsVariable(variableName)) {
             throw new UndefinedVariableException(variableName);
         }

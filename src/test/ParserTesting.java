@@ -1,6 +1,7 @@
 package test;
 
 import backend.Parser;
+import backend.error_handling.SLogoException;
 import deprecated_commands.turtle.TurtleListener;
 
 import java.util.Scanner;
@@ -17,10 +18,12 @@ public class ParserTesting {
 		Scanner in = new Scanner(System.in);
 		while (in.hasNextLine()) {
 			String command = in.nextLine();
-			if (parser.validateCommand(command)) {
-				parser.executeCommand(command);	
-			} else {
-				System.out.println("Failed to parse command!");
+			try {
+				if (parser.validateCommand(command)) {
+					parser.executeCommand(command);
+				}
+			} catch (SLogoException e) {
+				System.out.println(e.getMessage());
 			}
 		}
 	}

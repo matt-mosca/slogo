@@ -1,5 +1,7 @@
 package backend;
 
+import backend.control_nodes.VariableDefinitionNode;
+import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
@@ -53,7 +55,7 @@ public class Parser {
 			System.out.println("Validated command!");
 			return true;
 		} catch (SLogoException badSyntaxException) {
-			badSyntaxException.registerMessage();
+			badSyntaxException.getMessage();
 			return false;
 		}
 	}
@@ -68,7 +70,7 @@ public class Parser {
 			SyntaxNode tree = syntaxTrees.get(formattedCommand);
 			tree.execute();
 		} catch (SLogoException slogoException) {
-			slogoException.registerMessage();
+			slogoException.getMessage();
 		}
 	}
 
@@ -79,7 +81,7 @@ public class Parser {
 		} catch (IOException e) {
 			// Can only be because language passed in is not supported
 			SLogoException badLanguage = new ProjectBuildException();
-			badLanguage.registerMessage();
+			badLanguage.getMessage();
 		}
 	}
 
@@ -128,7 +130,7 @@ public class Parser {
 			Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
 			System.out.println("Next parsing method: " + nextParsingMethod.getName());
 			return (SyntaxNode) nextParsingMethod.invoke(this, it);
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException badCommand) {
+		} catch (IllegalAccessException | InvocationTargetException badCommand) {
 			badCommand.printStackTrace();
 			throw new UndefinedCommandException(nextToken);
 		}
@@ -157,7 +159,7 @@ public class Parser {
 				System.out.println("Added child no. " + child + " to ValueNode");
 			}
 			return valueNode;
-		} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
 				| InstantiationException e) {
 			throw new UndefinedCommandException(commandName);
 		}
@@ -174,9 +176,7 @@ public class Parser {
 		return new VariableDefinitionNode(scopedStorage, varName, expr);
 	}
 
-	private RepeatNode makeRepeatNode(PeekingIterator<String> it)
-			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException, SLogoException {
+	private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making RepeatNode");
 		// Consume the REPEAT token
 		it.next();
@@ -185,9 +185,7 @@ public class Parser {
 		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, exprToRepeat);
 	}
 
-	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it)
-			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException, SLogoException {
+	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making DoTimesNode");
 		// Consume the DOTIMES token
 		it.next();
@@ -199,9 +197,7 @@ public class Parser {
 		return new DoTimesNode(scopedStorage, varName, limitExp, exprToRepeat);
 	}
 
-	private IterationNode makeForLoopNode(PeekingIterator<String> it)
-			throws IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, InstantiationException,
-			InvocationTargetException, IllegalAccessException, SLogoException {
+	private IterationNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ForLoopNode");
 		// Consume the FOR token
 		it.next();
@@ -214,13 +210,12 @@ public class Parser {
 	}
 
 	// Only ValueNodes can have variable params
-	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it)
-			throws IllegalArgumentException, SLogoException {
+	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
-		// Retrieve just the root node corresponding to this command
+		// Retrive just the root node corresponding to this command
 		// it advanced by one token
 		String commandName = it.peek();
 		ValueNode root = makeValueNode(it);

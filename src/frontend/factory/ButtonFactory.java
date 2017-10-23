@@ -1,11 +1,12 @@
-package apis;
+package frontend.factory;
 
+import apis.GUIFactory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 
-public class ButtonFactory implements GUIFactory{
+public class ButtonFactory implements GUIFactory {
 	
 	public void makeGUIItem (EventHandler<ActionEvent> handle, Group root, String name)
 	{
