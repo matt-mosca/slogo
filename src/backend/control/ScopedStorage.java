@@ -2,7 +2,6 @@ package backend;
 
 import backend.error_handling.UndefinedFunctionException;
 import backend.error_handling.UndefinedVariableException;
-import com.sun.istack.internal.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 /**
  * @author Ben Schwennesen
@@ -59,7 +59,7 @@ public class ScopedStorage {
         currentScope = newScope;
     }
 
-    public void exitScope() {
+    void exitScope() {
         String lastScope = (scopeStack.isEmpty() ? GLOBAL : scopeStack.pop());
         Set<String> outerScopes = scopeMap.getOrDefault(lastScope, new HashSet<>());
         outerScopes.removeAll(scopeMap.getOrDefault(currentScope, new HashSet<>()));
@@ -71,7 +71,7 @@ public class ScopedStorage {
     public boolean existsFunction(String name) { return functionRoots.containsKey(name); }
 
     public Set<Entry<String, Double>> getCurrentVariables() {
-        Set<Entry<String, Double>> availableVariables = new HashSet<>();
+        Set<Entry<String, Double>> availableVariables = new TreeSet<>();
         Set<String> currentFunctionScopes = scopeMap.getOrDefault(currentScope, new HashSet<>());
         for (String currentFunctionScopeMember : currentFunctionScopes) {
             availableVariables.addAll(
