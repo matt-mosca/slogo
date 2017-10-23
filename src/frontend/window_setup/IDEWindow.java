@@ -1,7 +1,6 @@
 package frontend.window_setup;
 
 import java.io.File;
-
 import apis.ButtonFactory;
 import apis.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
@@ -11,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -31,6 +32,7 @@ public class IDEWindow {
 	public static final Paint STANDARD_AREA_COLOR = Color.WHITE;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
+	public static final double TURTLEFIELD_DEPTH = 0;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double RIGHT_WIDTH = 150;
@@ -44,7 +46,8 @@ public class IDEWindow {
 	private Scene primaryScene;
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
-	private GridPane turtleGrid;
+//	private Box turtleRegion;
+	private HBox turtleRegion;
 	private VBox leftBox;
 	private VBox rightBox;
 	private HBox topBox;
@@ -83,15 +86,18 @@ public class IDEWindow {
 		borderLayout = new BorderPane();
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-//		turtleGrid = new GridPane();
-//		turtleGrid.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+//		turtleField = new Rectangle();
+//		turtleField.setFill(STANDARD_AREA_COLOR);
+//		turtleRegion = new Box(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, TURTLEFIELD_DEPTH);
+		turtleRegion = new HBox();
+		turtleRegion.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+		turtleRegion.setStyle("-fx-background-color: white;"); //do not use arbitrary white here, make constant
 		leftBox = new VBox();
 //		left.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
 		rightBox = new VBox();
 //		right.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
 		topBox = new HBox();
 		bottomBox = new HBox();
-		
 		console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
 		//console.setVgap(2);
@@ -106,6 +112,7 @@ public class IDEWindow {
 		//makeButtons();
 		
 		borderLayout.setCenter(turtleField);
+//		borderLayout.setCenter(turtleRegion);
 		borderLayout.setLeft(leftBox);
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
@@ -118,12 +125,11 @@ public class IDEWindow {
 	}
 	
 	private void setUpTurtleField() {
-		TurtleView field = new TurtleView(borderLayout, turtleField);
+		TurtleView field = new TurtleView(borderLayout, turtleField, turtleRegion);
 		field.displayInitialTurtle();
 	}
 	
 	private void makeButtons(Stage s) {
-		
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
 		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
