@@ -4,6 +4,7 @@ import apis.TurtleDisplay;
 import frontend.window_setup.IDEWindow;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
