@@ -98,9 +98,9 @@ public class IDEWindow {
 	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
-	private TurtleView turtleView = new TurtleView(borderLayout, turtleField);
-	TurtleFactory turtleFactory = new TurtleFactory(turtleView);
-	Parser commandParser = new Parser(turtleFactory);
+	private TurtleView turtleView;
+	private TurtleFactory turtleFactory;
+	private Parser commandParser;
 	private Image turtlePic;
 	private int commandCount = 0;
 	
@@ -164,6 +164,9 @@ public class IDEWindow {
 		
 		makeButtons(primaryStage);
 		setBorderArrangement();
+		turtleView = new TurtleView(borderLayout, turtleField);
+		turtleFactory = new TurtleFactory(turtleView);
+		commandParser = new Parser(turtleFactory);
 	}
 
 	private void setBorderArrangement() {
@@ -331,8 +334,8 @@ public class IDEWindow {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			 turtlePen.setImage(new Image(fileLocation));  
-			 turtleView.showTurtle(turtlePen);
+		//	 turtlePen.setImage(new Image(fileLocation));  
+		//	 turtleView.showTurtle(turtlePen);
 		}
 	}
 	/**
