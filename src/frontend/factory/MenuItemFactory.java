@@ -14,8 +14,12 @@ public class MenuItemFactory implements GUIFactory {
 	{
 		MenuItem sampleMenuItem= new MenuItem(name);
 		sampleMenuItem.setOnAction(handle);
-		//(Menu) root = new Menu();
-		//.getItems().add(sampleMenuItem);
+	}
+	public MenuItem makeMenuItem(EventHandler<ActionEvent> handle, String name)
+	{
+		MenuItem sampleMenuItem= new MenuItem(name);
+		sampleMenuItem.setOnAction(handle);
+		return sampleMenuItem;
 	}
 
 }

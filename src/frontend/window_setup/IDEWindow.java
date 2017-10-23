@@ -1,11 +1,13 @@
 package frontend.window_setup;
 
 import java.io.File;
+import java.io.IOException;
 
 import backend.Parser;
 import backend.error_handling.SLogoException;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
+import frontend.factory.MenuItemFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
@@ -15,6 +17,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -79,6 +84,15 @@ public class IDEWindow {
 	private Group rightGroup = new Group();
 	private GridPane console = new GridPane();
 	
+	MenuItem chinese = new MenuItem();
+	MenuItem english = new MenuItem();
+	MenuItem french = new MenuItem();
+	MenuItem german = new MenuItem();
+	MenuItem italian = new MenuItem();
+	MenuItem portuguese = new MenuItem();
+	MenuItem russian = new MenuItem();
+	MenuItem spanish = new MenuItem();
+	
 	public static final int OFFSET = 8;
 
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
@@ -88,12 +102,13 @@ public class IDEWindow {
 	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
-	Parser commandParser = new Parser();
+	Parser commandParser = new Parser(null);
 	private Image turtlePic;
 	private int commandCount = 0;
 	
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
+	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -188,10 +203,101 @@ public class IDEWindow {
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		
+		chinese = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("Chinese");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "Chinese");
+		
+		english = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("English");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "English");
+		
+		french = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("French");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "French");
+		
+		german = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("German");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "German");
+		
+		italian = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("Italian");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "Italian");
+		
+		portuguese = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("Portuguese");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "Portuguese");
+		
+		russian = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("Russian");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "Russian");
+		
+		spanish = menuItemMaker.makeMenuItem(e->{
+			try {
+				setMenuLanguage("Spanish");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}, "Spanish");
+		
+		Menu languageMenu = new Menu("Language");
+		languageMenu.getItems().add(chinese);
+		languageMenu.getItems().add(english);
+		languageMenu.getItems().add(french);
+		languageMenu.getItems().add(german);
+		languageMenu.getItems().add(italian);
+		languageMenu.getItems().add(portuguese);
+		languageMenu.getItems().add(russian);
+		languageMenu.getItems().add(spanish);
+		MenuBar languageMenuBar = new MenuBar();
+		languageMenuBar.getMenus().add(languageMenu);
+		
+		bottomGroup.getChildren().add(languageMenuBar);
+		
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
+	}
+	
+	private void setMenuLanguage(String language) throws IOException
+	{
+		commandParser.setLanguage(language);
 	}
 	
 	private void changeBGColor() {
@@ -268,4 +374,3 @@ public class IDEWindow {
 	}
 	
 }
-
