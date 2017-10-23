@@ -1,5 +1,6 @@
-package apis;
+package frontend.factory;
 
+import apis.GUIFactory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;

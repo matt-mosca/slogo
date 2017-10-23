@@ -32,12 +32,12 @@ public class TurtleView implements TurtleDisplay{
 //		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
 //		fieldCenterX = turtleRegion.getWidth() / 2;
 //		fieldCenterY = turtleRegion.getHeight() / 2;
-		System.out.println(turtleField.getX());
-		System.out.println(turtleField.getY());
-		System.out.println(turtleField.getWidth() / 2);
-		System.out.println(turtleField.getHeight() / 2);
-		System.out.println(fieldCenterX);
-		System.out.println(fieldCenterY);
+//		System.out.println(turtleField.getX());
+//		System.out.println(turtleField.getY());
+//		System.out.println(turtleField.getWidth() / 2);
+//		System.out.println(turtleField.getHeight() / 2);
+//		System.out.println(fieldCenterX);
+//		System.out.println(fieldCenterY);
 //		fieldCenterY = IDEWindow.TOP_HEIGHT / 2 + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
 		TurtlePen original = new TurtlePen(fieldCenterX, fieldCenterY);
 		displayedTurtles.add(original);
