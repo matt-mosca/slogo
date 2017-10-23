@@ -11,8 +11,8 @@ public class SyntaxCausedException extends SLogoException {
     }
 
     @Override
-    public void registerMessage() {
+    public String getMessage() {
         String className = this.getClass().getName();
-        setMessage(String.format(ExceptionMessageGetter.getMessage(className), EXCEPTION_CAUSE));
+        return String.format(ExceptionMessageGetter.getMessage(className), EXCEPTION_CAUSE);
     }
 }
