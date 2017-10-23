@@ -177,10 +177,10 @@ public class IDEWindow {
 		TurtleView field = new TurtleView(borderLayout, turtleField);
 		field.displayInitialTurtle();
 		//Testing
-//		field.move(0, 20, 20);
-//		field.rotate(0, 45);
-//		field.move(0, -50, 50);
-//		field.move(0, 80, -100);
+		field.move(0, 0, 20);
+		field.rotate(0, 45);
+		field.move(0, -50, 50);
+		field.move(0, 80, -100);
 	}
 	
 	private void makeButtons(Stage s) {
