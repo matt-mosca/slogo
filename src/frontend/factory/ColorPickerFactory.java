@@ -3,6 +3,7 @@ package frontend.factory;
 import apis.GUIFactory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -23,6 +24,7 @@ public class ColorPickerFactory implements GUIFactory{
 		sampleColorPicker.setOnAction(handle);
 		vbox.getChildren().add(pickerLabel);
 		vbox.getChildren().add(sampleColorPicker);
+		vbox.setAlignment(Pos.BOTTOM_CENTER);
 		root.getChildren().add(vbox);
 		return sampleColorPicker;
 	}
