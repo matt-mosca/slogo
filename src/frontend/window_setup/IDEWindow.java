@@ -46,7 +46,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class IDEWindow {
 	private static Paint STANDARD_AREA_COLOR = Color.BLUE;
-	private static Paint penColor = Color.BLACK;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double TURTLEFIELD_DEPTH = 0;
@@ -70,18 +69,16 @@ public class IDEWindow {
 	private HBox topBox;
 	private HBox bottomBox;
 	private TextArea commandTextArea;
-	//private TextField bGColorTextField;
-	private TextField penColorTextField;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-	private boolean isError = false;
-	
+		
 	private Stage helpStage = new Stage();
-
+	
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
+	
 	private GridPane console = new GridPane();
 	
 	MenuItem chinese = new MenuItem();
