@@ -49,6 +49,7 @@ public class IDEWindow {
 	public static final double TOP_HEIGHT = 100;
 	public static final double BOTTOM_WIDTH = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	public static final double BOTTOM_HEIGHT = 200;
+	public static final double WRAPPING_WIDTH = 100;
 	
 	private Stage primaryStage;
 	private Scene primaryScene;
@@ -88,7 +89,6 @@ public class IDEWindow {
 	Parser commandParser = new Parser();
 	private Image turtlePic;
 	private int commandCount = 0;
-	private String errorMessage;
 	
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
@@ -123,7 +123,7 @@ public class IDEWindow {
 		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
-		//console.setVgap(2);
+		console.setVgap(2);
 		console.setPadding(new Insets(25, 25, 25, 25));
 		Text Console = new Text("Command History: ");
 		console.add(Console, 0, commandCount);
@@ -186,13 +186,14 @@ public class IDEWindow {
 			{
 				commandParser.executeCommand(commandInput);
 			}
-			history.setText(commandInput);
+			history.setText(commandCount+". "+commandInput);
 		}
 		catch(SLogoException e) {
 			
-			history.setText(e.getMessage());
+			history.setText(commandCount+". "+e.getMessage());
 			history.setFill(Color.RED);
 		}
+		history.setWrappingWidth(WRAPPING_WIDTH);
 		console.add(history, 0, commandCount);
 		commandTextArea.setText("");
 	}
@@ -231,11 +232,6 @@ public class IDEWindow {
 		helpStage.setTitle("Help");
 		helpStage.setScene(scene);
 		helpStage.show();
-	}
-	
-	public void takeError(String error) {
-		isError = true;
-		errorMessage = error;
 	}
 	
 	public Rectangle getTurtleField() {
