@@ -2,10 +2,8 @@ package frontend.turtle_display;
 
 import apis.TurtleDisplay;
 import frontend.window_setup.IDEWindow;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -15,30 +13,15 @@ public class TurtleView implements TurtleDisplay{
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
 	private Pane layout;
-	private HBox turtleRegion;
 	private double fieldCenterX;
 	private double fieldCenterY;
 	
-	public TurtleView(Pane border, Rectangle field, HBox region) {
+	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
 		layout = border;
 		turtleField = field;
-		turtleRegion = region;
-//		fieldCenterX = turtleField.getX() + turtleField.getWidth() / 2;
-//		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2 - TurtlePen.DEFAULT_WIDTH / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
-//		fieldCenterX = turtleField.getX() + turtleField.getWidth() / 2 - TurtlePen.DEFAULT_WIDTH / 2;
-//		fieldCenterY = turtleField.getY() + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
-//		fieldCenterX = turtleRegion.getWidth() / 2;
-//		fieldCenterY = turtleRegion.getHeight() / 2;
-//		System.out.println(turtleField.getX());
-//		System.out.println(turtleField.getY());
-//		System.out.println(turtleField.getWidth() / 2);
-//		System.out.println(turtleField.getHeight() / 2);
-//		System.out.println(fieldCenterX);
-//		System.out.println(fieldCenterY);
-//		fieldCenterY = IDEWindow.TOP_HEIGHT / 2 + turtleField.getHeight() / 2 - TurtlePen.DEFAULT_HEIGHT / 2;
 		TurtlePen original = new TurtlePen(fieldCenterX, fieldCenterY);
 		displayedTurtles.add(original);
 	}
@@ -49,9 +32,6 @@ public class TurtleView implements TurtleDisplay{
 	
 	public void showTurtle(TurtlePen turtle) {
     	layout.getChildren().add(turtle.getImage());
-//		turtleRegion.getChildren().add(turtle.getImage());
-//		turtleRegion.getChildren().add();
-//    	System.out.println("Check");
     }
 	
 	/**
@@ -62,9 +42,13 @@ public class TurtleView implements TurtleDisplay{
      */
     public void move(int turtleIndex, double newXCoord, double newYCoord) {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
-    	double xCoordinateOnRegion = translateXCoord(newXCoord);
-    	double yCoordinateOnRegion = translateYCoord(newYCoord);
-    	displayedTurtles.get(turtleIndex).moveTurtle(xCoordinateOnRegion, yCoordinateOnRegion);
+    	double newXCoordinate = translateXCoord(newXCoord) + TurtlePen.DEFAULT_WIDTH / 2;
+    	double newYCoordinate = translateYCoord(newYCoord) + TurtlePen.DEFAULT_HEIGHT / 2;
+    	double currentXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate();
+    	double currentYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate();
+    	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
+    	Drawer lineMaker = new Drawer();
+    	lineMaker.drawLine(currentXCoordinate, currentYCoordinate, newXCoordinate, newYCoordinate, layout);
     }
 
     /**
@@ -86,13 +70,6 @@ public class TurtleView implements TurtleDisplay{
     	showTurtle(newAddition);
     	return newAddition;
     }
-    
-//    public void displayTurtles(Pane layout) {
-//    	BorderPane turtleWindow = (BorderPane) layout;
-//    	for(int i = 0; i < displayedTurtles.size(); i++) {
-//    		
-//    	}
-//    }
     
     /**
      * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
