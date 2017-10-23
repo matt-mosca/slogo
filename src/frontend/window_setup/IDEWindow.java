@@ -3,6 +3,7 @@ package frontend.window_setup;
 import java.io.File;
 
 import apis.ButtonFactory;
+import apis.ColorPickerFactory;
 import apis.TextAreaFactory;
 import apis.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
@@ -11,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -32,7 +34,8 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class IDEWindow {
-	public static final Paint STANDARD_AREA_COLOR = Color.WHITE;
+	private static Paint STANDARD_AREA_COLOR = Color.BLUE;
+	private static Paint penColor = Color.BLACK;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
@@ -54,10 +57,10 @@ public class IDEWindow {
 	private HBox topBox;
 	private HBox bottomBox;
 	private TextArea commandTextArea;
-	private TextField bGColorTextField;
+	//private TextField bGColorTextField;
 	private TextField penColorTextField;
-	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
-	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
+	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH+20;
+	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT+20;
 	private boolean isError = false;
 	
 	private Stage helpStage = new Stage();
@@ -70,20 +73,20 @@ public class IDEWindow {
 	private GridPane console = new GridPane();
 	
 	public static final int OFFSET = 8;
-	private static final Color BACKGROUND = Color.BLACK;
-	private static final String TITLE = "SLogo";
-	private Group splash = new Group();
-	private Group helpText = new Group();
+
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 	private static final String DATA_FILE_EXTENSION = "*.jpg";
-	private static final int VERT_SIZE = 650;
-	private static final int HORIZONTAL_SIZE = 575;
+
 	ButtonFactory buttonMaker = new ButtonFactory();
+	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private Image turtlePic;
 	private int commandCount = 0;
 	private String errorMessage;
+	
+	private ColorPicker backGroundColorPicker = new ColorPicker();
+	private ColorPicker penColorPicker = new ColorPicker();
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -94,18 +97,19 @@ public class IDEWindow {
 		leftBox = new VBox();
 		leftBox.setPadding(new Insets(OFFSET));
 		leftBox.setSpacing(OFFSET);
-//		left.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
+		leftBox.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
 		rightBox = new VBox();
 		rightBox.setPadding(new Insets(OFFSET));
 		rightBox.setSpacing(OFFSET);
-//		right.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
+		rightBox.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
 		topBox = new HBox();
 		topBox.setPadding(new Insets(OFFSET));
 		topBox.setSpacing(OFFSET);
-		
+		topBox.setPrefSize(TOP_WIDTH, TOP_HEIGHT);
 		bottomBox = new HBox();
 		bottomBox.setPadding(new Insets(OFFSET));
 		bottomBox.setSpacing(OFFSET);
+		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
@@ -124,6 +128,7 @@ public class IDEWindow {
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);
+		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
 	public void setUpWindow(Stage primary) {
@@ -145,8 +150,9 @@ public class IDEWindow {
 		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
-		bGColorTextField = textFieldMaker.makeReturnableTextField(e->changeBGColor(), topGroup, "BackGround Color");
-		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");	
+		colorPickerMaker.makeGUIItem(e->changeBGColor(), topGroup, "BackGround Color");
+		colorPickerMaker.makeGUIItem(e->changePenColor(), topGroup, "Pen Color");
+		
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
@@ -154,7 +160,11 @@ public class IDEWindow {
 	}
 	
 	private void changeBGColor() {
-		bGColorTextField.getText();
+		STANDARD_AREA_COLOR = backGroundColorPicker.getValue();
+	}
+	
+	private void changePenColor() {
+		penColor = penColorPicker.getValue();
 	}
 	
 	private void enterCommand() {
@@ -172,10 +182,6 @@ public class IDEWindow {
 			isError = false;
 		}
 		commandTextArea.setText("");
-	}
-	
-	private void changePenColor() {
-		penColorTextField.getText();
 	}
 	
 	private void openFile(Stage s) {
