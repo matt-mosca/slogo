@@ -4,13 +4,14 @@ import backend.SyntaxNode;
 import backend.error_handling.UndefinedFunctionException;
 import backend.error_handling.UndefinedVariableException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 /**
  * @author Ben Schwennesen
@@ -18,8 +19,9 @@ import java.util.TreeSet;
 public class ScopedStorage {
 
     Map<String, Map<String, Double>> functionVariables = new HashMap<>();
-    Map<String, Set<String>> scopeMap = new HashMap<>();
+    Map<String, List<String>> functionParameterNames = new HashMap<>();
     Map<String, SyntaxNode> functionRoots = new HashMap<>();
+    Map<String, Set<String>> scopeMap = new HashMap<>();
 
     private Stack<String> scopeStack = new Stack<>();
 
@@ -55,6 +57,10 @@ public class ScopedStorage {
         return value;
     }
 
+    void addFunctionParameterNames(String functionName, List<String> parameterNames) {
+        functionParameterNames.put(functionName, parameterNames);
+    }
+
     void enterScope(String newScope) {
         Set<String> scopes = scopeMap.getOrDefault(newScope, new HashSet<>());
         scopes.add(newScope);
@@ -80,28 +86,25 @@ public class ScopedStorage {
     public boolean existsVariable(String name) { return functionVariables.get(currentScope).containsKey(name); }
     public boolean existsFunction(String name) { return functionRoots.containsKey(name); }
 
-    public Set<Entry<String, Double>> getCurrentVariables() {
-        Set<Entry<String, Double>> availableVariables = new TreeSet<>();
+    public Map<String, Double> getAllAvailableVariables() {
+        Map<String, Double> availableVariables = new TreeMap<>();
         Set<String> currentFunctionScopes = scopeMap.getOrDefault(currentScope, new HashSet<>());
         for (String currentFunctionScopeMember : currentFunctionScopes) {
-            availableVariables.addAll(
-                    functionVariables
-                            .getOrDefault(currentFunctionScopeMember, new HashMap<>())
-                            .entrySet());
+            availableVariables.putAll(functionVariables.getOrDefault(currentFunctionScopeMember, new HashMap<>()));
         }
-
         return availableVariables;
     }
 
-    /* public Set<String> getDeclaredFunctions() {
-        return functionVariables.keySet();
-    }*/
+    List<String> getCurrentFunctionParameterNames() {
+        return functionParameterNames.getOrDefault(currentScope, new ArrayList<>());
+    }
 
-    SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
-        if (!existsFunction(functionName)) {
-            throw new UndefinedFunctionException(functionName);
+
+    SyntaxNode getCurrentFunctionRoot() throws UndefinedFunctionException {
+        if (!existsFunction(currentScope)) {
+            throw new UndefinedFunctionException(currentScope);
         } else {
-            return functionRoots.get(functionName);
+            return functionRoots.get(currentScope);
         }
     }
 
