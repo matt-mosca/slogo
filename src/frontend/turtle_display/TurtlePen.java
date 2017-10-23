@@ -54,5 +54,7 @@ public class TurtlePen {
 	}
 	public void setImage(Image newTurtle) {
 		turtleImage = new ImageView(newTurtle);
+		turtleImage.setFitWidth(25);
+		turtleImage.setFitHeight(30);
 	}
 }
