@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import backend.control_nodes.DoTimesNode;
+import backend.control_nodes.FunctionDefinitionNode;
+import backend.control_nodes.IfElseNode;
+import backend.control_nodes.IfNode;
 import backend.control_nodes.IterationNode;
 import backend.control_nodes.RepeatNode;
 import backend.control_nodes.VariableDefinitionNode;
@@ -200,6 +203,34 @@ public class Parser {
 		return new IterationNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
 	}
 
+	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfNode");
+		// Consume the IF token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		return new IfNode(conditionExpression, trueBranch);
+	}
+	
+	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfElseNode");
+		// Consume the IfELSE token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		SyntaxNode elseBranch = makeExpTree(it);
+		return new IfElseNode(conditionExpression, trueBranch, elseBranch);
+	}
+	
+	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making a FunctionDefinitionNode");
+		// Consume the MAKEUSERINSTRUCTION token
+		it.next();
+		String funcName = it.next();
+		SyntaxNode funcRoot = makeExpTree(it);
+		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
+	}
+	
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");

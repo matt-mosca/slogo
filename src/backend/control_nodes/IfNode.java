@@ -14,6 +14,7 @@ public class IfNode implements SyntaxNode  {
 
     public IfNode(SyntaxNode conditionExpression, SyntaxNode trueBranch) {
         this.conditionExpression = conditionExpression;
+        this.trueBranch = trueBranch;
     }
 
     protected boolean isTrue() throws SLogoException{ return conditionExpression.execute() == 1; }
