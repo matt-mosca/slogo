@@ -1,13 +1,15 @@
 package backend;
 
-import backend.control_nodes.VariableDefinitionNode;
+import backend.control.ScopedStorage;
+import backend.control.VariableDefinitionNode;
+import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
-import backend.math_nodes.ConstantNode;
-import turtle_nodes.TurtleManager;
+import backend.math.ConstantNode;
+import backend.turtle.TurtleFactory;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -18,10 +20,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import backend.control_nodes.DoTimesNode;
-import backend.control_nodes.IterationNode;
-import backend.control_nodes.RepeatNode;
-import backend.control_nodes.VariableDefinitionNode;
+import backend.control.DoTimesNode;
+import backend.control.LoopNode;
+import backend.control.RepeatNode;
+import backend.control.VariableDefinitionNode;
 
 public class Parser {
 
@@ -33,13 +35,12 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
-	private TurtleManager turtleManager;
+	private TurtleFactory turtleManager;
 	private ScopedStorage scopedStorage;
 
-	public Parser(TurtleManager turtleManager) {
+	public Parser(TurtleFactory turtleManager) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		this.turtleManager = turtleManager;
 		scopedStorage = new ScopedStorage();
 	}
 
@@ -188,7 +189,7 @@ public class Parser {
 		return new DoTimesNode(scopedStorage, varName, limitExp, exprToRepeat);
 	}
 
-	private IterationNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
+	private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ForLoopNode");
 		// Consume the FOR token
 		it.next();
@@ -197,9 +198,37 @@ public class Parser {
 		SyntaxNode endExp = makeExpTree(it);
 		SyntaxNode incrExp = makeExpTree(it);
 		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new IterationNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
+		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
 	}
 
+	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfNode");
+		// Consume the IF token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		return new IfNode(conditionExpression, trueBranch);
+	}
+	
+	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfElseNode");
+		// Consume the IfELSE token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		SyntaxNode elseBranch = makeExpTree(it);
+		return new IfElseNode(conditionExpression, trueBranch, elseBranch);
+	}
+	
+	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making a FunctionDefinitionNode");
+		// Consume the MAKEUSERINSTRUCTION token
+		it.next();
+		String funcName = it.next();
+		SyntaxNode funcRoot = makeExpTree(it);
+		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
+	}
+	
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
