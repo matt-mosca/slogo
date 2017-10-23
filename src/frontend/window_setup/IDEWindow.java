@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -106,29 +107,47 @@ public class IDEWindow {
 		turtleRegion = new HBox();
 		turtleRegion.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
 		turtleRegion.setStyle("-fx-background-color: white;"); //do not use arbitrary white here, make constant
+		
 		leftBox = new VBox();
 		leftBox.setPadding(new Insets(OFFSET));
 		leftBox.setSpacing(OFFSET);
 		leftBox.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
+		
 		rightBox = new VBox();
 		rightBox.setPadding(new Insets(OFFSET));
 		rightBox.setSpacing(OFFSET);
 		rightBox.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
+		
 		topBox = new HBox();
 		topBox.setPadding(new Insets(OFFSET));
 		topBox.setSpacing(OFFSET);
 		topBox.setPrefSize(TOP_WIDTH, TOP_HEIGHT);
+		
 		bottomBox = new HBox();
 		bottomBox.setPadding(new Insets(OFFSET));
 		bottomBox.setSpacing(OFFSET);
 		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
-		console.setAlignment(Pos.CENTER);
+		
+		//console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
 		console.setVgap(2);
-		console.setPadding(new Insets(25, 25, 25, 25));
-		Text Console = new Text("Command History: ");
-		console.add(Console, 0, commandCount);
-		rightGroup.getChildren().add(console);
+		//console.setPadding(new Insets(25, 25, 25, 25));
+		Text consoleLabel = new Text("Command History: ");
+		console.add(consoleLabel, 0, commandCount);
+		
+		Text variableDisplay = new Text("Variables: ");
+		
+		ScrollPane consoleScrollable = new ScrollPane();
+		ScrollPane variableScrollable = new ScrollPane();
+		
+		consoleScrollable.setPrefSize(150,150);
+		consoleScrollable.setContent(console);
+		
+		variableScrollable.setPrefSize(50,50);
+		variableScrollable.setContent(variableDisplay);
+		
+		rightGroup.getChildren().add(consoleScrollable);
+		rightGroup.getChildren().add(variableScrollable);
 		
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
