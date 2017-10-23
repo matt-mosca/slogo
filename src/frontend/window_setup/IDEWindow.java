@@ -336,8 +336,8 @@ public class IDEWindow {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-		//	 turtlePen.setImage(new Image(fileLocation));  
-		//	 turtleView.showTurtle(turtlePen);
+			turtlePen.setImage(new Image(fileLocation));  
+			turtleView.showTurtle(turtlePen);
 		}
 	}
 	/**
