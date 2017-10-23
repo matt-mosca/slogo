@@ -2,15 +2,20 @@ package frontend.window_setup;
 
 import java.io.File;
 
-import apis.ButtonFactory;
-import apis.TextAreaFactory;
-import apis.TextFieldFactory;
+import backend.Parser;
+import backend.error_handling.SLogoException;
+import frontend.factory.ButtonFactory;
+import frontend.factory.ColorPickerFactory;
+import frontend.factory.TextAreaFactory;
+import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -22,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -32,9 +38,11 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class IDEWindow {
-	public static final Paint STANDARD_AREA_COLOR = Color.WHITE;
+	private static Paint STANDARD_AREA_COLOR = Color.BLUE;
+	private static Paint penColor = Color.BLACK;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
+	public static final double TURTLEFIELD_DEPTH = 0;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double RIGHT_WIDTH = 150;
@@ -43,28 +51,28 @@ public class IDEWindow {
 	public static final double TOP_HEIGHT = 100;
 	public static final double BOTTOM_WIDTH = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	public static final double BOTTOM_HEIGHT = 200;
+	public static final double WRAPPING_WIDTH = 100;
 	
 	private Stage primaryStage;
 	private Scene primaryScene;
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
-	private GridPane turtleGrid;
+//	private Box turtleRegion;
+	private HBox turtleRegion;
 	private VBox leftBox;
 	private VBox rightBox;
 	private HBox topBox;
 	private HBox bottomBox;
-	private TextField commandTextField; //Need to make right panel
 	private TextArea commandTextArea;
-	private TextField bGColorTextField;
+	//private TextField bGColorTextField;
 	private TextField penColorTextField;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	private boolean isError = false;
 	
 	private Stage helpStage = new Stage();
-	private static final int FRAMES_PER_SECOND = 2;
-	private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-	private Timeline animation = new Timeline();
+
+
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
@@ -72,62 +80,86 @@ public class IDEWindow {
 	private GridPane console = new GridPane();
 	
 	public static final int OFFSET = 8;
-	private static final Color BACKGROUND = Color.BLACK;
-	private static final String TITLE = "SLogo";
-	private Group splash = new Group();
-	private Group helpText = new Group();
+
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 	private static final String DATA_FILE_EXTENSION = "*.jpg";
-	private static final int VERT_SIZE = 650;
-	private static final int HORIZONTAL_SIZE = 575;
+
 	ButtonFactory buttonMaker = new ButtonFactory();
+	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
+	Parser commandParser = new Parser();
 	private Image turtlePic;
-	private int count = 0;
 	private int commandCount = 0;
+	
+	private ColorPicker backGroundColorPicker = new ColorPicker();
+	private ColorPicker penColorPicker = new ColorPicker();
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
+		borderLayout.setPrefSize(totalWidth, totalHeight);
+		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-//		turtleGrid = new GridPane();
-//		turtleGrid.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+//		turtleField = new Rectangle();
+//		turtleField.setFill(STANDARD_AREA_COLOR);
+//		turtleRegion = new Box(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, TURTLEFIELD_DEPTH);
+		turtleRegion = new HBox();
+		turtleRegion.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
+		turtleRegion.setStyle("-fx-background-color: white;"); //do not use arbitrary white here, make constant
+		
 		leftBox = new VBox();
 		leftBox.setPadding(new Insets(OFFSET));
 		leftBox.setSpacing(OFFSET);
-//		left.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
+		leftBox.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
+		
 		rightBox = new VBox();
 		rightBox.setPadding(new Insets(OFFSET));
 		rightBox.setSpacing(OFFSET);
-//		right.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
+		rightBox.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
+		
 		topBox = new HBox();
 		topBox.setPadding(new Insets(OFFSET));
 		topBox.setSpacing(OFFSET);
+		topBox.setPrefSize(TOP_WIDTH, TOP_HEIGHT);
 		
 		bottomBox = new HBox();
 		bottomBox.setPadding(new Insets(OFFSET));
 		bottomBox.setSpacing(OFFSET);
+		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
-		console.setAlignment(Pos.CENTER);
+		//console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
-		//console.setVgap(2);
-		console.setPadding(new Insets(25, 25, 25, 25));
-		Text Console = new Text("Command History: ");
-		console.add(Console, 0, count);
-		rightGroup.getChildren().add(console);
+		console.setVgap(2);
+		//console.setPadding(new Insets(25, 25, 25, 25));
+		Text consoleLabel = new Text("Command History: ");
+		console.add(consoleLabel, 0, commandCount);
+		
+		Text variableDisplay = new Text("Variables: ");
+		
+		ScrollPane consoleScrollable = new ScrollPane();
+		ScrollPane variableScrollable = new ScrollPane();
+		
+		consoleScrollable.setPrefSize(150,150);
+		consoleScrollable.setContent(console);
+		
+		variableScrollable.setPrefSize(50,50);
+		variableScrollable.setContent(variableDisplay);
+		
+		rightGroup.getChildren().add(consoleScrollable);
+		rightGroup.getChildren().add(variableScrollable);
 		
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		makeButtons(primaryStage);
 		
-		//primaryScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
-		
 		borderLayout.setCenter(turtleField);
+//		borderLayout.setCenter(turtleRegion);
 		borderLayout.setLeft(leftBox);
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);
+		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
 	public void setUpWindow(Stage primary) {
@@ -138,73 +170,56 @@ public class IDEWindow {
 	private void setUpTurtleField() {
 		TurtleView field = new TurtleView(borderLayout, turtleField);
 		field.displayInitialTurtle();
+		//Testing
+		field.move(0, 20, 20);
+		field.move(0, -50, 50);
+		field.move(0, 80, -100);
 	}
 	
 	private void makeButtons(Stage s) {
-		
 		Text enterCommand = new Text("Enter Command");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
 		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
-		commandTextArea = textAreaMaker.makeReturnableTextArea(e->storeCommand(), leftGroup, "Command");
+		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
+		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
+		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
-		bGColorTextField = textFieldMaker.makeReturnableTextField(e->changeBGColor(), topGroup, "BackGround Color");
-		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");	
 	}
 	
 	private void changeBGColor() {
-		bGColorTextField.getText();
-	}
-	
-	private void enterCommand() {
-		Text history = new Text(commandTextArea.getText()+"\n");
-		System.out.println(commandTextArea.getText());
-		count++;
-		if(isError) {
-			console.add(history, 0, count);
-			System.out.println(commandTextArea.getText());
-		}
-		else {
-			history.setFill(Color.RED);
-			console.add(history, 0, count);
-			isError = false;
-		}
-		commandTextArea.setText("");
+		turtleField.setFill(backGroundColorPicker.getValue());
 	}
 	
 	private void changePenColor() {
-		penColorTextField.getText();
+		penColor = penColorPicker.getValue();
 	}
 	
-	/*private void enterCount() {
-		Text history = new Text(commandTextArea.getText()+"\n");
-		count++;
-		if(!isError) {
-			console.add(history, 0, count);
+	private void enterCommand() {
+		Text history = new Text();
+		String commandInput = commandTextArea.getText();
+		commandCount++;
+		try {
+			if(commandParser.validateCommand(commandInput))
+			{
+				commandParser.executeCommand(commandInput);
+			}
+			history.setText(commandCount+". "+commandInput);
 		}
-		else {
+		catch(SLogoException e) {
+			
+			history.setText(commandCount+". "+e.getMessage());
 			history.setFill(Color.RED);
-			console.add(history, 0, count);
 		}
-	}*/
-
-	private void storeCommand()
-	{
-		Text history = new Text(commandTextArea.getText()+"\n");
-		count++;
-		if(isError) {
-			console.add(history, 0, count);
-		}
-		else {
-			history.setFill(Color.RED);
-			console.add(history, 0, count);
-		}
+		history.setWrappingWidth(WRAPPING_WIDTH);
+		console.add(history, 0, commandCount);
+		commandTextArea.setText("");
 	}
 	
 	private void openFile(Stage s) {
@@ -222,38 +237,25 @@ public class IDEWindow {
 	 */
 	private FileChooser makeChooser(String extensionAccepted) {
 		FileChooser result = new FileChooser();
-		//result.setTitle(myResources.getString("open"));
 		result.setTitle("open");
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
 		result.getExtensionFilters().setAll(new ExtensionFilter("Text Files", extensionAccepted));
 		return result;
 	}
+
 	private void help() {
 		Text t = new Text();
 		t.setFont(new Font(20));
 		t.setWrappingWidth(200);
 		t.setTextAlignment(TextAlignment.JUSTIFY);
 		t.setText("Commands/help");
-		//TextFlow textFlow = new TextFlow();
-		//textFlow.getChildren().add(t);
-		//Group group = new Group(textFlow);
+
 		VBox vbox = new VBox();
 		vbox.getChildren().add(t);
 		Scene scene = new Scene(vbox, 500, 150, Color.WHITE);
 		helpStage.setTitle("Help");
 		helpStage.setScene(scene);
 		helpStage.show();
-	}
-	
-	 /*private void handleKeyInput (KeyCode code) {
-	    	//Move the top paddle to the right
-	        if (code == KeyCode.ENTER) {
-	           System.out.print("help");
-	        }
-	 }*/
-	
-	public void takeError() {
-		isError = true;
 	}
 	
 	public Rectangle getTurtleField() {

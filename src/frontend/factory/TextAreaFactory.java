@@ -1,5 +1,6 @@
-package apis;
+package frontend.factory;
 
+import apis.GUIFactory;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -15,8 +16,6 @@ public class TextAreaFactory implements GUIFactory {
 	}
 	public TextArea makeReturnableTextArea(EventHandler<ActionEvent> handle, Group root, String name) {
 		TextArea returnText = new TextArea();
-		//returnText.setPromptText(name);
-		//returnText.setOnAction(handle);
 		root.getChildren().add(returnText);
 		return returnText;
 	}
