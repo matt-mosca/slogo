@@ -6,25 +6,32 @@ import backend.error_handling.SLogoException;
 /**
  * @author Ben Schwennesen
  */
-public class IfNode implements SyntaxNode  {
+public class IfNode extends DataAccessingNode  {
 
     private SyntaxNode conditionExpression;
 
     private SyntaxNode trueBranch;
 
-    public IfNode(SyntaxNode conditionExpression, SyntaxNode trueBranch) {
+    public IfNode(ScopedStorage store, SyntaxNode conditionExpression, SyntaxNode trueBranch) {
+        super(store);
         this.conditionExpression = conditionExpression;
     }
 
     protected boolean isTrue() throws SLogoException{ return conditionExpression.execute() == 1; }
 
-    protected double executeTrueBranch() throws SLogoException { return trueBranch.execute(); }
+    protected double executeTrueBranch() throws SLogoException {
+        getStore().enterAnonymousScope();
+        double result = trueBranch.execute();
+        getStore().exitScope();
+        return result;
+    }
 
     @Override
-    public double execute() throws SLogoException{
+    public double execute() throws SLogoException {
+        double result = 0;
         if (isTrue()) {
-            return executeTrueBranch();
+            result = executeTrueBranch();
         }
-        return 0;
+        return result;
     }
 }

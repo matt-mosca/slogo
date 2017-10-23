@@ -162,7 +162,7 @@ public class Parser {
 	 */
 
 	/*
-	 * private IterationNode makeForLoopNode(PeekingIterator<String> it) throws
+	 * private LoopNode makeForLoopNode(PeekingIterator<String> it) throws
 	 * IllegalArgumentException, ClassNotFoundException, NoSuchMethodException,
 	 * InstantiationException, InvocationTargetException, IllegalAccessException {
 	 * // todo - dont use assert, do something better if

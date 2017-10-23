@@ -12,7 +12,7 @@ import backend.math.ConstantNode;
  * @author Ben Schwennesen
  */
 
-public class RepeatNode extends IterationNode {
+public class RepeatNode extends LoopNode {
 
     private static final String REPEAT_VARIABLE_NAME = ":repcount";
     private static final SyntaxNode START_EXPRESSION = new ConstantNode(1);

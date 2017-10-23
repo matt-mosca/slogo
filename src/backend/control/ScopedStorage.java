@@ -24,9 +24,13 @@ public class ScopedStorage {
     private Stack<String> scopeStack = new Stack<>();
 
     private String currentScope;
+
     private static final String GLOBAL = "global";
 
     private final int STORAGE_SUCCESS = 1;
+
+    // track anonymous scopes (loops, conditionals)
+    private int anonymousId = 0;
 
     public ScopedStorage() {
         functionVariables.put(GLOBAL, new HashMap<>());
@@ -58,6 +62,11 @@ public class ScopedStorage {
         scopeMap.put(newScope, scopes);
         scopeStack.push(currentScope);
         currentScope = newScope;
+    }
+
+    // for loops, conditionals
+    void enterAnonymousScope() {
+        enterScope(String.valueOf(anonymousId++));
     }
 
     void exitScope() {

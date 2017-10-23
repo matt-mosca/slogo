@@ -10,17 +10,22 @@ public class IfElseNode extends IfNode {
 
     private SyntaxNode falseBranch;
 
-    public IfElseNode(SyntaxNode conditionExpression, SyntaxNode trueBranch, SyntaxNode falseBranch) {
-        super(conditionExpression, trueBranch);
+    public IfElseNode(ScopedStorage store, SyntaxNode conditionExpression,
+                      SyntaxNode trueBranch, SyntaxNode falseBranch) {
+        super(store, conditionExpression, trueBranch);
         this.falseBranch = falseBranch;
     }
 
     @Override
     public double execute() throws SLogoException {
+        double result;
         if (isTrue()) {
-            return executeTrueBranch();
+            result = executeTrueBranch();
         } else {
-            return falseBranch.execute();
+            getStore().enterAnonymousScope();
+            result = falseBranch.execute();
+            getStore().exitScope();
         }
+        return result;
     }
 }

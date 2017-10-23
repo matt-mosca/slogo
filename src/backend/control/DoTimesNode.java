@@ -11,7 +11,7 @@ import backend.math.ConstantNode;
  *
  * @author Ben Schwennesen
  */
-public class DoTimesNode extends IterationNode {
+public class DoTimesNode extends LoopNode {
 
     private static final SyntaxNode START_EXPRESSION = new ConstantNode(1);
     private static final SyntaxNode INCREMENT_EXPRESSION = new ConstantNode(1);
