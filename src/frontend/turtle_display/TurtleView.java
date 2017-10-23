@@ -42,13 +42,13 @@ public class TurtleView implements TurtleDisplay{
      */
     public void move(int turtleIndex, double newXCoord, double newYCoord) {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
-    	double newXCoordinate = translateXCoord(newXCoord) + TurtlePen.DEFAULT_WIDTH / 2;
-    	double newYCoordinate = translateYCoord(newYCoord) + TurtlePen.DEFAULT_HEIGHT / 2;
-    	double currentXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate();
-    	double currentYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate();
+    	double newXCoordinate = translateXCoord(newXCoord) - TurtlePen.DEFAULT_WIDTH / 2;
+    	double newYCoordinate = translateYCoord(newYCoord) - TurtlePen.DEFAULT_HEIGHT / 2;
+    	double currentLineXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
+    	double currentLineYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
     	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
     	Drawer lineMaker = new Drawer();
-    	lineMaker.drawLine(currentXCoordinate, currentYCoordinate, newXCoordinate, newYCoordinate, layout);
+    	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord), layout);
     }
 
     /**
