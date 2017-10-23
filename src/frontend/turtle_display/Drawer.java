@@ -22,8 +22,9 @@ public class Drawer {
 	public void drawLine(double startX, double startY, double endX, double endY, Pane layout) {
 		if(isPenDown) {
 			Line lineToDraw = new Line(startX, startY, endX, endY);
-			lineToDraw.setFill(drawColor);
+			lineToDraw.setStroke(drawColor);
 			layout.getChildren().add(lineToDraw);
+			System.out.println(drawColor);
 		}
 	}
 }

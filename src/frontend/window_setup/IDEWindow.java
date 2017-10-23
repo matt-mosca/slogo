@@ -313,6 +313,7 @@ public class IDEWindow {
 	
 	private void changePenColor() {
 		turtleView.changeDrawColor(penColorPicker.getValue());
+		System.out.println(penColorPicker.getValue());
 	}
 	
 	private void enterCommand() {

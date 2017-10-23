@@ -3,6 +3,7 @@ package frontend.turtle_display;
 import apis.TurtleDisplay;
 import frontend.window_setup.IDEWindow;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class TurtleView implements TurtleDisplay{
 		turtleField = field;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
+		drawColor = Color.BLACK;
+		isPenDown = true;
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
