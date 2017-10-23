@@ -1,6 +1,6 @@
 package deprecated_commands;
 
-import backend.ScopedStorage;
+import backend.control.ScopedStorage;
 
 import java.lang.reflect.Method;
 

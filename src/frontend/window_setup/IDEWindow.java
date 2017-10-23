@@ -171,9 +171,10 @@ public class IDEWindow {
 		TurtleView field = new TurtleView(borderLayout, turtleField);
 		field.displayInitialTurtle();
 		//Testing
-		field.move(0, 20, 20);
-		field.move(0, -50, 50);
-		field.move(0, 80, -100);
+//		field.move(0, 20, 20);
+//		field.rotate(0, 45);
+//		field.move(0, -50, 50);
+//		field.move(0, 80, -100);
 	}
 	
 	private void makeButtons(Stage s) {
@@ -184,8 +185,8 @@ public class IDEWindow {
 		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
-		colorPickerMaker.makeGUIItem(e->changeBGColor(), topGroup, "BackGround Color");
-		colorPickerMaker.makeGUIItem(e->changePenColor(), topGroup, "Pen Color");
+		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
+		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
@@ -194,7 +195,7 @@ public class IDEWindow {
 	}
 	
 	private void changeBGColor() {
-		STANDARD_AREA_COLOR = backGroundColorPicker.getValue();
+		turtleField.setFill(backGroundColorPicker.getValue());
 	}
 	
 	private void changePenColor() {

@@ -1,13 +1,14 @@
 package backend;
 
-import backend.control_nodes.VariableDefinitionNode;
+import backend.control.ScopedStorage;
+import backend.control.VariableDefinitionNode;
+import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
-import backend.math_nodes.ConstantNode;
-import turtle_nodes.TurtleManager;
+import backend.math.ConstantNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -18,13 +19,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import backend.control_nodes.DoTimesNode;
-import backend.control_nodes.FunctionDefinitionNode;
-import backend.control_nodes.IfElseNode;
-import backend.control_nodes.IfNode;
-import backend.control_nodes.IterationNode;
-import backend.control_nodes.RepeatNode;
-import backend.control_nodes.VariableDefinitionNode;
+import backend.control.DoTimesNode;
+import backend.control.FunctionDefinitionNode;
+import backend.control.IfElseNode;
+import backend.control.IfNode;
+import backend.control.IterationNode;
+import backend.control.RepeatNode;
+import backend.control.VariableDefinitionNode;
 
 public class Parser {
 
@@ -36,13 +37,11 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
-	private TurtleManager turtleManager;
 	private ScopedStorage scopedStorage;
 
-	public Parser(TurtleManager turtleManager) {
+	public Parser() {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		this.turtleManager = turtleManager;
 		scopedStorage = new ScopedStorage();
 	}
 
