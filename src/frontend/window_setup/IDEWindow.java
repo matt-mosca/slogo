@@ -6,6 +6,8 @@ import apis.ButtonFactory;
 import apis.ColorPickerFactory;
 import apis.TextAreaFactory;
 import apis.TextFieldFactory;
+import backend.Parser;
+import backend.error_handling.SLogoException;
 import frontend.turtle_display.TurtleView;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -81,6 +83,7 @@ public class IDEWindow {
 	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
+	Parser errorParser = new Parser();
 	private Image turtlePic;
 	private int commandCount = 0;
 	private String errorMessage;
@@ -168,19 +171,22 @@ public class IDEWindow {
 	}
 	
 	private void enterCommand() {
-		Text history = new Text(commandTextArea.getText()+"\n");
-		System.out.println(commandTextArea.getText());
+		Text history = new Text();
+		String commandInput = commandTextArea.getText();
 		commandCount++;
-		if(!isError) {
-			console.add(history, 0, commandCount);
-			System.out.println(commandTextArea.getText());
+		try {
+			if(errorParser.validateCommand(commandInput))
+			{
+				errorParser.executeCommand(commandInput);
+			}
+			history.setText(commandInput);
 		}
-		else {
-			history.setText(errorMessage);
+		catch(SLogoException e) {
+			
+			history.setText(e.getMessage());
 			history.setFill(Color.RED);
-			console.add(history, 0, commandCount);
-			isError = false;
 		}
+		console.add(history, 0, commandCount);
 		commandTextArea.setText("");
 	}
 	
