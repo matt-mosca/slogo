@@ -85,7 +85,7 @@ public class IDEWindow {
 	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
-	Parser errorParser = new Parser();
+	Parser commandParser = new Parser();
 	private Image turtlePic;
 	private int commandCount = 0;
 	private String errorMessage;
@@ -180,9 +180,9 @@ public class IDEWindow {
 		String commandInput = commandTextArea.getText();
 		commandCount++;
 		try {
-			if(errorParser.validateCommand(commandInput))
+			if(commandParser.validateCommand(commandInput))
 			{
-				errorParser.executeCommand(commandInput);
+				commandParser.executeCommand(commandInput);
 			}
 			history.setText(commandInput);
 		}

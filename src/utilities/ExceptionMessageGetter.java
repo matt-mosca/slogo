@@ -15,7 +15,7 @@ import java.util.Properties;
  */
 public final class ExceptionMessageGetter {
 
-    private static final String PROPERTIES_FILE = "Exceptions.properties";
+    private static final String PROPERTIES_FILE = "resources/Exceptions.properties";
     private static final Properties PROPERTIES;
 
     /**
