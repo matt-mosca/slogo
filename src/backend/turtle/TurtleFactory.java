@@ -17,7 +17,7 @@ public class TurtleFactory {
         this.turtleView = turtleView;
         createdTurtles = new ArrayList<>();
         Turtle firstTurtle = new Turtle();
-        activeTurtleId = 1;
+        activeTurtleId = 0;
         createdTurtles.add(firstTurtle);
     }
 
@@ -66,14 +66,11 @@ public class TurtleFactory {
     		Turtle turtle = getTurtle(index);
     		turtle.moveForward(pixels);
     		// Update front end
+    		System.out.print("New x: " + turtle.getX() + "; New y: " + turtle.getY());
     		turtleView.move(index, turtle.getX(), turtle.getY());
     		return pixels;
     }
     
-	double moveBackward(int index, double pixels) {
-		return moveTurtleForward(index, -pixels);
-	}
-	
 	double moveCurrentTurtleForward(double pixels) {
 		return moveTurtleForward(activeTurtleId, pixels);
 	}

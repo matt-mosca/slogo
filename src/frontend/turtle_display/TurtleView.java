@@ -3,6 +3,8 @@ package frontend.turtle_display;
 import apis.TurtleDisplay;
 import frontend.window_setup.IDEWindow;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,8 @@ public class TurtleView implements TurtleDisplay{
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
+	private Paint drawColor;
+	private boolean isPenDown;
 	
 	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
@@ -20,6 +24,8 @@ public class TurtleView implements TurtleDisplay{
 		turtleField = field;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
+		drawColor = Color.BLACK;
+		isPenDown = true;
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
@@ -46,8 +52,9 @@ public class TurtleView implements TurtleDisplay{
     	double currentLineXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
     	double currentLineYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
     	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
-    	Drawer lineMaker = new Drawer();
-    	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord), layout);
+    	Drawer lineMaker = new Drawer(drawColor, isPenDown);
+    	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord),
+    			layout);
     }
 
     /**
@@ -70,8 +77,17 @@ public class TurtleView implements TurtleDisplay{
     	return newAddition;
     }
     
-    public void movePenUp() {
-    }
+	public void pickUpPen() {
+		isPenDown = false;
+	}
+	
+	public void putDownPen() {
+		isPenDown = true;
+	}
+	
+	public void changeDrawColor(Paint color) {
+		drawColor = color;
+	}
     
     /**
      * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
