@@ -5,6 +5,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math_nodes.ConstantNode;
+import turtle_nodes.TurtleManager;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -30,11 +31,13 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
+	private TurtleManager turtleManager;
 	private ScopedStorage scopedStorage;
 
-	public Parser() {
+	public Parser(TurtleManager turtleManager) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
+		this.turtleManager = turtleManager;
 		scopedStorage = new ScopedStorage();
 	}
 
@@ -109,7 +112,7 @@ public class Parser {
 		}
 		if (isNumeric(nextToken)) {
 			it.next();
-			System.out.print("Numeric, making ConstantNode");
+			System.out.println("Numeric, making ConstantNode");
 			return new ConstantNode(Double.parseDouble(nextToken));
 		}
 		System.out.println("Not numeric");
@@ -126,6 +129,7 @@ public class Parser {
 			System.out.println("Next parsing method: " + nextParsingMethod.getName());
 			return (SyntaxNode) nextParsingMethod.invoke(this, it);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException badCommand) {
+			badCommand.printStackTrace();
 			throw new UndefinedCommandException(nextToken);
 		}
 
@@ -209,33 +213,6 @@ public class Parser {
 		return new IterationNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
 	}
 
-	/*
-	 *
-	 * @param tokens
-	 * 
-	 * @param index
-	 * 
-	 * @return
-	 */
-
-	/*
-	 * private IterationNode makeForLoopNode(PeekingIterator<String> it) throws
-	 * IllegalArgumentException, ClassNotFoundException, NoSuchMethodException,
-	 * InstantiationException, InvocationTargetException, IllegalAccessException {
-	 * // todo - dont use assert, do something better if
-	 * (!tokens[index].equals("[")) { throw new IllegalArgumentException(); } String
-	 * indexVariableName = tokens[++index]; double start =
-	 * Double.parseDouble(tokens[++index]), end =
-	 * Double.parseDouble(tokens[++index]), increment =
-	 * Double.parseDouble(tokens[++index]); if (!(tokens[++index].equals("]") &&
-	 * tokens[++index].equals("["))) { throw new IllegalArgumentException(); }
-	 * functionsStore.setVariable(indexVariableName, start); Entry<String, Double>
-	 * indexVariable = functionsStore.getVariable(indexVariableName); SyntaxNode
-	 * subtree = makeExpTree(tokens, ++index); ControlCommand forCommand = new
-	 * IterationCommand(indexVariable, end, increment, subtree); return new
-	 * ControlNode(forCommand); }
-	 */
-
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it)
 			throws IllegalArgumentException, SLogoException {
@@ -243,7 +220,7 @@ public class Parser {
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
-		// Retrive just the root node corresponding to this command
+		// Retrieve just the root node corresponding to this command
 		// it advanced by one token
 		String commandName = it.peek();
 		ValueNode root = makeValueNode(it);

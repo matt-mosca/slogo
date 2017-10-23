@@ -9,7 +9,9 @@ public class ParserTesting {
 
 	
 	public static void main(String[] args) {
-		Parser parser = new Parser();
+		
+		// TEMP, for testing non turtle-commands
+		Parser parser = new Parser(null);
 		// Simulate call by the front end
 		TurtleListener.initializeSingleton(null);
 		Scanner in = new Scanner(System.in);
