@@ -45,8 +45,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class IDEWindow {
-	private static final Paint STANDARD_AREA_COLOR = Color.BLUE;
-	private static Paint penColor = Color.BLACK;
+	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double TURTLEFIELD_DEPTH = 0;
@@ -203,6 +202,8 @@ public class IDEWindow {
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
+		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
+		penColorPicker.setValue(Color.BLACK);
 		
 		chinese = menuItemMaker.makeMenuItem(e->{
 			try {
