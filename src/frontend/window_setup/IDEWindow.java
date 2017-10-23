@@ -1,12 +1,13 @@
 package frontend.window_setup;
 
 import java.io.File;
-import apis.ButtonFactory;
-import apis.ColorPickerFactory;
-import apis.TextAreaFactory;
-import apis.TextFieldFactory;
+
 import backend.Parser;
 import backend.error_handling.SLogoException;
+import frontend.factory.ButtonFactory;
+import frontend.factory.ColorPickerFactory;
+import frontend.factory.TextAreaFactory;
+import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleView;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
