@@ -1,7 +1,6 @@
 package frontend.window_setup;
 
 import java.io.File;
-
 import backend.Parser;
 import backend.error_handling.SLogoException;
 import frontend.factory.ButtonFactory;
@@ -52,13 +51,12 @@ public class IDEWindow {
 	public static final double BOTTOM_WIDTH = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
+	public static final int OFFSET = 8;
 	
 	private Stage primaryStage;
 	private Scene primaryScene;
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
-//	private Box turtleRegion;
-	private HBox turtleRegion;
 	private VBox leftBox;
 	private VBox rightBox;
 	private HBox topBox;
@@ -72,14 +70,11 @@ public class IDEWindow {
 	
 	private Stage helpStage = new Stage();
 
-
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
 	private GridPane console = new GridPane();
-	
-	public static final int OFFSET = 8;
 
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 	private static final String DATA_FILE_EXTENSION = "*.jpg";
@@ -101,12 +96,6 @@ public class IDEWindow {
 		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-//		turtleField = new Rectangle();
-//		turtleField.setFill(STANDARD_AREA_COLOR);
-//		turtleRegion = new Box(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, TURTLEFIELD_DEPTH);
-		turtleRegion = new HBox();
-		turtleRegion.setPrefSize(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT);
-		turtleRegion.setStyle("-fx-background-color: white;"); //do not use arbitrary white here, make constant
 		
 		leftBox = new VBox();
 		leftBox.setPadding(new Insets(OFFSET));
@@ -152,9 +141,11 @@ public class IDEWindow {
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		makeButtons(primaryStage);
-		
+		setBorderArrangement();
+	}
+
+	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
-//		borderLayout.setCenter(turtleRegion);
 		borderLayout.setLeft(leftBox);
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
@@ -207,8 +198,7 @@ public class IDEWindow {
 		String commandInput = commandTextArea.getText();
 		commandCount++;
 		try {
-			if(commandParser.validateCommand(commandInput))
-			{
+			if(commandParser.validateCommand(commandInput)){
 				commandParser.executeCommand(commandInput);
 			}
 			history.setText(commandCount+". "+commandInput);
