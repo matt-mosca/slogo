@@ -1,6 +1,6 @@
 package deprecated_commands;
 
-import backend.FunctionsStore;
+import backend.ScopedStorage;
 
 import java.lang.reflect.Method;
 
@@ -10,7 +10,8 @@ public class StoreCommand extends AbstractCommandOld {
         super(methodToInvoke);
     }
 
-    private double storeVariables(FunctionsStore functions, String[] names, double[] values) {
-        return functions.storeVariables(names, values);
+    private double storeVariables(ScopedStorage functions, String[] names, double[] values) {
+        //return functions.storeVariables(names, values);
+        return 0;
     }
 }

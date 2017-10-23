@@ -2,6 +2,9 @@ package backend.logic_nodes;
 
 import backend.VarArgNode;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class AndNode extends VarArgNode {
 
     @Override

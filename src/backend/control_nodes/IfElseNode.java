@@ -1,7 +1,11 @@
 package backend.control_nodes;
 
 import backend.SyntaxNode;
+import backend.error_handling.SLogoException;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class IfElseNode extends IfNode {
 
     private SyntaxNode falseBranch;
@@ -12,7 +16,7 @@ public class IfElseNode extends IfNode {
     }
 
     @Override
-    public double execute() {
+    public double execute() throws SLogoException {
         if (isTrue()) {
             return executeTrueBranch();
         } else {

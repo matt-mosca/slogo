@@ -1,10 +1,21 @@
 package backend.logic_nodes;
 
-import backend.TwoArgNode;
+import backend.VarArgNode;
 
-public class NotEqualNode extends TwoArgNode {
+/**
+ * @author Ben Schwennesen
+ */
+public class NotEqualNode extends VarArgNode {
 
     @Override
-    public double executeSelf(double... operands) { return operands[0] != operands[1] ? 1 : 0; }
+    public double executeSelf(double... operands) {
+        double firstOperand = operands[0];
+        for (double operand : operands) {
+            if (operand != firstOperand) {
+                return 1;
+            }
+        }
+        return 0;
+    }
     
 }
