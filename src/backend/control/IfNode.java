@@ -6,7 +6,7 @@ import backend.error_handling.SLogoException;
 /**
  * @author Ben Schwennesen
  */
-public class IfNode extends DataAccessingNode  {
+public class IfNode extends ControlNode {
 
     private SyntaxNode conditionExpression;
 

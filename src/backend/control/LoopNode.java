@@ -6,7 +6,7 @@ import backend.error_handling.SLogoException;
 /**
  * @author Ben Schwennesen
  */
-public class LoopNode extends DataAccessingNode {
+public class LoopNode extends ControlNode {
 
     private String iterationVariable;
     private SyntaxNode startExpression, endExpression, incrementExpression, subtree;
