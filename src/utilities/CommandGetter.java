@@ -14,15 +14,15 @@ import java.util.Set;
 
 public class CommandGetter {
 
-	private final String COMMAND_INFO_FILE = "CommandNodes.properties";
-	private final String LANGUAGES_PROPERTIES_FOLDER = "languages/";
+	private final String COMMAND_INFO_FILE = "resources/CommandNodes.properties";
+	private final String LANGUAGES_PROPERTIES_FOLDER = "resources/languages/";
 	private final String PROPERTIES_SUFFIX = ".properties";
 	public static final String DEFAULT_LANGUAGE = "English";
 	private final Properties COMMAND_PROPERTIES;
 	private Properties languageProperties;
 	private Map<String, String> commandMap = new HashMap<>();
 
-	private final String COMMAND_PARSING_FILE = "CommandParsing.properties";
+	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
 	private final Class PARSER_CLASS = Parser.class;
 	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {PeekingIterator.class};
 	private final Properties COMMAND_PARSING_PROPERTIES;
