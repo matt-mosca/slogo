@@ -18,7 +18,7 @@ public class VariableDefinitionNode extends DataAccessingNode {
         VARIABLE_NAME = name;
         // store the variable so that the parser knows it's been defined (but not yet set until execution)
         if (!getStore().existsVariable(VARIABLE_NAME)) {
-            getStore().setVariable(VARIABLE_NAME, null);
+            getStore().setVariable(VARIABLE_NAME, 0.0);
         }
     }
 
@@ -26,5 +26,4 @@ public class VariableDefinitionNode extends DataAccessingNode {
     public double execute() throws SLogoException {
         return getStore().setVariable(VARIABLE_NAME, expression.execute());
     }
-
 }
