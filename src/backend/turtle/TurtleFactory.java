@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TurtleFactory {
-
+	
     private TurtleView turtleView;
 
     private List<Turtle> createdTurtles;
@@ -60,6 +60,25 @@ public class TurtleFactory {
     void setActiveTurtle(int id) {
         activeTurtleId = id;
     }
+    
+    double moveTurtleForward(int index, double pixels) {
+    		System.out.println("Moving turtle " + index + " by " + pixels);
+    		Turtle turtle = getTurtle(index);
+    		turtle.moveForward(pixels);
+    		// Update front end
+    		turtleView.move(index, turtle.getX(), turtle.getY());
+    		return pixels;
+    }
+    
+	double moveBackward(int index, double pixels) {
+		return moveTurtleForward(index, -pixels);
+	}
+	
+	double moveCurrentTurtleForward(double pixels) {
+		return moveTurtleForward(activeTurtleId, pixels);
+	}
+	
 
+    
     // ASKWITH [ condition ] -- handled in turtle nodes
 }

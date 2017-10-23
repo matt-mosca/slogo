@@ -45,7 +45,8 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class IDEWindow {
-	private static Paint STANDARD_AREA_COLOR = Color.BLUE;
+	private static final Paint STANDARD_AREA_COLOR = Color.BLUE;
+	private static Paint penColor = Color.BLACK;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double TURTLEFIELD_DEPTH = 0;
@@ -89,7 +90,6 @@ public class IDEWindow {
 	MenuItem portuguese = new MenuItem();
 	MenuItem russian = new MenuItem();
 	MenuItem spanish = new MenuItem();
-	
 
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 	private static final String DATA_FILE_EXTENSION = "*.jpg";

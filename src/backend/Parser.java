@@ -11,6 +11,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
+import backend.turtle.ForwardNode;
 import backend.turtle.TurtleFactory;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
@@ -253,6 +254,14 @@ public class Parser {
 		// Consume ')' token
 		it.next();
 		return root;
+	}
+	
+	private ForwardNode makeForwardNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.print("Making ForwardNode");
+		// Consume the FORWARD token
+		it.next();
+		SyntaxNode expTree = makeExpTree(it);
+		return new ForwardNode(turtleManager, expTree);
 	}
 
 	private boolean isNumeric(String command) {
