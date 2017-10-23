@@ -5,12 +5,12 @@ import backend.SyntaxNode;
 /**
  * @author Ben Schwennesen
  */
-public class FunctionDefinitonNode extends DataAccessingNode {
+public class FunctionDefinitionNode extends DataAccessingNode {
 
     private SyntaxNode functionRoot;
     private final String FUNCTION_NAME;
 
-    public FunctionDefinitonNode(ScopedStorage store, String functionName, SyntaxNode functionRoot) {
+    public FunctionDefinitionNode(ScopedStorage store, String functionName, SyntaxNode functionRoot) {
         super(store);
         FUNCTION_NAME = functionName;
         this.functionRoot = functionRoot;

@@ -41,7 +41,6 @@ public class Parser {
 	public Parser(TurtleFactory turtleManager) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		this.turtleManager = turtleManager;
 		scopedStorage = new ScopedStorage();
 	}
 
@@ -202,6 +201,34 @@ public class Parser {
 		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
 	}
 
+	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfNode");
+		// Consume the IF token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		return new IfNode(conditionExpression, trueBranch);
+	}
+	
+	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making an IfElseNode");
+		// Consume the IfELSE token
+		it.next();
+		SyntaxNode conditionExpression = makeExpTree(it);
+		SyntaxNode trueBranch = makeExpTree(it);
+		SyntaxNode elseBranch = makeExpTree(it);
+		return new IfElseNode(conditionExpression, trueBranch, elseBranch);
+	}
+	
+	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making a FunctionDefinitionNode");
+		// Consume the MAKEUSERINSTRUCTION token
+		it.next();
+		String funcName = it.next();
+		SyntaxNode funcRoot = makeExpTree(it);
+		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
+	}
+	
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
