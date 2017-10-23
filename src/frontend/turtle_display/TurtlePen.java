@@ -52,4 +52,7 @@ public class TurtlePen {
 	public ImageView getImage() {
 		return turtleImage;
 	}
+	public void setImage(Image newTurtle) {
+		turtleImage = new ImageView(newTurtle);
+	}
 }

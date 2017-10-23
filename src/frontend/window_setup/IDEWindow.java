@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import backend.Parser;
 import backend.error_handling.SLogoException;
+import backend.turtle.TurtleFactory;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
+import frontend.turtle_display.Drawer;
+import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -67,18 +70,16 @@ public class IDEWindow {
 	private HBox topBox;
 	private HBox bottomBox;
 	private TextArea commandTextArea;
-	//private TextField bGColorTextField;
-	private TextField penColorTextField;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-	private boolean isError = false;
-	
+		
 	private Stage helpStage = new Stage();
-
+	
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
+	
 	private GridPane console = new GridPane();
 	
 	MenuItem chinese = new MenuItem();
@@ -97,13 +98,17 @@ public class IDEWindow {
 	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
-	Parser commandParser = new Parser(null);
+	private TurtleView turtleView = new TurtleView(borderLayout, turtleField);
+	TurtleFactory turtleFactory = new TurtleFactory(turtleView);
+	Parser commandParser = new Parser(turtleFactory);
 	private Image turtlePic;
 	private int commandCount = 0;
 	
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
+	private Drawer drawer = new Drawer();
+	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -125,11 +130,13 @@ public class IDEWindow {
 		topBox = new HBox();
 		topBox.setPadding(new Insets(OFFSET));
 		topBox.setSpacing(OFFSET);
+		topBox.setAlignment(Pos.BOTTOM_CENTER);
 		topBox.setPrefSize(TOP_WIDTH, TOP_HEIGHT);
 		
 		bottomBox = new HBox();
 		bottomBox.setPadding(new Insets(OFFSET));
 		bottomBox.setSpacing(OFFSET);
+		bottomBox.setAlignment(Pos.TOP_CENTER);
 		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		//console.setAlignment(Pos.CENTER);
@@ -174,7 +181,7 @@ public class IDEWindow {
 	}
 	
 	private void setUpTurtleField() {
-		TurtleView field = new TurtleView(borderLayout, turtleField);
+		TurtleView field = new TurtleView(borderLayout,turtleField);
 		field.displayInitialTurtle();
 		//Testing
 //		field.move(0, 20, 20);
@@ -184,7 +191,7 @@ public class IDEWindow {
 	}
 	
 	private void makeButtons(Stage s) {
-		Text enterCommand = new Text("Enter Command");
+		Text enterCommand = new Text("Enter Command:");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
@@ -296,7 +303,7 @@ public class IDEWindow {
 	}
 	
 	private void changePenColor() {
-		penColor = penColorPicker.getValue();
+		drawer.changeDrawColor(penColorPicker.getValue());
 	}
 	
 	private void enterCommand() {
@@ -324,7 +331,8 @@ public class IDEWindow {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			turtlePic = new Image(fileLocation);  
+			 turtlePen.setImage(new Image(fileLocation));  
+			 turtleView.showTurtle(turtlePen);
 		}
 	}
 	/**
