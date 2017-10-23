@@ -53,7 +53,6 @@ public class IDEWindow {
 	private VBox rightBox;
 	private HBox topBox;
 	private HBox bottomBox;
-	private TextField commandTextField; //Need to make right panel
 	private TextArea commandTextArea;
 	private TextField bGColorTextField;
 	private TextField penColorTextField;
@@ -62,9 +61,8 @@ public class IDEWindow {
 	private boolean isError = false;
 	
 	private Stage helpStage = new Stage();
-	private static final int FRAMES_PER_SECOND = 2;
-	private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-	private Timeline animation = new Timeline();
+
+
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
@@ -84,7 +82,6 @@ public class IDEWindow {
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private Image turtlePic;
-	private int count = 0;
 	private int commandCount = 0;
 	private String errorMessage;
 	
@@ -115,14 +112,12 @@ public class IDEWindow {
 		//console.setVgap(2);
 		console.setPadding(new Insets(25, 25, 25, 25));
 		Text Console = new Text("Command History: ");
-		console.add(Console, 0, count);
+		console.add(Console, 0, commandCount);
 		rightGroup.getChildren().add(console);
 		
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		makeButtons(primaryStage);
-		
-		//primaryScene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
 		
 		borderLayout.setCenter(turtleField);
 		borderLayout.setLeft(leftBox);
@@ -148,15 +143,14 @@ public class IDEWindow {
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
 		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
-		commandTextArea = textAreaMaker.makeReturnableTextArea(e->storeCommand(), leftGroup, "Command");
+		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
-		
+		bGColorTextField = textFieldMaker.makeReturnableTextField(e->changeBGColor(), topGroup, "BackGround Color");
+		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");	
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
-		bGColorTextField = textFieldMaker.makeReturnableTextField(e->changeBGColor(), topGroup, "BackGround Color");
-		penColorTextField = textFieldMaker.makeReturnableTextField(e->changePenColor(), topGroup, "Pen Color");	
 	}
 	
 	private void changeBGColor() {
@@ -166,15 +160,15 @@ public class IDEWindow {
 	private void enterCommand() {
 		Text history = new Text(commandTextArea.getText()+"\n");
 		System.out.println(commandTextArea.getText());
-		count++;
+		commandCount++;
 		if(!isError) {
-			console.add(history, 0, count);
+			console.add(history, 0, commandCount);
 			System.out.println(commandTextArea.getText());
 		}
 		else {
 			history.setText(errorMessage);
 			history.setFill(Color.RED);
-			console.add(history, 0, count);
+			console.add(history, 0, commandCount);
 			isError = false;
 		}
 		commandTextArea.setText("");
@@ -182,31 +176,6 @@ public class IDEWindow {
 	
 	private void changePenColor() {
 		penColorTextField.getText();
-	}
-	
-	/*private void enterCount() {
-		Text history = new Text(commandTextArea.getText()+"\n");
-		count++;
-		if(!isError) {
-			console.add(history, 0, count);
-		}
-		else {
-			history.setFill(Color.RED);
-			console.add(history, 0, count);
-		}
-	}*/
-
-	private void storeCommand()
-	{
-		Text history = new Text(commandTextArea.getText()+"\n");
-		count++;
-		if(isError) {
-			console.add(history, 0, count);
-		}
-		else {
-			history.setFill(Color.RED);
-			console.add(history, 0, count);
-		}
 	}
 	
 	private void openFile(Stage s) {
@@ -224,21 +193,19 @@ public class IDEWindow {
 	 */
 	private FileChooser makeChooser(String extensionAccepted) {
 		FileChooser result = new FileChooser();
-		//result.setTitle(myResources.getString("open"));
 		result.setTitle("open");
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
 		result.getExtensionFilters().setAll(new ExtensionFilter("Text Files", extensionAccepted));
 		return result;
 	}
+
 	private void help() {
 		Text t = new Text();
 		t.setFont(new Font(20));
 		t.setWrappingWidth(200);
 		t.setTextAlignment(TextAlignment.JUSTIFY);
 		t.setText("Commands/help");
-		//TextFlow textFlow = new TextFlow();
-		//textFlow.getChildren().add(t);
-		//Group group = new Group(textFlow);
+
 		VBox vbox = new VBox();
 		vbox.getChildren().add(t);
 		Scene scene = new Scene(vbox, 500, 150, Color.WHITE);
@@ -246,13 +213,6 @@ public class IDEWindow {
 		helpStage.setScene(scene);
 		helpStage.show();
 	}
-	
-	 /*private void handleKeyInput (KeyCode code) {
-	    	//Move the top paddle to the right
-	        if (code == KeyCode.ENTER) {
-	           System.out.print("help");
-	        }
-	 }*/
 	
 	public void takeError(String error) {
 		isError = true;
