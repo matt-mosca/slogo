@@ -5,11 +5,11 @@ import backend.SyntaxNode;
 /**
  * @author Ben Schwennesen
  */
-public abstract class DataAccessingNode implements SyntaxNode {
+public abstract class ControlNode implements SyntaxNode {
 
     private ScopedStorage store;
 
-    public DataAccessingNode(ScopedStorage store) {
+    public ControlNode(ScopedStorage store) {
         this.store = store;
     }
 

@@ -6,7 +6,7 @@ import backend.error_handling.SLogoException;
 /**
  * @author Ben Schwennesen
  */
-public class VariableDefinitionNode extends DataAccessingNode {
+public class VariableDefinitionNode extends ControlNode {
 
     private SyntaxNode expression;
     private final String VARIABLE_NAME;
