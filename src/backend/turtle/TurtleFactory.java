@@ -62,6 +62,7 @@ public class TurtleFactory {
     }
     
     double moveTurtleForward(int index, double pixels) {
+    		System.out.println("Moving turtle " + index + " by " + pixels);
     		Turtle turtle = getTurtle(index);
     		turtle.moveForward(pixels);
     		// Update front end
@@ -72,6 +73,11 @@ public class TurtleFactory {
 	double moveBackward(int index, double pixels) {
 		return moveTurtleForward(index, -pixels);
 	}
+	
+	double moveCurrentTurtleForward(double pixels) {
+		return moveTurtleForward(activeTurtleId, pixels);
+	}
+	
 
     
     // ASKWITH [ condition ] -- handled in turtle nodes
