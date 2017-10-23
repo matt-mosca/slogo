@@ -43,35 +43,26 @@ public class Parser {
 		scopedStorage = new ScopedStorage();
 	}
 
-	public boolean validateCommand(String command) {
+	public boolean validateCommand(String command) throws SLogoException {
 		if (command == null) {
 			return false;
 		}
 		// Avoid repeated computation for just differing whitespace
 		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
-		try {
-			syntaxTrees.put(formattedCommand, constructSyntaxTree(
-					new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
-			System.out.println("Validated command!");
-			return true;
-		} catch (SLogoException badSyntaxException) {
-			badSyntaxException.getMessage();
-			return false;
-		}
+		syntaxTrees.put(formattedCommand,
+				constructSyntaxTree(new PeekingIterator<>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
+		System.out.println("Validated command!");
+		return true;
 	}
 
-	public void executeCommand(String command) {
-		try {
-			String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
-			if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
-				syntaxTrees.put(formattedCommand, constructSyntaxTree(
-						new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
-			}
-			SyntaxNode tree = syntaxTrees.get(formattedCommand);
-			tree.execute();
-		} catch (SLogoException slogoException) {
-			slogoException.getMessage();
+	public void executeCommand(String command) throws SLogoException {
+		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
+		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
+			syntaxTrees.put(formattedCommand, constructSyntaxTree(
+					new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
 		}
+		SyntaxNode tree = syntaxTrees.get(formattedCommand);
+		tree.execute();
 	}
 
 	// To support switching of language through front end
