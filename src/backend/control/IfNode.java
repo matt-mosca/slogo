@@ -15,6 +15,7 @@ public class IfNode extends DataAccessingNode  {
     public IfNode(ScopedStorage store, SyntaxNode conditionExpression, SyntaxNode trueBranch) {
         super(store);
         this.conditionExpression = conditionExpression;
+        this.trueBranch = trueBranch;
     }
 
     protected boolean isTrue() throws SLogoException{ return conditionExpression.execute() == 1; }
