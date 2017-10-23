@@ -11,6 +11,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
+import backend.turtle.BackwardNode;
 import backend.turtle.ForwardNode;
 import backend.turtle.TurtleFactory;
 import utilities.CommandGetter;
@@ -21,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import backend.control.DoTimesNode;
@@ -45,6 +47,7 @@ public class Parser {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
 		scopedStorage = new ScopedStorage();
+		this.turtleManager = turtleManager;
 	}
 
 	public boolean validateCommand(String command) throws SLogoException {
@@ -223,14 +226,21 @@ public class Parser {
 		return new IfElseNode(scopedStorage, conditionExpression, trueBranch, elseBranch);
 	}
 	
+	/*
 	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a FunctionDefinitionNode");
 		// Consume the MAKEUSERINSTRUCTION token
 		it.next();
 		String funcName = it.next();
+		
+		FunctionDefinitionNode(ScopedStorage store, String functionName,
+                SyntaxNode functionRoot, List<String> parameterNames)
+                
 		SyntaxNode funcRoot = makeExpTree(it);
-		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
+		return funcRoot;
+		//return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
 	}
+*/
 	
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
@@ -256,14 +266,25 @@ public class Parser {
 		return root;
 	}
 	
+	// TODO - Group TurtleNodes with similar signatures into a helper function
+	// and perhaps use reflection to dispatch right constructor
+	
 	private ForwardNode makeForwardNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.print("Making ForwardNode");
+		System.out.println("Making ForwardNode");
 		// Consume the FORWARD token
 		it.next();
 		SyntaxNode expTree = makeExpTree(it);
 		return new ForwardNode(turtleManager, expTree);
 	}
-
+	
+	private BackwardNode makeBackwardNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making BackwardNode");
+		// Consume the BACKWARD token
+		it.next();
+		SyntaxNode expTree = makeExpTree(it);
+		return new BackwardNode(turtleManager, expTree);
+	}
+	
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
