@@ -1,13 +1,14 @@
 package backend;
 
-import backend.control_nodes.VariableDefinitionNode;
+import backend.control.ScopedStorage;
+import backend.control.VariableDefinitionNode;
+import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
-import backend.math_nodes.ConstantNode;
-import turtle_nodes.TurtleManager;
+import backend.math.ConstantNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
