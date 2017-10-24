@@ -7,35 +7,24 @@ import javafx.scene.shape.Line;
 
 public class Drawer {
 	private Paint drawColor;
-	private boolean penDown;
+	private boolean isPenDown;
 	
 	public Drawer() { 
 		drawColor = Color.BLACK;
-		penDown = true;
+		isPenDown = true;
 	}
 	
 	public Drawer(Paint color, boolean down) {
 		drawColor = color;
-		penDown = down;
-	}
-	
-	public void pickUpPen() {
-		penDown = false;
-	}
-	
-	public void putDownPen() {
-		penDown = true;
-	}
-	
-	public void changeDrawColor(Paint color) {
-		drawColor = color;
+		isPenDown = down;
 	}
 	
 	public void drawLine(double startX, double startY, double endX, double endY, Pane layout) {
-		if(penDown) {
+		if(isPenDown) {
 			Line lineToDraw = new Line(startX, startY, endX, endY);
-			lineToDraw.setFill(drawColor);
+			lineToDraw.setStroke(drawColor);
 			layout.getChildren().add(lineToDraw);
+			System.out.println(drawColor);
 		}
 	}
 }
