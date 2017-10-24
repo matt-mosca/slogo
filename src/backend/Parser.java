@@ -202,32 +202,53 @@ public class Parser {
 		// Consume the REPEAT token
 		it.next();
 		SyntaxNode numberOfTimesToRepeat = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, exprToRepeat);
+		RootNode commandsRoot = new RootNode();
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, commandsListRoot);
 	}
 
 	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making DoTimesNode");
 		// Consume the DOTIMES token
 		it.next();
+		// Consume the '[' token
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(LIST_START_DELIMITER);
+		}
 		String varName = it.next();
 		SyntaxNode limitExp = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume ']' token
+		it.next();
+		RootNode commandsListRoot = getCommandsListRoot(it);
 		// Error will be resolved when limit arg type is changed to SyntaxNode in
 		// DoTimesNode constructor
-		return new DoTimesNode(scopedStorage, varName, limitExp, exprToRepeat);
+		return new DoTimesNode(scopedStorage, varName, limitExp, commandsListRoot);
 	}
 
 	private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ForLoopNode");
 		// Consume the FOR token
 		it.next();
+		// Consume the '[' token
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(LIST_START_DELIMITER);
+		}
 		String varName = it.next();
 		SyntaxNode startExp = makeExpTree(it);
 		SyntaxNode endExp = makeExpTree(it);
 		SyntaxNode incrExp = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume ']' token
+		it.next();
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, commandsListRoot);
 	}
 
 	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
@@ -235,8 +256,8 @@ public class Parser {
 		// Consume the IF token
 		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
-		SyntaxNode trueBranch = makeExpTree(it);
-		return new IfNode(scopedStorage, conditionExpression, trueBranch);
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new IfNode(scopedStorage, conditionExpression, commandsListRoot);
 	}
 
 	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
@@ -244,9 +265,9 @@ public class Parser {
 		// Consume the IfELSE token
 		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
-		SyntaxNode trueBranch = makeExpTree(it);
-		SyntaxNode elseBranch = makeExpTree(it);
-		return new IfElseNode(scopedStorage, conditionExpression, trueBranch, elseBranch);
+		RootNode trueCommandsListRoot = getCommandsListRoot(it);
+		RootNode falseCommandsListRoot = getCommandsListRoot(it);
+		return new IfElseNode(scopedStorage, conditionExpression, trueCommandsListRoot, falseCommandsListRoot);
 	}
 
 	// TODO - SPLIT INTO SMALLER HELPERS
@@ -274,22 +295,7 @@ public class Parser {
 		}
 		// Consume the ']' token
 		it.next();
-		RootNode funcRoot = new RootNode();
-		// Iterate through list of commands, and for each command, construct the
-		// sub-tree appropriately
-		// Consume the next '[' token
-		listStartToken = it.next();
-		if (!listStartToken.equals(LIST_START_DELIMITER)) {
-			throw new IllegalSyntaxException(LIST_START_DELIMITER);
-		}
-		while (it.hasNext() && !it.peek().equals(LIST_END_DELIMITER)) {
-			funcRoot.addChild(makeExpTree(it));
-		}
-		if (!it.hasNext()) {
-			throw new IllegalSyntaxException(LIST_END_DELIMITER);
-		}
-		// Consume the next ']' token
-		it.next();
+		RootNode funcRoot = getCommandsListRoot(it);
 		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot, variableNames);
 	}
 	
@@ -319,10 +325,9 @@ public class Parser {
 		it.next();
 		return root;
 	}
-
-	// TODO - Call this from the control node parsing methods
+	
 	// Called when expecting a list
-	private List<SyntaxNode> makeListOfSyntaxNodes(PeekingIterator<String> it) throws SLogoException {
+	private RootNode getCommandsListRoot(PeekingIterator<String> it) throws SLogoException {
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
@@ -330,16 +335,16 @@ public class Parser {
 		if (!listStartToken.equals(LIST_START_DELIMITER)) {
 			throw new IllegalSyntaxException(listStartToken);
 		}
-		List<SyntaxNode> listOfSyntaxNodes = new ArrayList<>();
+		RootNode commandsListRoot = new RootNode();
 		while (it.hasNext() && !it.peek().equals(LIST_END_DELIMITER)) {
-			listOfSyntaxNodes.add(makeExpTree(it));
+			commandsListRoot.addChild(makeExpTree(it));
 		}
 		if (!it.hasNext()) {
 			throw new IllegalSyntaxException(LIST_END_DELIMITER);
 		}
 		// Consume ']' token
 		it.next();
-		return listOfSyntaxNodes;
+		return commandsListRoot;
 	}
 
 	// TODO - Group TurtleNodes with similar signatures into a helper function
