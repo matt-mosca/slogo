@@ -5,18 +5,16 @@ import backend.error_handling.SLogoException;
 
 public class ForwardNode extends TurtleNode {
 
-	SyntaxNode expr;
-	
-	public ForwardNode(TurtleFactory turtleFactory, SyntaxNode expr) {
+	SyntaxNode pixelsExpr;
+
+	public ForwardNode(TurtleFactory turtleFactory, SyntaxNode pixelsExpr) {
 		super(turtleFactory);
-		this.expr = expr;
+		this.pixelsExpr = pixelsExpr;
 	}
 
 	@Override
 	public double execute() throws SLogoException {
-		double pixels = expr.execute();
-		return getTurtleFactory().moveCurrentTurtleForward(pixels);
+		return getTurtleFactory().moveCurrentTurtleForward(pixelsExpr.execute());
 	}
-	
-	
+
 }

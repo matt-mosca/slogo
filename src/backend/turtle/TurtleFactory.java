@@ -75,7 +75,26 @@ public class TurtleFactory {
 		return moveTurtleForward(activeTurtleId, pixels);
 	}
 	
-
+	double rotateTurtle(int index, boolean clockwise, double angleInDegrees) {
+		Turtle turtle = getTurtle(index);
+		turtle.rotate(clockwise, angleInDegrees);
+		System.out.println("New angle: " + turtle.getAngle());
+		turtleView.rotate(index, turtle.getAngle());
+		return angleInDegrees;
+	}
+	
+	double rotateCurrentTurtle(boolean clockwise, double angleInDegrees) {
+		return rotateTurtle(activeTurtleId, clockwise, angleInDegrees);
+	}
+	
+	double setHeading(int index, double angleInDegrees) {
+		Turtle turtle = getTurtle(index);
+		return turtle.setAngle(angleInDegrees);
+	}
+	
+	double setCurrentTurtleHeading(double angleInDegrees) {
+		return setHeading(activeTurtleId, angleInDegrees);
+	}
     
     // ASKWITH [ condition ] -- handled in turtle nodes
 }

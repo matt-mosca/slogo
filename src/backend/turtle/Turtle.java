@@ -3,18 +3,19 @@ package backend.turtle;
 public class Turtle {
 
 	public static final double STARTING_ANGLE = Math.PI / 2;
-	
+	public static final double ONE_REVOLUTION_DEGREES = 360;
+
 	private double xCoord;
 	private double yCoord;
 	private double angle;
-	
+
 	private boolean penUp;
 	private boolean showing;
 
 	public Turtle() {
 		angle = STARTING_ANGLE;
 	}
-	
+
 	double moveForward(double pixels) {
 		double currentAngleInRads = angle;
 		double yDelta = pixels * Math.sin(currentAngleInRads);
@@ -22,6 +23,19 @@ public class Turtle {
 		setX(getX() + xDelta);
 		setY(getY() + yDelta);
 		return pixels;
+	}
+
+	double rotate(boolean clockwise, double angleInDegrees) {
+		double angleInRad = Math.toRadians(angleInDegrees);
+		setAngle(clockwise ? angle - angleInRad : angle + angleInRad);
+		return angleInDegrees;
+	}
+	
+	double setAngle(double angleInDegrees) {
+		double newAngle = Math.toRadians(angleInDegrees);
+		double degreesMoved = (angleInDegrees - Math.toDegrees(angle)) % ONE_REVOLUTION_DEGREES;
+		angle = newAngle;
+		return degreesMoved;
 	}
 
 	void setPenUp(boolean penUp) {
@@ -54,17 +68,13 @@ public class Turtle {
 	boolean isShowing() {
 		return showing;
 	}
-	
+
 	private void setX(double newX) {
 		xCoord = newX;
 	}
 
 	private void setY(double newY) {
 		yCoord = newY;
-	}
-
-	private void setAngle(double rad) {
-		angle = rad;
 	}
 
 }

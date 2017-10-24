@@ -17,6 +17,9 @@ import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
 import backend.turtle.BackwardNode;
 import backend.turtle.ForwardNode;
+import backend.turtle.LeftNode;
+import backend.turtle.RightNode;
+import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
@@ -364,6 +367,30 @@ public class Parser {
 		it.next();
 		SyntaxNode expTree = makeExpTree(it);
 		return new BackwardNode(turtleManager, expTree);
+	}
+	
+	private RightNode makeRightNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making RightNode");
+		// Consume the RIGHT token
+		it.next();
+		SyntaxNode expTree = makeExpTree(it);
+		return new RightNode(turtleManager, expTree);
+	}
+	
+	private LeftNode makeLeftNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making LeftNode");
+		// Consume the LEFT token
+		it.next();
+		SyntaxNode expTree = makeExpTree(it);
+		return new LeftNode(turtleManager, expTree);
+	}
+	
+	private SetHeadingNode makeSetHeadingNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making SetHeadingNode");
+		// Consume the SETHEADING token
+		it.next();
+		SyntaxNode expTree = makeExpTree(it);
+		return new SetHeadingNode(turtleManager, expTree);
 	}
 
 	private boolean isNumeric(String command) {
