@@ -30,7 +30,7 @@ public class PeekingIterator<E> {
 	}
 	
 	public boolean hasNext() {
-		return it.hasNext();
+		return it.hasNext() || peekedElement != null;
 	}
 	
 }
