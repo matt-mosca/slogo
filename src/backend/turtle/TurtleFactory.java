@@ -79,6 +79,7 @@ public class TurtleFactory {
 		Turtle turtle = getTurtle(index);
 		turtle.rotate(clockwise, angleInDegrees);
 		System.out.println("New angle: " + turtle.getAngle());
+		// Update front end
 		turtleView.rotate(index, turtle.getAngle());
 		return angleInDegrees;
 	}
@@ -89,11 +90,25 @@ public class TurtleFactory {
 	
 	double setHeading(int index, double angleInDegrees) {
 		Turtle turtle = getTurtle(index);
-		return turtle.setAngle(angleInDegrees);
+		// Update front end
+		double angleRotated = turtle.setAngle(angleInDegrees);
+		turtleView.rotate(index, turtle.getAngle());
+		return angleRotated;
 	}
 	
 	double setCurrentTurtleHeading(double angleInDegrees) {
 		return setHeading(activeTurtleId, angleInDegrees);
+	}
+	
+	double setTowards(int index, double x, double y) {
+		Turtle turtle = getTurtle(index);
+		double angleRotated = turtle.setTowards(x, y);
+		turtleView.rotate(index, turtle.getAngle());
+		return angleRotated;
+	}
+	
+	double setTowardsCurrentTurtle(double x, double y) {
+		return setTowards(activeTurtleId, x, y);
 	}
     
     // ASKWITH [ condition ] -- handled in turtle nodes

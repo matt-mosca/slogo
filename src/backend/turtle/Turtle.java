@@ -26,16 +26,25 @@ public class Turtle {
 	}
 
 	double rotate(boolean clockwise, double angleInDegrees) {
-		double angleInRad = Math.toRadians(angleInDegrees);
-		setAngle(clockwise ? angle - angleInRad : angle + angleInRad);
+		double currentAngleInDegrees = Math.toDegrees(angle);
+		setAngle(clockwise ? currentAngleInDegrees - angleInDegrees : currentAngleInDegrees + angleInDegrees);
 		return angleInDegrees;
 	}
-	
+
 	double setAngle(double angleInDegrees) {
-		double newAngle = Math.toRadians(angleInDegrees);
-		double degreesMoved = (angleInDegrees - Math.toDegrees(angle)) % ONE_REVOLUTION_DEGREES;
-		angle = newAngle;
+		double angleInRad = Math.toRadians(angleInDegrees);
+		double degreesMoved = (angleInDegrees - Math.toDegrees(angle));
+		angle = angleInRad;
 		return degreesMoved;
+	}
+
+	double setTowards(double x, double y) {
+		double xDelta = x - getX();
+		double yDelta = y - getY();
+		double angleToFaceInRad = Math.atan2(yDelta, xDelta);
+		double angleToTurnInRad = angleToFaceInRad - angle;
+		// Angles measured anti-clockwise by default
+		return rotate(false, Math.toDegrees(angleToTurnInRad));
 	}
 
 	void setPenUp(boolean penUp) {

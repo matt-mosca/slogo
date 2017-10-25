@@ -55,6 +55,8 @@ public class TurtleView implements TurtleDisplay{
     	Drawer lineMaker = new Drawer(drawColor, isPenDown);
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord),
     			layout);
+    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
+    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
 
     /**
@@ -68,6 +70,7 @@ public class TurtleView implements TurtleDisplay{
     public void rotate(int turtleIndex, double newAngle) {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
     	displayedTurtles.get(turtleIndex).rotateTurtle(newAngle);
+    	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
     }
     
     public TurtlePen addTurtle() {
