@@ -12,8 +12,7 @@ public class Drawer {
 	
 	public Drawer() { 
 		drawColor = Color.BLACK;
-		// todo - prob make this not a magic number (temp)
-		strokeWidth = 1.0;
+		strokeWidth = 10.0;
 		isPenDown = true;
 	}
 	
@@ -29,8 +28,9 @@ public class Drawer {
 	public void drawLine(double startX, double startY, double endX, double endY, Pane layout) {
 		if(isPenDown) {
 			Line lineToDraw = new Line(startX, startY, endX, endY);
+			//lineToDraw.setStrokeWidth(strokeWidth);
+			//TODO - line above doesn't work, no idea why
 			lineToDraw.setStroke(drawColor);
-			lineToDraw.setStrokeWidth(strokeWidth);
 			layout.getChildren().add(lineToDraw);
 			System.out.println(drawColor);
 		}
