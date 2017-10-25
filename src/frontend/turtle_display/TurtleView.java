@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TurtleView implements TurtleDisplay{
+
+	private double DEFAULT_STROKE_WIDTH = 1.0;
+
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
 	private Paint drawColor;
+	private double strokeWidth;
 	private boolean isPenDown;
 	
 	public TurtleView(Pane border, Rectangle field) {
@@ -25,6 +29,7 @@ public class TurtleView implements TurtleDisplay{
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
 		drawColor = Color.BLACK;
+		strokeWidth = DEFAULT_STROKE_WIDTH;
 		isPenDown = true;
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
@@ -68,7 +73,7 @@ public class TurtleView implements TurtleDisplay{
     	double currentLineXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
     	double currentLineYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
     	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
-    	Drawer lineMaker = new Drawer(drawColor, isPenDown);
+    	Drawer lineMaker = new Drawer(drawColor, strokeWidth, isPenDown);
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord),
     			layout);
     	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
@@ -109,6 +114,8 @@ public class TurtleView implements TurtleDisplay{
 	public void changeDrawColor(Paint color) {
 		drawColor = color;
 	}
+
+	public void changeStrokeWidth(double width) { strokeWidth = width; }
     
     /**
      * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
