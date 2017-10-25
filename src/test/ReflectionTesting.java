@@ -1,6 +1,5 @@
 package test;
 
-import deprecated_commands.AbstractCommand;
 import utilities.CommandGetter;
 
 import java.lang.reflect.Method;
