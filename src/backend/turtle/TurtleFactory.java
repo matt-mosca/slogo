@@ -168,6 +168,46 @@ public class TurtleFactory {
 		return goHome(activeTurtleId);
 	}
 	
+	double xCor(int index) {
+		return getTurtle(index).getX();
+	}
+	
+	double currentTurtleXCor() {
+		return xCor(activeTurtleId);
+	}
+	
+	double yCor(int index) {
+		return getTurtle(index).getY();
+	}
+	
+	double currentTurtleYCor() {
+		return yCor(activeTurtleId);
+	}
+	
+	double heading(int index) {
+		return getTurtle(index).getAngle();
+	}
+	
+	double currentTurtleHeading() {
+		return heading(activeTurtleId);
+	}
+	
+	double isPenDown(int index) {
+		return getTurtle(index).isPenUp() ? 0 : 1;
+	}
+	
+	double isCurrentTurtlePenDown() {
+		return isPenDown(activeTurtleId);
+	}
+	
+	double isShowing(int index) {
+		return getTurtle(index).isShowing() ? 1 : 0;
+	}
+	
+	double isCurrentTurtleShowing() {
+		return isShowing(activeTurtleId);
+	}
+	
 	private double toggleTurtleShow(int index, boolean showing) {
 		Turtle turtle = getTurtle(index);
 		turtle.setShowing(showing);

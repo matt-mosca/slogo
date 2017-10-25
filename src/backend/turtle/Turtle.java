@@ -14,6 +14,7 @@ public class Turtle {
 
 	public Turtle() {
 		angle = STARTING_ANGLE;
+		showing = true;
 	}
 
 	double moveForward(double pixels) {
