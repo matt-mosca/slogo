@@ -23,6 +23,7 @@ import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
+import backend.view_manipulation.ViewNode;
 import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
@@ -169,7 +170,12 @@ public class Parser {
 			if (isTurtleNode(commandClass)) {
 				constructor = commandClass.getConstructor(TurtleFactory.class);
 				constructorArgs = new Object[] {turtleManager};
-			} else {
+			}
+			// Note - I added this so I can test the commands (Ben), free to change as you see fit
+			else if (isViewNode(commandClass)) {
+				constructor = commandClass.getConstructor(ViewController.class);
+				constructorArgs = new Object[] {viewController};
+			}  else {
 				constructor = commandClass.getConstructor(null);
 				constructorArgs = null;
 			}
@@ -375,4 +381,5 @@ public class Parser {
 		return TurtleNode.class.isAssignableFrom(nodeClass);
 	}
 
+	private boolean isViewNode(Class nodeClass) { return ViewNode.class.isAssignableFrom(nodeClass); }
 }
