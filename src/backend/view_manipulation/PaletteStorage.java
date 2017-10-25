@@ -2,9 +2,6 @@ package backend.view_manipulation;
 
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedColorException;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;

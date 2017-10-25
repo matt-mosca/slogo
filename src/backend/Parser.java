@@ -1,29 +1,25 @@
 package backend;
 
+import backend.control.DoTimesNode;
 import backend.control.FunctionDefinitionNode;
 import backend.control.FunctionNode;
 import backend.control.IfElseNode;
 import backend.control.IfNode;
+import backend.control.LoopNode;
+import backend.control.RepeatNode;
 import backend.control.ScopedStorage;
 import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
-import backend.error_handling.BadNumberOfArgumentsException;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
-import backend.error_handling.SyntaxCausedException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
-import backend.turtle.BackwardNode;
-import backend.turtle.ForwardNode;
-import backend.turtle.LeftNode;
-import backend.turtle.RightNode;
-import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
-import sun.reflect.generics.scope.Scope;
+import backend.view_manipulation.ViewNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -36,11 +32,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import backend.control.DoTimesNode;
-import backend.control.LoopNode;
-import backend.control.RepeatNode;
-import backend.control.VariableDefinitionNode;
 
 public class Parser {
 
@@ -169,7 +160,12 @@ public class Parser {
 			if (isTurtleNode(commandClass)) {
 				constructor = commandClass.getConstructor(TurtleFactory.class);
 				constructorArgs = new Object[] {turtleManager};
-			} else {
+			}
+			// Note - I added this so I can test the commands (Ben), free to change as you see fit
+			else if (isViewNode(commandClass)) {
+				constructor = commandClass.getConstructor(ViewController.class);
+				constructorArgs = new Object[] {viewController};
+			}  else {
 				constructor = commandClass.getConstructor(null);
 				constructorArgs = null;
 			}
@@ -375,4 +371,5 @@ public class Parser {
 		return TurtleNode.class.isAssignableFrom(nodeClass);
 	}
 
+	private boolean isViewNode(Class nodeClass) { return ViewNode.class.isAssignableFrom(nodeClass); }
 }

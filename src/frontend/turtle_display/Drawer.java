@@ -4,7 +4,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.LineBuilder;
 
 public class Drawer {
 

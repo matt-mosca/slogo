@@ -1,18 +1,8 @@
 package frontend.window_setup;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-
 import backend.Controller;
-import backend.Parser;
 import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
-import backend.turtle.TurtleFactory;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
@@ -21,7 +11,6 @@ import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.Drawer;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -32,9 +21,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -42,15 +29,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 public class IDEWindow implements Observer {
 	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;

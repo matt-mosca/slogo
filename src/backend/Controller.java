@@ -3,12 +3,11 @@ package backend;
 import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
 import backend.turtle.TurtleFactory;
+import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import backend.view_manipulation.PaletteStorage;
 
 import java.util.List;
 import java.util.Map;
