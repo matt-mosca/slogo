@@ -24,4 +24,12 @@ public interface TurtleDisplay {
      * @param angle - the direction the turtle's image should point toward
      */
     void rotate(int turtleIndex, double angle);
+    
+    void pickUpPen();
+    
+    void putDownPen();
+    
+    void showTurtle(int index);
+    
+    void hideTurtle(int index);
 }

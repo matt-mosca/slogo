@@ -46,6 +46,12 @@ public class Turtle {
 		// Angles measured anti-clockwise by default
 		return rotate(false, Math.toDegrees(angleToTurnInRad));
 	}
+	
+	double setXY(double x, double y) {
+		setX(x);
+		setY(y);
+		return Math.sqrt(x * x + y * y);
+	}
 
 	void setPenUp(boolean penUp) {
 		this.penUp = penUp;
@@ -78,10 +84,12 @@ public class Turtle {
 		return showing;
 	}
 
+	// TODO - handle going off-screen
 	private void setX(double newX) {
 		xCoord = newX;
 	}
 
+	// TODO - handle going off-screen
 	private void setY(double newY) {
 		yCoord = newY;
 	}

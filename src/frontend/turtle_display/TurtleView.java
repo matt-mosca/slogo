@@ -35,9 +35,25 @@ public class TurtleView implements TurtleDisplay{
 		showTurtle(displayedTurtles.get(0));
 	}
 	
+	// TODO - possible to make this package-friendly instead of public?
+	// Perhaps by reorganizing front end packages?
 	public void showTurtle(TurtlePen turtle) {
-    	layout.getChildren().add(turtle.getImage());
+    		layout.getChildren().add(turtle.getImage());
     }
+	
+	@Override
+	public void showTurtle(int index) {
+		showTurtle(displayedTurtles.get(index));
+	}
+	
+	public void hideTurtle(TurtlePen turtle) {
+		layout.getChildren().remove(turtle.getImage());
+	}
+	
+	@Override
+	public void hideTurtle(int index) {
+		hideTurtle(displayedTurtles.get(index));
+	}
 	
 	/**
      * Move a turtle's image to a new location within the pane.
@@ -80,10 +96,12 @@ public class TurtleView implements TurtleDisplay{
     	return newAddition;
     }
     
+    @Override
 	public void pickUpPen() {
 		isPenDown = false;
 	}
 	
+    @Override
 	public void putDownPen() {
 		isPenDown = true;
 	}

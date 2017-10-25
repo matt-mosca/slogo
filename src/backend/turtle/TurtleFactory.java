@@ -110,6 +110,75 @@ public class TurtleFactory {
 	double setTowardsCurrentTurtle(double x, double y) {
 		return setTowards(activeTurtleId, x, y);
 	}
+	
+	double setXY(int index, double x, double y) {
+		Turtle turtle = getTurtle(index);
+		double distanceMoved = turtle.setXY(x, y);
+		turtleView.move(index, turtle.getX(), turtle.getY());
+		return distanceMoved;
+	}
+	
+	double setCurrentTurtleXY(double x, double y) {
+		return setXY(activeTurtleId, x, y);
+	}
     
+	double setPenDown(int index) {
+		Turtle turtle = getTurtle(index);
+		turtle.setPenUp(false);
+		turtleView.putDownPen();
+		return 1;
+	}
+	
+	double setCurrentTurtlePenDown() {
+		return setPenDown(activeTurtleId);
+	}
+	
+	double setPenUp(int index) {
+		Turtle turtle = getTurtle(index);
+		turtle.setPenUp(true);
+		turtleView.pickUpPen();
+		return 0;
+	}
+	
+	double setCurrentTurtlePenUp() {
+		return setPenUp(activeTurtleId);
+	}
+	
+	double showTurtle(int index) {
+		return toggleTurtleShow(index, true);
+	}
+	
+	double showCurrentTurtle() {
+		return showTurtle(activeTurtleId);
+	}
+	
+	double hideTurtle(int index) {
+		return toggleTurtleShow(index, false);
+	}
+	
+	double hideCurrentTurtle() {
+		return hideTurtle(activeTurtleId);
+	}
+	
+	double goHome(int index) {
+		return setXY(index, 0, 0);
+	}
+	
+	double goHomeCurrentTurtle() {
+		return goHome(activeTurtleId);
+	}
+	
+	private double toggleTurtleShow(int index, boolean showing) {
+		Turtle turtle = getTurtle(index);
+		turtle.setShowing(showing);
+		if (showing) {
+			turtleView.showTurtle(index);
+			return 1;
+		} else {
+			turtleView.hideTurtle(index);
+			return 0;
+		}
+	}
+	
     // ASKWITH [ condition ] -- handled in turtle nodes
 }
