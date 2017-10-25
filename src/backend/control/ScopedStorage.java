@@ -6,31 +6,26 @@ import backend.error_handling.UndefinedVariableException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Observable;
 import java.util.TreeMap;
 
 /**
  * @author Ben Schwennesen
  */
-public class ScopedStorage {
+public class ScopedStorage extends Observable {
 
-	Map<String, Map<String, Double>> functionVariables = new HashMap<>();
-	Map<String, List<String>> functionParameterNames = new HashMap<>();
-	Map<String, SyntaxNode> functionRoots = new HashMap<>();
-	Map<String, Set<String>> scopeMap = new HashMap<>();
+	private Map<String, Map<String, Double>> functionVariables = new HashMap<>();
+	private Map<String, List<String>> functionParameterNames = new HashMap<>();
+	private Map<String, SyntaxNode> functionRoots = new HashMap<>();
 
 	private Deque<String> scopeStack = new ArrayDeque<>();
 
 	private String currentScope;
-
 	private static final String GLOBAL = "global";
 
 	private final int STORAGE_SUCCESS = 1;
@@ -41,9 +36,6 @@ public class ScopedStorage {
 	public ScopedStorage() {
 		functionVariables.put(GLOBAL, new HashMap<>());
 		currentScope = GLOBAL;
-		Set<String> accessibleFromGlobal = new HashSet<>();
-		accessibleFromGlobal.add(GLOBAL);
-		scopeMap.put(GLOBAL, accessibleFromGlobal);
 	}
 
 	double addFunction(String functionName, SyntaxNode functionRoot) {
@@ -62,19 +54,21 @@ public class ScopedStorage {
 		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
 		functionVariableMap.put(name, value);
 		functionVariables.put(currentScope, functionVariableMap);
+		// point at which frontend should update available variables
+		setChanged();
+		notifyObservers();
+		System.out.println(countObservers());
 		return value;
 	}
 
 	void addFunctionParameterNames(String functionName, List<String> parameterNames) {
 		functionParameterNames.put(functionName, parameterNames);
+		// point at which frontend should display the available "user-defined command" (function)
+		setChanged();
+		notifyObservers();
 	}
 
 	void enterScope(String newScope) {
-		Set<String> scopes = scopeMap.getOrDefault(newScope, new HashSet<String>());
-		scopes.add(GLOBAL);
-		scopes.add(newScope);
-		scopes.addAll(scopeMap.getOrDefault(currentScope, new HashSet<>()));
-		scopeMap.put(newScope, scopes);
 		scopeStack.addLast(currentScope);
 		currentScope = newScope;
 	}
@@ -114,15 +108,21 @@ public class ScopedStorage {
 
 	public Map<String, Double> getAllAvailableVariables() {
 		Map<String, Double> availableVariables = new TreeMap<>();
-		Set<String> currentFunctionScopes = scopeMap.getOrDefault(currentScope, new HashSet<>());
-		for (String currentFunctionScopeMember : currentFunctionScopes) {
-			availableVariables.putAll(functionVariables.getOrDefault(currentFunctionScopeMember, new HashMap<>()));
+		availableVariables.putAll(functionVariables.get(GLOBAL));
+		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
+		while (innerToOuterScope.hasNext()) {
+			availableVariables.putAll(functionVariables.get(innerToOuterScope.next()));
 		}
 		return availableVariables;
 	}
 
+	// return function name and parameter name list
+	public Map<String, List<String>> getDefinedFunctions() {
+		return functionParameterNames;
+	}
+
 	List<String> getCurrentFunctionParameterNames() {
-		return functionParameterNames.getOrDefault(currentScope, new ArrayList<>());
+		return functionParameterNames.get(currentScope);
 	}
 
 	SyntaxNode getCurrentFunctionRoot() throws UndefinedFunctionException {
@@ -154,9 +154,7 @@ public class ScopedStorage {
 	}
 
 	private boolean variableExistsInCurrentScope(String variableName) {
-		if (!functionVariables.containsKey(currentScope)) { // No variables set in this scope yet
-			return false;
-		}
-		return functionVariables.get(currentScope).containsKey(variableName);
+		return functionVariables.containsKey(currentScope) &&
+				functionVariables.get(currentScope).containsKey(variableName);
 	}
 }
