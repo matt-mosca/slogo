@@ -22,6 +22,7 @@ import backend.turtle.RightNode;
 import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
+import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -58,10 +59,10 @@ public class Parser {
 	private TurtleFactory turtleManager;
 	private ScopedStorage scopedStorage;
 
-	public Parser(TurtleFactory turtleManager) {
+	public Parser(TurtleFactory turtleManager, ScopedStorage storage) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		scopedStorage = new ScopedStorage();
+		scopedStorage = storage;
 		this.turtleManager = turtleManager;
 	}
 
