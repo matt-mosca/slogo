@@ -73,8 +73,8 @@ public class Turtle {
 		return yCoord;
 	}
 
-	double getAngle() {
-		return angle;
+	double getAngleInDegrees() {
+		return Math.toDegrees(getAngle());
 	}
 
 	boolean isPenUp() {
@@ -85,6 +85,10 @@ public class Turtle {
 		return showing;
 	}
 
+	private double getAngle() {
+		return angle;
+	}
+	
 	// TODO - handle going off-screen
 	private void setX(double newX) {
 		xCoord = newX;
