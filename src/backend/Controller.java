@@ -3,26 +3,31 @@ package backend;
 import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
 import backend.turtle.TurtleFactory;
+import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import utilities.PaletteStorage;
+import backend.view_manipulation.PaletteStorage;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class Controller {
 
     private Parser parser;
-    private TurtleFactory turtleFactory;
     private ScopedStorage scopedStorage;
     private PaletteStorage paletteStorage;
 
     public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
-        this.turtleFactory = new TurtleFactory(turtleView);
         this.scopedStorage = scopedStorage;
-        this.parser = new Parser(turtleFactory, scopedStorage);
         this.paletteStorage = new PaletteStorage();
+        TurtleFactory turtleFactory = new TurtleFactory(turtleView);
+        ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField);
+        this.parser = new Parser(turtleFactory, scopedStorage, viewController);
     }
 
     public void setLanguage(String language) throws SLogoException {
@@ -43,5 +48,9 @@ public class Controller {
 
     public Map<String, List<String>> retrieveDefinedFunctions () {
         return scopedStorage.getDefinedFunctions();
+    }
+
+    public Map<Double, Color> retrieveAvailableColors() {
+        return paletteStorage.getAvailableColors();
     }
 }

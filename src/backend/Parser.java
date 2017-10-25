@@ -22,6 +22,7 @@ import backend.turtle.RightNode;
 import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
+import backend.view_manipulation.ViewController;
 import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
@@ -58,12 +59,14 @@ public class Parser {
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
 	private TurtleFactory turtleManager;
 	private ScopedStorage scopedStorage;
+	private ViewController viewController;
 
-	public Parser(TurtleFactory turtleManager, ScopedStorage storage) {
+	public Parser(TurtleFactory turtleManager, ScopedStorage storage, ViewController viewController) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
 		scopedStorage = storage;
 		this.turtleManager = turtleManager;
+		this.viewController = viewController;
 	}
 
 	public boolean validateCommand(String command) throws SLogoException {
