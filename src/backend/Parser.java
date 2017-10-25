@@ -21,10 +21,12 @@ import backend.turtle.LeftNode;
 import backend.turtle.RightNode;
 import backend.turtle.SetHeadingNode;
 import backend.turtle.TurtleFactory;
+import backend.turtle.TurtleNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -48,6 +50,8 @@ public class Parser {
 	public static final String VARIABLE_ARGS_END_DELIMITER = ")";
 	public static final String LIST_START_DELIMITER = "[";
 	public static final String LIST_END_DELIMITER = "]";
+	
+	public static final String TURTLE_PACKAGE = "backend.turtle";
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
@@ -156,7 +160,16 @@ public class Parser {
 		try {
 			Class commandClass = commandGetter.getCommandNodeClass(commandName);
 			System.out.println("Command class: " + commandClass.getName());
-			ValueNode valueNode = (ValueNode) commandClass.getConstructor(null).newInstance();
+			Constructor constructor;
+			Object[] constructorArgs;
+			if (isTurtleNode(commandClass)) {
+				constructor = commandClass.getConstructor(TurtleFactory.class);
+				constructorArgs = new Object[] {turtleManager};
+			} else {
+				constructor = commandClass.getConstructor(null);
+				constructorArgs = null;
+			}
+			ValueNode valueNode = (ValueNode) constructor.newInstance(constructorArgs);
 			int numChildren = valueNode.getDefaultNumberOfArguments();
 			System.out.println("No. of children: " + numChildren);
 			SyntaxNode nextChild;
@@ -350,51 +363,12 @@ public class Parser {
 		return commandsListRoot;
 	}
 
-	// TODO - Group TurtleNodes with similar signatures into a helper function
-	// and perhaps use reflection to dispatch right constructor
-
-	private ForwardNode makeForwardNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making ForwardNode");
-		// Consume the FORWARD token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new ForwardNode(turtleManager, expTree);
-	}
-
-	private BackwardNode makeBackwardNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making BackwardNode");
-		// Consume the BACKWARD token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new BackwardNode(turtleManager, expTree);
-	}
-	
-	private RightNode makeRightNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making RightNode");
-		// Consume the RIGHT token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new RightNode(turtleManager, expTree);
-	}
-	
-	private LeftNode makeLeftNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making LeftNode");
-		// Consume the LEFT token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new LeftNode(turtleManager, expTree);
-	}
-	
-	private SetHeadingNode makeSetHeadingNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making SetHeadingNode");
-		// Consume the SETHEADING token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new SetHeadingNode(turtleManager, expTree);
-	}
-
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
+	}
+	
+	private boolean isTurtleNode(Class nodeClass) {
+		return TurtleNode.class.isAssignableFrom(nodeClass);
 	}
 
 }

@@ -1,20 +1,22 @@
 package backend.turtle;
 
-import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 
 public class RightNode extends TurtleNode {
 
-	SyntaxNode angleExpr;
-	
-	public RightNode(TurtleFactory turtleFactory, SyntaxNode angleExpr) {
+	public RightNode(TurtleFactory turtleFactory) {
 		super(turtleFactory);
-		this.angleExpr = angleExpr;
 	}
 
 	@Override
-	public double execute() throws SLogoException {
-		return getTurtleFactory().rotateCurrentTurtle(true, angleExpr.execute());
+	public double executeSelf(double... arguments) throws SLogoException {
+		double angle = arguments[0];
+		return getTurtleFactory().rotateCurrentTurtle(true, angle);
+	}
+
+	@Override
+	public int getDefaultNumberOfArguments() {
+		return 1;
 	}
 
 }

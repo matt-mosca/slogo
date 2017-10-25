@@ -1,20 +1,23 @@
 package backend.turtle;
 
-import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 
 public class ForwardNode extends TurtleNode {
 
-	SyntaxNode pixelsExpr;
-
-	public ForwardNode(TurtleFactory turtleFactory, SyntaxNode pixelsExpr) {
+	public ForwardNode(TurtleFactory turtleFactory) {
 		super(turtleFactory);
-		this.pixelsExpr = pixelsExpr;
+	}
+
+
+	@Override
+	public double executeSelf(double... arguments) throws SLogoException {
+		double pixels = arguments[0];
+		return getTurtleFactory().moveCurrentTurtleForward(pixels);
 	}
 
 	@Override
-	public double execute() throws SLogoException {
-		return getTurtleFactory().moveCurrentTurtleForward(pixelsExpr.execute());
+	public int getDefaultNumberOfArguments() {
+		return 1;
 	}
 
 }
