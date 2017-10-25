@@ -10,14 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class PaletteStore {
+public class Palette {
 
     private final Properties DEFAULT_PALETTE_PROPERTIES;
     private final String PALETTE_DEFAULTS_FILE = "resources/DefaultPalette.properties";
 
     private Map<Integer, Color> colorMap = new HashMap<>();
 
-    public PaletteStore() throws SLogoException {
+    private Color currentColor; 
+
+    public Palette() throws SLogoException {
         DEFAULT_PALETTE_PROPERTIES = new Properties();
         try {
             InputStream paletteStream = getClass().getClassLoader().getResourceAsStream(PALETTE_DEFAULTS_FILE);
