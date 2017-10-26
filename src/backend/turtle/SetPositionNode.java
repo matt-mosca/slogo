@@ -12,7 +12,7 @@ public class SetPositionNode extends TurtleNode {
 	public double executeSelf(double... arguments) throws SLogoException {
 		double x = arguments[0];
 		double y = arguments[1];
-		return getTurtleFactory().setCurrentTurtleXY(x, y);
+		return getTurtleFactory().setCurrentTurtlesXY(x, y);
 	}
 
 	@Override

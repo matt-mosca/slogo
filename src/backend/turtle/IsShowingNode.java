@@ -10,7 +10,7 @@ public class IsShowingNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().isCurrentTurtleShowing();
+		return getTurtleFactory().isCurrentTurtlesShowing();
 	}
 
 	@Override

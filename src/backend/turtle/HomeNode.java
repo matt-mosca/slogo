@@ -10,7 +10,7 @@ public class HomeNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().goHomeCurrentTurtle();
+		return getTurtleFactory().goHomeCurrentTurtles();
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class ForwardNode extends TurtleNode {
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double pixels = arguments[0];
-		return getTurtleFactory().moveCurrentTurtleForward(pixels);
+		return getTurtleFactory().moveCurrentTurtlesForward(pixels);
 	}
 
 	@Override

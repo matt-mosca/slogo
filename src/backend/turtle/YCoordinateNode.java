@@ -11,7 +11,7 @@ public class YCoordinateNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().currentTurtleYCor();
+		return getTurtleFactory().currentTurtlesYCor();
 	}
 
 	@Override

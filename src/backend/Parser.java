@@ -16,6 +16,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
+import backend.turtle.TellNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
@@ -314,6 +315,18 @@ public class Parser {
 		it.next();
 		RootNode funcRoot = getCommandsListRoot(it);
 		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot, variableNames);
+	}
+	
+	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making TellNode");
+		// Consume the TELL token
+		it.next();
+		RootNode idsRoot = getCommandsListRoot(it);
+		TellNode tellNode = new TellNode(turtleManager);
+		for (SyntaxNode child : idsRoot.getChildren()) {
+			tellNode.addChild(child);
+		} 
+		return tellNode;
 	}
 	
 	// Only ValueNodes can have variable params

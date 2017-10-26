@@ -32,4 +32,8 @@ public abstract class ValueNode implements SyntaxNode {
 	public void addChild(SyntaxNode child) {
 		children.add(child);
 	}
+	
+	protected List<SyntaxNode> getChildren() {
+		return children;
+	}
 }

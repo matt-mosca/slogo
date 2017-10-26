@@ -10,7 +10,7 @@ public class XCoordinateNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().currentTurtleXCor();
+		return getTurtleFactory().currentTurtlesXCor();
 	}
 
 	@Override

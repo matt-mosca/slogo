@@ -10,7 +10,7 @@ public class PenDownNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().setCurrentTurtlePenDown();
+		return getTurtleFactory().setCurrentTurtlesPenDown();
 	}
 
 	@Override

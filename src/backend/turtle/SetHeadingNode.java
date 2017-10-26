@@ -11,7 +11,7 @@ public class SetHeadingNode extends TurtleNode {
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double angle = arguments[0];
-		return getTurtleFactory().setCurrentTurtleHeading(angle);
+		return getTurtleFactory().setCurrentTurtlesHeading(angle);
 	}
 
 	@Override

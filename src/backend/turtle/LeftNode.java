@@ -11,7 +11,7 @@ public class LeftNode extends TurtleNode {
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double angle = arguments[0];
-		return getTurtleFactory().rotateCurrentTurtle(false, angle);
+		return getTurtleFactory().rotateCurrentTurtles(false, angle);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class SetTowardsNode extends TurtleNode {
 	public double executeSelf(double... arguments) throws SLogoException {
 		double x = arguments[0];
 		double y = arguments[1];
-		return getTurtleFactory().setTowardsCurrentTurtle(x, y);
+		return getTurtleFactory().setTowardsCurrentTurtles(x, y);
 	}
 
 	@Override
