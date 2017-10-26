@@ -196,7 +196,8 @@ public class Parser {
 		}
 		// Resolve the expression into a tree
 		SyntaxNode expr = makeExpTree(it);
-		return new VariableDefinitionNode(scopedStorage, varName, expr);
+		// TODO - make multiple vars ( make :a 10 :b 9 ... ) work
+		return new VariableDefinitionNode(scopedStorage, new String[]{varName}, new SyntaxNode[]{expr});
 	}
 	
 	private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
