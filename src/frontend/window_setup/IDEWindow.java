@@ -1,10 +1,8 @@
 package frontend.window_setup;
 
-import java.io.File;
-import java.io.IOException;
-import backend.Parser;
+import backend.Controller;
+import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
-import backend.turtle.TurtleFactory;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
@@ -13,7 +11,6 @@ import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.Drawer;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -24,9 +21,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -34,17 +29,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
-public class IDEWindow {
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+
+public class IDEWindow implements Observer {
 	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
@@ -59,7 +58,10 @@ public class IDEWindow {
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
-	
+	private static final String VARIABLE_SEPARATOR = " = ";
+	public static final String VARIABLES_HEADER = "Variables: ";
+	public static final String NEW_LINE = "\n";
+
 	private Stage primaryStage;
 	private Scene primaryScene;
 	private BorderPane borderLayout;
@@ -98,8 +100,6 @@ public class IDEWindow {
 	TextFieldFactory textFieldMaker = new TextFieldFactory();
 	TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private TurtleView turtleView;
-	private TurtleFactory turtleFactory;
-	private Parser commandParser;
 	private Image turtlePic;
 	private int commandCount = 0;
 	
@@ -108,6 +108,9 @@ public class IDEWindow {
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Drawer drawer = new Drawer();
 	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
+
+	private Text variableDisplay;
+	private Controller controller;
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -145,7 +148,7 @@ public class IDEWindow {
 		Text consoleLabel = new Text("Command History: ");
 		console.add(consoleLabel, 0, commandCount);
 		
-		Text variableDisplay = new Text("Variables: ");
+		variableDisplay = new Text(VARIABLES_HEADER);
 		
 		ScrollPane consoleScrollable = new ScrollPane();
 		ScrollPane variableScrollable = new ScrollPane();
@@ -163,9 +166,12 @@ public class IDEWindow {
 		
 		makeButtons(primaryStage);
 		setBorderArrangement();
+
 		turtleView = new TurtleView(borderLayout, turtleField);
-		turtleFactory = new TurtleFactory(turtleView);
-		commandParser = new Parser(turtleFactory);
+
+		ScopedStorage scopedStorage = new ScopedStorage();
+		scopedStorage.addObserver(this);
+		controller = new Controller(scopedStorage, turtleView, turtleField);
 	}
 
 	private void setBorderArrangement() {
@@ -211,75 +217,35 @@ public class IDEWindow {
 		penColorPicker.setValue(Color.BLACK);
 		
 		chinese = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("Chinese");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "Chinese");
 		
 		english = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("English");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "English");
 		
 		french = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("French");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "French");
 		
 		german = menuItemMaker.makeMenuItem(e->{
-			try {
-				setMenuLanguage("German");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			setMenuLanguage("German");
 		}, "German");
 		
 		italian = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("Italian");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "Italian");
 		
 		portuguese = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("Portuguese");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "Portuguese");
 		
 		russian = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("Russian");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "Russian");
 		
 		spanish = menuItemMaker.makeMenuItem(e->{
-			try {
 				setMenuLanguage("Spanish");
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}, "Spanish");
 		
 		Menu languageMenu = new Menu("Language");
@@ -302,9 +268,15 @@ public class IDEWindow {
 		rightBox.getChildren().addAll(rightGroup.getChildren());
 	}
 	
-	private void setMenuLanguage(String language) throws IOException
-	{
-		commandParser.setLanguage(language);
+	private void setMenuLanguage(String language) {
+		try {
+			controller.setLanguage(language);
+		} catch (SLogoException badLanguage) {
+			Text errorMessage = new Text();
+			errorMessage.setText(commandCount+". "+badLanguage.getMessage());
+			errorMessage.setFill(Color.RED);
+			console.add(errorMessage, 0, ++commandCount);
+		}
 	}
 	
 	private void changeBGColor() {
@@ -321,8 +293,8 @@ public class IDEWindow {
 		String commandInput = commandTextArea.getText();
 		commandCount++;
 		try {
-			if(commandParser.validateCommand(commandInput)){
-				commandParser.executeCommand(commandInput);
+			if(controller.validateCommand(commandInput)){
+				controller.executeCommand(commandInput);
 			}
 			history.setText(commandCount+". "+commandInput);
 		}
@@ -380,5 +352,34 @@ public class IDEWindow {
 	public Pane getPane() {
 		return borderLayout;
 	}
-	
+
+	@Override
+	public void update(Observable o, Object arg) {
+		updateVariableDisplay();
+		updateFunctionsDisplay();
+
+	}
+
+	private void updateVariableDisplay() {
+		Map<String, Double> availableVariables = controller.retrieveAvailableVariables();
+		System.out.println(availableVariables);
+		StringBuilder variablesBuffer = new StringBuilder(VARIABLES_HEADER);
+		for (String variableName : availableVariables.keySet()) {
+			variablesBuffer.append(NEW_LINE + variableName
+					+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
+		}
+		variableDisplay.setText(variablesBuffer.toString());
+	}
+
+	// TODO - need to change to a separate variables display not just functions display;
+	private void updateFunctionsDisplay() {
+		Map<String, List<String>> availableVariables = controller.retrieveDefinedFunctions();
+		StringBuilder variablesBuffer = new StringBuilder();
+		for (String variableName : availableVariables.keySet()) {
+			variablesBuffer.append(NEW_LINE + variableName + availableVariables.get(variableName));
+		}
+		// TODO - change below
+		variableDisplay.setText(variableDisplay.getText() + variablesBuffer.toString());
+	}
+
 }

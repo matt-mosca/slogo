@@ -2,22 +2,21 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
-public class ForwardNode extends TurtleNode {
+public class PenDownNode extends TurtleNode {
 
-	public ForwardNode(TurtleFactory turtleFactory) {
+	public PenDownNode(TurtleFactory turtleFactory) {
 		super(turtleFactory);
 	}
 
-
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		double pixels = arguments[0];
-		return getTurtleFactory().moveCurrentTurtlesForward(pixels);
+		return getTurtleFactory().setCurrentTurtlesPenDown();
 	}
 
 	@Override
 	public int getDefaultNumberOfArguments() {
-		return 1;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

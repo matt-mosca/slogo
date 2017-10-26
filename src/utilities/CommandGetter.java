@@ -4,7 +4,6 @@ import backend.Parser;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;

@@ -2,6 +2,8 @@ package backend.math;
 
 import backend.VarArgNode;
 
+import java.util.Arrays;
+
 /**
  * @author Ben Schwennesen
  */
@@ -9,11 +11,7 @@ public class ProductNode extends VarArgNode {
 
     @Override
     public double executeSelf(double... operands) {
-        double product = 1.0;
-        for (double operand : operands) {
-            product *= operand;
-        }
-        return product;
+        return Arrays.stream(operands).reduce(1, (a,b) -> a*b);
     }
 
 }

@@ -23,6 +23,7 @@ public class VariableNode extends NoArgNode {
 		try {
 			return store.getVariableValue(varName);
 		} catch (UndefinedVariableException e) {
+			System.out.println("Returning 0 for undefined value");
 			return 0;
 		}
 	}

@@ -1,53 +1,64 @@
 package backend;
 
+import backend.control.DoTimesNode;
 import backend.control.FunctionDefinitionNode;
+import backend.control.FunctionNode;
 import backend.control.IfElseNode;
 import backend.control.IfNode;
+import backend.control.LoopNode;
+import backend.control.RepeatNode;
 import backend.control.ScopedStorage;
 import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
+import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
-import backend.turtle.BackwardNode;
-import backend.turtle.ForwardNode;
+import backend.turtle.TellNode;
 import backend.turtle.TurtleFactory;
+import backend.turtle.TurtleNode;
+import backend.view_manipulation.ViewController;
+import backend.view_manipulation.ViewNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import backend.control.DoTimesNode;
-import backend.control.LoopNode;
-import backend.control.RepeatNode;
-import backend.control.VariableDefinitionNode;
 
 public class Parser {
 
 	public static final String DELIMITER_REGEX = "\\s+";
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
+	public static final String VARIABLE_REGEX = ":[a-zA-Z_]+";
 	public static final String VARIABLE_ARGS_START_DELIMITER = "(";
 	public static final String VARIABLE_ARGS_END_DELIMITER = ")";
+	public static final String LIST_START_DELIMITER = "[";
+	public static final String LIST_END_DELIMITER = "]";
+	
+	public static final String TURTLE_PACKAGE = "backend.turtle";
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
 	private TurtleFactory turtleManager;
 	private ScopedStorage scopedStorage;
+	private ViewController viewController;
 
-	public Parser(TurtleFactory turtleManager) {
+	public Parser(TurtleFactory turtleManager, ScopedStorage storage, ViewController viewController) {
 		commandGetter = new CommandGetter();
 		syntaxTrees = new HashMap<>();
-		scopedStorage = new ScopedStorage();
+		scopedStorage = storage;
 		this.turtleManager = turtleManager;
+		this.viewController = viewController;
 	}
 
 	public boolean validateCommand(String command) throws SLogoException {
@@ -100,7 +111,6 @@ public class Parser {
 	// Parsing command which chooses appropriate parsing command for
 	// construction of next node
 	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws SLogoException {
-		// System.out.println("Making expTree");
 		if (!it.hasNext()) { // Done parsing
 			return null;
 		}
@@ -115,16 +125,16 @@ public class Parser {
 			System.out.println("Numeric, making ConstantNode");
 			return new ConstantNode(Double.parseDouble(nextToken));
 		}
-		System.out.println("Not numeric");
 		// Need to check for user-declared methods here
-		// TODO - check if variable exists using Ben's new variableExists() method
-		if (scopedStorage.existsVariable(nextToken)) {
+		if (scopedStorage.existsFunction(nextToken)) {
+			return makeFunctionNode(it);
+		}
+		if (scopedStorage.existsVariable(nextToken) || nextToken.matches(VARIABLE_REGEX)) {
 			it.next();
 			return new VariableNode(scopedStorage, nextToken);
 		}
 		// Dispatch appropriate method
 		try {
-			System.out.println("Retrieving appropriate parsing method");
 			Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
 			System.out.println("Next parsing method: " + nextParsingMethod.getName());
 			return (SyntaxNode) nextParsingMethod.invoke(this, it);
@@ -146,15 +156,27 @@ public class Parser {
 		try {
 			Class commandClass = commandGetter.getCommandNodeClass(commandName);
 			System.out.println("Command class: " + commandClass.getName());
-			ValueNode valueNode = (ValueNode) commandClass.getConstructor(null).newInstance();
+			Constructor constructor;
+			Object[] constructorArgs;
+			if (isTurtleNode(commandClass)) {
+				constructor = commandClass.getConstructor(TurtleFactory.class);
+				constructorArgs = new Object[] {turtleManager};
+			}
+			// Note - I added this so I can test the commands (Ben), free to change as you see fit
+			else if (isViewNode(commandClass)) {
+				constructor = commandClass.getConstructor(ViewController.class);
+				constructorArgs = new Object[] {viewController};
+			}  else {
+				constructor = commandClass.getConstructor(null);
+				constructorArgs = null;
+			}
+			ValueNode valueNode = (ValueNode) constructor.newInstance(constructorArgs);
 			int numChildren = valueNode.getDefaultNumberOfArguments();
 			System.out.println("No. of children: " + numChildren);
 			SyntaxNode nextChild;
 			for (int child = 0; child < numChildren; child++) {
-				System.out.println("Preparing to append child to ValueNode");
 				nextChild = makeExpTree(it);
 				valueNode.addChild(nextChild);
-				System.out.println("Added child no. " + child + " to ValueNode");
 			}
 			return valueNode;
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
@@ -169,9 +191,28 @@ public class Parser {
 		it.next();
 		// Extract the variable name
 		String varName = it.next();
+		// Assert proper regex
+		if (!varName.matches(VARIABLE_REGEX)) {
+			throw new IllegalSyntaxException(varName);
+		}
 		// Resolve the expression into a tree
 		SyntaxNode expr = makeExpTree(it);
-		return new VariableDefinitionNode(scopedStorage, varName, expr);
+		// TODO - make multiple vars ( make :a 10 :b 9 ... ) work
+		return new VariableDefinitionNode(scopedStorage, new String[]{varName}, new SyntaxNode[]{expr});
+	}
+	
+	private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making FunctionNode");
+		// Consume the function name
+		String funcName = it.next();
+		// Need to know number of arguments taken by function
+		int numberOfFunctionParameters = scopedStorage.getNumberOfFunctionParameters(funcName);
+		System.out.println("Number of function parameters: " + numberOfFunctionParameters);
+		List<SyntaxNode> functionParameters = new ArrayList<>();
+		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex ++) {
+			functionParameters.add(makeExpTree(it));
+		}
+		return new FunctionNode(scopedStorage, funcName, functionParameters);
 	}
 
 	private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws SLogoException {
@@ -179,32 +220,53 @@ public class Parser {
 		// Consume the REPEAT token
 		it.next();
 		SyntaxNode numberOfTimesToRepeat = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, exprToRepeat);
+		RootNode commandsRoot = new RootNode();
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, commandsListRoot);
 	}
 
 	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making DoTimesNode");
 		// Consume the DOTIMES token
 		it.next();
+		// Consume the '[' token
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(LIST_START_DELIMITER);
+		}
 		String varName = it.next();
 		SyntaxNode limitExp = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume ']' token
+		it.next();
+		RootNode commandsListRoot = getCommandsListRoot(it);
 		// Error will be resolved when limit arg type is changed to SyntaxNode in
 		// DoTimesNode constructor
-		return new DoTimesNode(scopedStorage, varName, limitExp, exprToRepeat);
+		return new DoTimesNode(scopedStorage, varName, limitExp, commandsListRoot);
 	}
 
 	private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a ForLoopNode");
 		// Consume the FOR token
 		it.next();
+		// Consume the '[' token
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(LIST_START_DELIMITER);
+		}
 		String varName = it.next();
 		SyntaxNode startExp = makeExpTree(it);
 		SyntaxNode endExp = makeExpTree(it);
 		SyntaxNode incrExp = makeExpTree(it);
-		SyntaxNode exprToRepeat = makeExpTree(it);
-		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, exprToRepeat);
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume ']' token
+		it.next();
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, commandsListRoot);
 	}
 
 	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
@@ -212,35 +274,60 @@ public class Parser {
 		// Consume the IF token
 		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
-		SyntaxNode trueBranch = makeExpTree(it);
-		return new IfNode(scopedStorage, conditionExpression, trueBranch);
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		return new IfNode(scopedStorage, conditionExpression, commandsListRoot);
 	}
-	
+
 	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making an IfElseNode");
 		// Consume the IfELSE token
 		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
-		SyntaxNode trueBranch = makeExpTree(it);
-		SyntaxNode elseBranch = makeExpTree(it);
-		return new IfElseNode(scopedStorage, conditionExpression, trueBranch, elseBranch);
+		RootNode trueCommandsListRoot = getCommandsListRoot(it);
+		RootNode falseCommandsListRoot = getCommandsListRoot(it);
+		return new IfElseNode(scopedStorage, conditionExpression, trueCommandsListRoot, falseCommandsListRoot);
 	}
-	
-	/*
+
+	// TODO - SPLIT INTO SMALLER HELPERS
 	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a FunctionDefinitionNode");
 		// Consume the MAKEUSERINSTRUCTION token
 		it.next();
 		String funcName = it.next();
-		
-		FunctionDefinitionNode(ScopedStorage store, String functionName,
-                SyntaxNode functionRoot, List<String> parameterNames)
-                
-		SyntaxNode funcRoot = makeExpTree(it);
-		return funcRoot;
-		//return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
+		// To support recursive functions, may need to store the funcName here
+		scopedStorage.registerFunctionName(funcName);
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(LIST_START_DELIMITER);
+		}
+		List<String> variableNames = new ArrayList<>();
+		while (it.hasNext() && !it.peek().equals(LIST_END_DELIMITER)) {
+			String variableName = it.next();
+			if (!variableName.matches(VARIABLE_REGEX)) {
+				throw new IllegalSyntaxException(variableName);
+			}
+			variableNames.add(variableName);
+		}
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume the ']' token
+		it.next();
+		RootNode funcRoot = getCommandsListRoot(it);
+		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot, variableNames);
 	}
-*/
+	
+	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making TellNode");
+		// Consume the TELL token
+		it.next();
+		RootNode idsRoot = getCommandsListRoot(it);
+		TellNode tellNode = new TellNode(turtleManager);
+		for (SyntaxNode child : idsRoot.getChildren()) {
+			tellNode.addChild(child);
+		} 
+		return tellNode;
+	}
 	
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
@@ -257,36 +344,46 @@ public class Parser {
 			throw new VariableArgumentsException(commandName);
 		}
 		SyntaxNode nextChild;
-		while (!it.peek().equals(VARIABLE_ARGS_END_DELIMITER)) {
+		while (it.hasNext() && !it.peek().equals(VARIABLE_ARGS_END_DELIMITER)) {
 			nextChild = makeExpTree(it);
 			root.addChild(nextChild);
+		}
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(VARIABLE_ARGS_END_DELIMITER);
 		}
 		// Consume ')' token
 		it.next();
 		return root;
 	}
 	
-	// TODO - Group TurtleNodes with similar signatures into a helper function
-	// and perhaps use reflection to dispatch right constructor
-	
-	private ForwardNode makeForwardNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making ForwardNode");
-		// Consume the FORWARD token
+	// Called when expecting a list
+	private RootNode getCommandsListRoot(PeekingIterator<String> it) throws SLogoException {
+		if (it == null || !it.hasNext()) {
+			throw new IllegalArgumentException();
+		}
+		String listStartToken = it.next();
+		if (!listStartToken.equals(LIST_START_DELIMITER)) {
+			throw new IllegalSyntaxException(listStartToken);
+		}
+		RootNode commandsListRoot = new RootNode();
+		while (it.hasNext() && !it.peek().equals(LIST_END_DELIMITER)) {
+			commandsListRoot.addChild(makeExpTree(it));
+		}
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(LIST_END_DELIMITER);
+		}
+		// Consume ']' token
 		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new ForwardNode(turtleManager, expTree);
+		return commandsListRoot;
 	}
-	
-	private BackwardNode makeBackwardNode(PeekingIterator<String> it) throws SLogoException {
-		System.out.println("Making BackwardNode");
-		// Consume the BACKWARD token
-		it.next();
-		SyntaxNode expTree = makeExpTree(it);
-		return new BackwardNode(turtleManager, expTree);
-	}
-	
+
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
+	
+	private boolean isTurtleNode(Class nodeClass) {
+		return TurtleNode.class.isAssignableFrom(nodeClass);
+	}
 
+	private boolean isViewNode(Class nodeClass) { return ViewNode.class.isAssignableFrom(nodeClass); }
 }
