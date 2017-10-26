@@ -34,7 +34,6 @@ public class TurtleView implements TurtleDisplay{
 		isPenDown = true;
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
-//		original.getImage().setRotate(90);
 		displayedTurtles.add(original);
 	}
 	
@@ -97,7 +96,7 @@ public class TurtleView implements TurtleDisplay{
     	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
     }
     
-    public double processAngle(double originalAngle) {
+    private double processAngle(double originalAngle) {
     	//In backend, angle is measured counterclockwise from x-axis
     	return (90 - originalAngle) % 360;
     }
@@ -123,7 +122,9 @@ public class TurtleView implements TurtleDisplay{
 		drawColor = color;
 	}
 
-	public void changeStrokeWidth(double width) { strokeWidth = width; }
+	public void changeStrokeWidth(double width) { 
+		strokeWidth = width; 
+	}
     
     /**
      * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
