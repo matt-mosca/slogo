@@ -20,11 +20,12 @@ public class Controller {
     private Parser parser;
     private ScopedStorage scopedStorage;
     private PaletteStorage paletteStorage;
+    private TurtleFactory turtleFactory;
 
     public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
         this.scopedStorage = scopedStorage;
         this.paletteStorage = new PaletteStorage();
-        TurtleFactory turtleFactory = new TurtleFactory(turtleView);
+        turtleFactory = new TurtleFactory(turtleView);
         ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField);
         this.parser = new Parser(turtleFactory, scopedStorage, viewController);
     }
@@ -51,5 +52,22 @@ public class Controller {
 
     public Map<Double, Color> retrieveAvailableColors() {
         return paletteStorage.getAvailableColors();
+    }
+    
+    // THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
+    public double moveTurtlesForward(double pixels) {
+    		return turtleFactory.moveCurrentTurtlesForward(pixels);
+    }
+    
+    public double moveTurtlesBackward(double pixels) {
+    		return turtleFactory.moveCurrentTurtlesForward(-pixels);
+    }
+    
+    public double turnTurtlesRight(double degrees) {
+    		return turtleFactory.rotateCurrentTurtles(true, degrees);
+    }
+    
+    public double turnTurtlesLeft(double degrees) {
+    		return turtleFactory.rotateCurrentTurtles(false, degrees);
     }
 }

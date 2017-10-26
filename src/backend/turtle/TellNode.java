@@ -10,13 +10,7 @@ public class TellNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		// Add every id to set of active turtles
-		// Return last id
-		Integer[] ids = new Integer[arguments.length];
-		for (int index = 0; index < arguments.length; index ++) {
-			ids[index] = (int) arguments[index];
-		}
-		return getTurtleFactory().setActiveTurtles(ids);
+		return setIDs(arguments);
 	}
 
 	@Override
@@ -27,6 +21,16 @@ public class TellNode extends TurtleNode {
 	@Override
 	public int getDefaultNumberOfArguments() {
 		return 1;
+	}
+	
+	protected double setIDs(double ... arguments) throws SLogoException {
+		// Add every id to set of active turtles
+		// Return last id
+		Integer[] ids = new Integer[arguments.length];
+		for (int index = 0; index < arguments.length; index ++) {
+			ids[index] = (int) arguments[index];
+		}
+		return getTurtleFactory().setActiveTurtles(ids);
 	}
 
 }

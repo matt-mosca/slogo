@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.IntToDoubleFunction;
 
 public class TurtleFactory {
@@ -89,6 +90,10 @@ public class TurtleFactory {
 		activeTurtleId = ids[ids.length - 1];
 		return activeTurtleId;
 	}
+	
+	Set<Integer> getToldTurtles() {
+		return toldTurtleIds;
+	}
 
 	double moveTurtleForward(int index, double pixels) {
 		System.out.println("Moving turtle " + index + " by " + pixels);
@@ -100,7 +105,8 @@ public class TurtleFactory {
 		return pixels;
 	}
 
-	double moveCurrentTurtlesForward(double pixels) {
+	// NOTE : Made public to support Controller
+	public double moveCurrentTurtlesForward(double pixels) {
 		return doForToldTurtles(turtleId -> moveTurtleForward(turtleId, pixels));
 	}
 
@@ -113,7 +119,8 @@ public class TurtleFactory {
 		return angleInDegrees;
 	}
 
-	double rotateCurrentTurtles(boolean clockwise, double angleInDegrees) {
+	// NOTE : Made public to support Controller
+	public double rotateCurrentTurtles(boolean clockwise, double angleInDegrees) {
 		return doForToldTurtles(turtleId -> rotateTurtle(turtleId, clockwise, angleInDegrees));
 	}
 
