@@ -16,6 +16,7 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
+import backend.turtle.AskNode;
 import backend.turtle.TellNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
@@ -101,7 +102,6 @@ public class Parser {
 		}
 		RootNode rootNode = new RootNode();
 		while (it.hasNext()) {
-			// System.out.println("Adding a child to root");
 			rootNode.addChild(makeExpTree(it));
 		}
 		System.out.println("Constructed Syntax Tree");
@@ -323,10 +323,24 @@ public class Parser {
 		it.next();
 		RootNode idsRoot = getCommandsListRoot(it);
 		TellNode tellNode = new TellNode(turtleManager);
+		// TODO - use helper for this??
 		for (SyntaxNode child : idsRoot.getChildren()) {
 			tellNode.addChild(child);
 		} 
 		return tellNode;
+	}
+	
+	private AskNode makeAskNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making AskNode");
+		// Consume the ASK button
+		it.next();
+		RootNode idsRoot = getCommandsListRoot(it);
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		AskNode askNode = new AskNode(turtleManager, commandsListRoot);
+		for (SyntaxNode child : idsRoot.getChildren()) {
+			askNode.addChild(child);
+		}
+		return askNode;
 	}
 	
 	// Only ValueNodes can have variable params

@@ -25,6 +25,7 @@ public interface TurtleDisplay {
      */
     void rotate(int turtleIndex, double angle);
     
+    // TODO - index for multiple turtles??
     void pickUpPen();
     
     void putDownPen();
