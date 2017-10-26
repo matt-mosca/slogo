@@ -17,13 +17,13 @@ public class TurtleFactory {
         this.turtleView = turtleView;
         createdTurtles = new ArrayList<>();
         Turtle firstTurtle = new Turtle();
-        activeTurtleId = 0;
+        activeTurtleId = 1;
         createdTurtles.add(firstTurtle);
     }
 
     // TELL [ 100 ] -- creates all turtles up to 100
     void addTurtles(int turtleId) {
-        for (int newTurtleId = createdTurtles.size(); newTurtleId <= turtleId; newTurtleId++) {
+        for (int newTurtleId = createdTurtles.size() + 1; newTurtleId <= turtleId; newTurtleId++) {
             Turtle newTurtle = new Turtle();
             createdTurtles.add(newTurtle);
             turtleView.addTurtle();
@@ -44,11 +44,12 @@ public class TurtleFactory {
     }
 
     // ASK [ turtle ] or something similar
+    // Convert from 1-based indexing to 0-based indexing
     Turtle getTurtle(int id) {
         if (id > getNumberTurtlesCreated()) {
             addTurtles(id);
         }
-        return createdTurtles.get(id);
+        return createdTurtles.get(getZeroBasedId(id));
     }
 
     Turtle getActiveTurtle() {
@@ -58,6 +59,9 @@ public class TurtleFactory {
     int getActiveTurtleId() { return activeTurtleId; }
 
     void setActiveTurtle(int id) {
+    		if (id <= 0) {
+    			throw new IllegalArgumentException();
+    		}
         activeTurtleId = id;
     }
     
@@ -67,7 +71,7 @@ public class TurtleFactory {
     		turtle.moveForward(pixels);
     		// Update front end
     		System.out.print("New x: " + turtle.getX() + "; New y: " + turtle.getY());
-    		turtleView.move(index, turtle.getX(), turtle.getY());
+    		turtleView.move(getZeroBasedId(index), turtle.getX(), turtle.getY());
     		return pixels;
     }
     
@@ -80,7 +84,7 @@ public class TurtleFactory {
 		turtle.rotate(clockwise, angleInDegrees);
 		System.out.println("New angle: " + turtle.getAngleInDegrees());
 		// Update front end
-		turtleView.rotate(index, turtle.getAngleInDegrees());
+		turtleView.rotate(getZeroBasedId(index), turtle.getAngleInDegrees());
 		return angleInDegrees;
 	}
 	
@@ -92,7 +96,7 @@ public class TurtleFactory {
 		Turtle turtle = getTurtle(index);
 		// Update front end
 		double angleRotated = turtle.setAngle(angleInDegrees);
-		turtleView.rotate(index, turtle.getAngleInDegrees());
+		turtleView.rotate(getZeroBasedId(index), turtle.getAngleInDegrees());
 		return angleRotated;
 	}
 	
@@ -104,7 +108,7 @@ public class TurtleFactory {
 		Turtle turtle = getTurtle(index);
 		double angleRotated = turtle.setTowards(x, y);
 		System.out.println("Angle in degrees: " + turtle.getAngleInDegrees());
-		turtleView.rotate(index, turtle.getAngleInDegrees());
+		turtleView.rotate(getZeroBasedId(index), turtle.getAngleInDegrees());
 		return angleRotated;
 	}
 	
@@ -115,7 +119,7 @@ public class TurtleFactory {
 	double setXY(int index, double x, double y) {
 		Turtle turtle = getTurtle(index);
 		double distanceMoved = turtle.setXY(x, y);
-		turtleView.move(index, turtle.getX(), turtle.getY());
+		turtleView.move(getZeroBasedId(index), turtle.getX(), turtle.getY());
 		return distanceMoved;
 	}
 	
@@ -125,6 +129,7 @@ public class TurtleFactory {
     
 	double setPenDown(int index) {
 		Turtle turtle = getTurtle(index);
+		// TODO - should this need index as arguments too?
 		turtle.setPenUp(false);
 		turtleView.putDownPen();
 		return 1;
@@ -136,6 +141,7 @@ public class TurtleFactory {
 	
 	double setPenUp(int index) {
 		Turtle turtle = getTurtle(index);
+		// TODO - should this need index as arguments too?
 		turtle.setPenUp(true);
 		turtleView.pickUpPen();
 		return 0;
@@ -209,16 +215,27 @@ public class TurtleFactory {
 		return isShowing(activeTurtleId);
 	}
 	
+	double getID() {
+		return activeTurtleId;
+	}
+	
 	private double toggleTurtleShow(int index, boolean showing) {
 		Turtle turtle = getTurtle(index);
 		turtle.setShowing(showing);
 		if (showing) {
-			turtleView.showTurtle(index);
+			turtleView.showTurtle(getZeroBasedId(index));
 			return 1;
 		} else {
-			turtleView.hideTurtle(index);
+			turtleView.hideTurtle(getZeroBasedId(index));
 			return 0;
 		}
+	}
+	
+	private int getZeroBasedId(int id) {
+		if (id <= 0) {
+			throw new IllegalArgumentException();
+		}
+		return id - 1;
 	}
 
     // ASKWITH [ condition ] -- handled in turtle nodes
