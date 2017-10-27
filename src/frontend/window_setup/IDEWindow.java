@@ -109,7 +109,6 @@ public class IDEWindow implements Observer {
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Drawer drawer = new Drawer();
 	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
-
 	private Text variableDisplay;
 	private Controller controller;
 	private ScrollPane consoleScrollable;
