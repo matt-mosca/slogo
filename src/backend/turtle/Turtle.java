@@ -85,7 +85,7 @@ public class Turtle {
 		return showing;
 	}
 
-	private double getAngle() {
+	double getAngle() {
 		return angle;
 	}
 	
