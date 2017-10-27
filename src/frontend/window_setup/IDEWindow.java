@@ -26,9 +26,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -47,7 +49,6 @@ public class IDEWindow implements Observer {
 	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
-	public static final double TURTLEFIELD_DEPTH = 0;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double RIGHT_WIDTH = 150;
@@ -66,10 +67,10 @@ public class IDEWindow implements Observer {
 	private Scene primaryScene;
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
-	private VBox leftBox;
-	private VBox rightBox;
-	private HBox topBox;
-	private HBox bottomBox;
+	private VBox leftBox = new VBox();
+	private VBox rightBox = new VBox();
+	private HBox topBox = new HBox();
+	private HBox bottomBox = new HBox();
 	private TextArea commandTextArea;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
@@ -83,14 +84,14 @@ public class IDEWindow implements Observer {
 	
 	private GridPane console = new GridPane();
 	
-	MenuItem chinese = new MenuItem();
-	MenuItem english = new MenuItem();
-	MenuItem french = new MenuItem();
-	MenuItem german = new MenuItem();
-	MenuItem italian = new MenuItem();
-	MenuItem portuguese = new MenuItem();
-	MenuItem russian = new MenuItem();
-	MenuItem spanish = new MenuItem();
+	private MenuItem chinese = new MenuItem();
+	private MenuItem english = new MenuItem();
+	private MenuItem french = new MenuItem();
+	private MenuItem german = new MenuItem();
+	private MenuItem italian = new MenuItem();
+	private MenuItem portuguese = new MenuItem();
+	private MenuItem russian = new MenuItem();
+	private MenuItem spanish = new MenuItem();
 
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 	private static final String DATA_FILE_EXTENSION = "*.jpg";
@@ -111,6 +112,10 @@ public class IDEWindow implements Observer {
 
 	private Text variableDisplay;
 	private Controller controller;
+	private ScrollPane consoleScrollable;
+	ScrollPane variableScrollable;
+	private GridPane variables = new GridPane();
+	private int variableCount = 0;
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -119,27 +124,14 @@ public class IDEWindow implements Observer {
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
 		
-		leftBox = new VBox();
-		leftBox.setPadding(new Insets(OFFSET));
-		leftBox.setSpacing(OFFSET);
-		leftBox.setPrefSize(LEFT_WIDTH, LEFT_HEIGHT);
 		
-		rightBox = new VBox();
-		rightBox.setPadding(new Insets(OFFSET));
-		rightBox.setSpacing(OFFSET);
-		rightBox.setPrefSize(RIGHT_WIDTH, RIGHT_HEIGHT);
+		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
-		topBox = new HBox();
-		topBox.setPadding(new Insets(OFFSET));
-		topBox.setSpacing(OFFSET);
-		topBox.setAlignment(Pos.BOTTOM_CENTER);
-		topBox.setPrefSize(TOP_WIDTH, TOP_HEIGHT);
+		setFormatV(rightBox,OFFSET,RIGHT_WIDTH,RIGHT_HEIGHT);
 		
-		bottomBox = new HBox();
-		bottomBox.setPadding(new Insets(OFFSET));
-		bottomBox.setSpacing(OFFSET);
-		bottomBox.setAlignment(Pos.TOP_CENTER);
-		bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
+		setFormatH(topBox, OFFSET, TOP_WIDTH, TOP_HEIGHT, Pos.BOTTOM_CENTER);
+		
+		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
 		
 		//console.setAlignment(Pos.CENTER);
 		console.setHgap(10);
@@ -149,18 +141,11 @@ public class IDEWindow implements Observer {
 		console.add(consoleLabel, 0, commandCount);
 		
 		variableDisplay = new Text(VARIABLES_HEADER);
+		variables.add(variableDisplay, 0, variableCount);
 		
-		ScrollPane consoleScrollable = new ScrollPane();
-		ScrollPane variableScrollable = new ScrollPane();
-		
-		consoleScrollable.setPrefSize(150,150);
-		consoleScrollable.setContent(console);
-		
-		variableScrollable.setPrefSize(50,50);
-		variableScrollable.setContent(variableDisplay);
-		
-		rightGroup.getChildren().add(consoleScrollable);
-		rightGroup.getChildren().add(variableScrollable);
+		formatScrollPane(consoleScrollable, 150, console, rightGroup);
+		formatScrollPane(variableScrollable, 150, variables, rightGroup);
+	
 		
 		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
@@ -172,6 +157,26 @@ public class IDEWindow implements Observer {
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
 		controller = new Controller(scopedStorage, turtleView, turtleField);
+	}
+
+	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
+		sampleScroll = new ScrollPane();
+		sampleScroll.setPrefSize(prefSize,prefSize);
+		sampleScroll.setContent(sampleGrid);
+		root.getChildren().add(sampleScroll);
+	}
+
+	private void setFormatH(HBox hbox, int offset, double width, double height, Pos pos) {
+		hbox.setPadding(new Insets(offset));
+		hbox.setSpacing(offset);
+		hbox.setPrefSize(width, height);
+		hbox.setAlignment(pos);
+	}
+
+	private void setFormatV(VBox vbox, int offset,double leftWidth, double leftHeight) {
+		vbox.setPadding(new Insets(offset));
+		vbox.setSpacing(offset);
+		vbox.setPrefSize(leftWidth, leftHeight);
 	}
 
 	private void setBorderArrangement() {
@@ -190,17 +195,6 @@ public class IDEWindow implements Observer {
 	
 	private void setUpTurtleField() {
 		turtleView.displayInitialTurtle();
-		//Testing
-		/*
-		turtleView.move(0, 0, 20);
-		turtleView.rotate(0, 45);
-		turtleView.move(0, -50, 50);
-		turtleView.move(0, 80, -100);
-		*/
-//		turtleView.move(0, 0, 20);
-//		turtleView.rotate(0, 45);
-//		turtleView.move(0, -50, 50);
-//		turtleView.move(0, 80, -100);
 	}
 	
 	private void makeButtons(Stage s) {
@@ -361,6 +355,7 @@ public class IDEWindow implements Observer {
 	}
 
 	private void updateVariableDisplay() {
+		Text newVariable = new Text();
 		Map<String, Double> availableVariables = controller.retrieveAvailableVariables();
 		System.out.println(availableVariables);
 		StringBuilder variablesBuffer = new StringBuilder(VARIABLES_HEADER);
@@ -368,18 +363,23 @@ public class IDEWindow implements Observer {
 			variablesBuffer.append(NEW_LINE + variableName
 					+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
 		}
-		variableDisplay.setText(variablesBuffer.toString());
+		newVariable.setWrappingWidth(WRAPPING_WIDTH);
+		newVariable.setText(variablesBuffer.toString());
+		variables.add(newVariable, 0, variableCount);
 	}
 
 	// TODO - need to change to a separate variables display not just functions display;
 	private void updateFunctionsDisplay() {
+		Text newVariable = new Text();
 		Map<String, List<String>> availableVariables = controller.retrieveDefinedFunctions();
 		StringBuilder variablesBuffer = new StringBuilder();
 		for (String variableName : availableVariables.keySet()) {
 			variablesBuffer.append(NEW_LINE + variableName + availableVariables.get(variableName));
 		}
 		// TODO - change below
-		variableDisplay.setText(variableDisplay.getText() + variablesBuffer.toString());
+		newVariable.setWrappingWidth(WRAPPING_WIDTH);
+		newVariable.setText(variablesBuffer.toString());
+		variables.add(newVariable, 0, variableCount);
 	}
 
 }

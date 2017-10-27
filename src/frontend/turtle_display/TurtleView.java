@@ -6,7 +6,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,17 +67,16 @@ public class TurtleView implements TurtleDisplay{
      * @param yCoordinate - the new y-coordinate of the turtle
      */
     public void move(int turtleIndex, double newXCoord, double newYCoord) {
-    	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
-    	double newXCoordinate = translateXCoord(newXCoord) - TurtlePen.DEFAULT_WIDTH / 2;
-    	double newYCoordinate = translateYCoord(newYCoord) - TurtlePen.DEFAULT_HEIGHT / 2;
+    	double newXCoordinate = BackendValProcessor.translateXCoord(fieldCenterX, newXCoord) - TurtlePen.DEFAULT_WIDTH / 2;
+    	double newYCoordinate = BackendValProcessor.translateYCoord(fieldCenterY, newYCoord) - TurtlePen.DEFAULT_HEIGHT / 2;
     	double currentLineXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
     	double currentLineYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
     	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
     	Drawer lineMaker = new Drawer(drawColor, strokeWidth, isPenDown);
-    	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, translateXCoord(newXCoord), translateYCoord(newYCoord),
-    			layout);
-    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
-    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
+    	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
+    			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
+//    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
+//    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
 
     /**
@@ -91,14 +89,9 @@ public class TurtleView implements TurtleDisplay{
      */
     public void rotate(int turtleIndex, double newAngle) {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
-    	double processedAngle = processAngle(newAngle);
+    	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
     	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
-    }
-    
-    private double processAngle(double originalAngle) {
-    	//In backend, angle is measured counterclockwise from x-axis
-    	return (90 - originalAngle) % 360;
     }
     
     public TurtlePen addTurtle() {
@@ -125,24 +118,4 @@ public class TurtleView implements TurtleDisplay{
 	public void changeStrokeWidth(double width) { 
 		strokeWidth = width; 
 	}
-    
-    /**
-     * Translates the x-coordinate relative to the center (input from backend) into the x-coordinate
-     * on the scene
-     * @param coordFromCenter
-     * @return x-coordinate along the field
-     */
-    private double translateXCoord(double xCoordFromCenter) {
-    	return fieldCenterX + xCoordFromCenter;
-    }
-    
-    /**
-     * Translates the y-coordinate relative to the center (input from backend) into the y-coordinate
-     * on the scene
-     * @param coordFromCenter
-     * @return x-coordinate along the field
-     */
-    private double translateYCoord(double yCoordFromCenter) {
-    	return fieldCenterY - yCoordFromCenter;
-    }
 }

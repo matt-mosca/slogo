@@ -33,10 +33,8 @@ public class TurtlePen {
 	}
 	
 	public void rotateTurtle(double newAngle) {
-		System.out.println("Current angle: " + angle);
 		turtleImage.setRotate(newAngle);
 		angle = newAngle;
-		System.out.println("New angle: " + turtleImage.getRotate());
 	}
 	
 	public double getXCoordinate() {
