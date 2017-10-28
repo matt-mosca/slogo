@@ -1,7 +1,9 @@
 package backend;
 
 import backend.control.ScopedStorage;
+import backend.control.WorkspaceManager;
 import backend.error_handling.SLogoException;
+import backend.error_handling.WorkspaceFileNotFoundException;
 import backend.turtle.TurtleFactory;
 import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
@@ -10,6 +12,7 @@ import frontend.window_setup.IDEWindow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +25,7 @@ public class Controller {
     private ScopedStorage scopedStorage;
     private PaletteStorage paletteStorage;
     private TurtleFactory turtleFactory;
+    private WorkspaceManager workspaceManager;
 
     public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
         this.scopedStorage = scopedStorage;
@@ -29,6 +33,7 @@ public class Controller {
         turtleFactory = new TurtleFactory(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2, IDEWindow.TURTLEFIELD_HEIGHT / 2);
         ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField);
         this.parser = new Parser(turtleFactory, scopedStorage, viewController);
+        workspaceManager = new WorkspaceManager();
     }
 
     public void setLanguage(String language) throws SLogoException {
@@ -70,5 +75,14 @@ public class Controller {
     
     public double turnTurtlesLeft(double degrees) {
     		return turtleFactory.rotateCurrentTurtles(false, degrees);
+    }
+    
+    public void saveWorkspaceToFile(String fileName) {
+    	
+    		workspaceManager.saveWorkspaceToFile(scopedStorage, fileName);
+    }
+    
+    public void loadWorkspaceFromFile(String fileName) throws SLogoException {
+    		workspaceManager.loadWorkspaceFromFile(scopedStorage, fileName);
     }
 }

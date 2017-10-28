@@ -152,7 +152,16 @@ public class ScopedStorage extends Observable {
 		}
 		return 0;
 	}
-
+	
+	// For SAVING TO / LOADING FROM WORKSPACE
+	Map<String, Map<String, Double>> getFunctionInfo() {
+		return functionVariables;
+	}
+	
+	List<String> getFunctionParameters(String functionName) {
+		return functionParameterNames.get(functionName);
+	}
+	
 	private boolean variableExistsInCurrentScope(String variableName) {
 		return functionVariables.containsKey(currentScope) &&
 				functionVariables.get(currentScope).containsKey(variableName);
