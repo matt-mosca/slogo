@@ -49,7 +49,6 @@ public class IDEWindow implements Observer {
 	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
-	public static final double TURTLEFIELD_DEPTH = 0;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double RIGHT_WIDTH = 150;
@@ -110,7 +109,6 @@ public class IDEWindow implements Observer {
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Drawer drawer = new Drawer();
 	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
-
 	private Text variableDisplay;
 	private Controller controller;
 	private ScrollPane consoleScrollable;

@@ -10,7 +10,7 @@ public class IDNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().getID();
+		return getTurtleFactory().getActiveTurtleId();
 	}
 
 	@Override
