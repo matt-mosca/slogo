@@ -9,6 +9,7 @@ import frontend.factory.MenuItemFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.Drawer;
+import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
 import javafx.geometry.Insets;
@@ -114,6 +115,7 @@ public class IDEWindow implements Observer {
 	private ScrollPane consoleScrollable;
 	ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
+	private GridPane turtleMovementKeys;
 	private int variableCount = 0;
 	
 	public IDEWindow() {
@@ -122,7 +124,7 @@ public class IDEWindow implements Observer {
 		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-		
+		turtleMovementKeys = new GridPane();
 		
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
@@ -144,18 +146,24 @@ public class IDEWindow implements Observer {
 		
 		formatScrollPane(consoleScrollable, 150, console, rightGroup);
 		formatScrollPane(variableScrollable, 150, variables, rightGroup);
-	
 		
-		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
-		
-		makeButtons(primaryStage);
-		setBorderArrangement();
-
 		turtleView = new TurtleView(borderLayout, turtleField);
 
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
 		controller = new Controller(scopedStorage, turtleView, turtleField);
+		
+		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
+		
+		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
+		
+		makeButtons(primaryStage);
+		setBorderArrangement();
+	}
+	
+	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
+		keysPane.setPrefSize(prefSize, prefSize * (2/3));
+		root.getChildren().add(keysPane);
 	}
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
@@ -201,7 +209,12 @@ public class IDEWindow implements Observer {
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
-		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
+		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
+		buttonMaker.makeGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
+		buttonMaker.makeGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
+		buttonMaker.makeGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, ">", 2, 1);
+		buttonMaker.makeGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, "<", 0, 1);
+//		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");

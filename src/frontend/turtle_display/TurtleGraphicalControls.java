@@ -3,20 +3,23 @@ package frontend.turtle_display;
 import backend.Controller;
 
 public class TurtleGraphicalControls {
+	public static final double STANDARD_MOVE = 10;
+	public static final double STANDARD_TURN = 10;
+	
 	Controller turtleControl;
 	public TurtleGraphicalControls(Controller control) {
 		turtleControl = control;
 	}
-	public void moveForward(double distance) {
-		turtleControl.moveTurtlesForward(distance);
+	public void moveForward() {
+		turtleControl.moveTurtlesForward(STANDARD_MOVE);
 	}
-	public void moveBackward(double distance) {
-		turtleControl.moveTurtlesBackward(distance);
+	public void moveBackward() {
+		turtleControl.moveTurtlesBackward(STANDARD_MOVE);
 	}
-	public void rotateRight(double degrees) {
-		turtleControl.turnTurtlesRight(degrees);
+	public void rotateRight() {
+		turtleControl.turnTurtlesRight(STANDARD_TURN);
 	}
-	public void rotateLeft(double degrees) {
-		turtleControl.turnTurtlesLeft(degrees);
+	public void rotateLeft() {
+		turtleControl.turnTurtlesLeft(STANDARD_TURN);
 	}
 }
