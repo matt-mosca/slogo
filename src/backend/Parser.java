@@ -17,6 +17,7 @@ import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
 import backend.turtle.AskNode;
+import backend.turtle.AskWithNode;
 import backend.turtle.TellNode;
 import backend.turtle.TurtleFactory;
 import backend.turtle.TurtleNode;
@@ -341,6 +342,16 @@ public class Parser {
 			askNode.addChild(child);
 		}
 		return askNode;
+	}
+	
+	private AskWithNode makeAskWithNode(PeekingIterator<String> it) throws SLogoException {
+		System.out.print("Making AskWithNode");
+		// Consume the ASKWITH button
+		it.next();
+		RootNode queriesRoot = getCommandsListRoot(it);
+		RootNode commandsListRoot = getCommandsListRoot(it);
+		AskWithNode askWithNode = new AskWithNode(turtleManager, queriesRoot, commandsListRoot);
+		return askWithNode;
 	}
 	
 	// Only ValueNodes can have variable params

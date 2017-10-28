@@ -19,8 +19,11 @@ public class Turtle {
 
 	double moveForward(double pixels) {
 		double currentAngleInRads = angle;
-		double yDelta = pixels * Math.sin(currentAngleInRads);
-		double xDelta = pixels * Math.cos(currentAngleInRads);
+		// To avoid imprecision of cos 90, sin 0, etc
+		double yDelta = currentAngleInRads == 0 || currentAngleInRads == Math.PI ? 0
+				: pixels * Math.sin(currentAngleInRads);
+		double xDelta = currentAngleInRads == Math.PI / 2 || currentAngleInRads == 3 * Math.PI / 2 ? 0
+				: pixels * Math.cos(currentAngleInRads);
 		setX(getX() + xDelta);
 		setY(getY() + yDelta);
 		return pixels;
@@ -47,7 +50,7 @@ public class Turtle {
 		// Angles measured anti-clockwise by default
 		return rotate(false, Math.toDegrees(angleToTurnInRad));
 	}
-	
+
 	double setXY(double x, double y) {
 		setX(x);
 		setY(y);
@@ -88,7 +91,7 @@ public class Turtle {
 	double getAngle() {
 		return angle;
 	}
-	
+
 	// TODO - handle going off-screen
 	private void setX(double newX) {
 		xCoord = newX;

@@ -4,6 +4,7 @@ import frontend.turtle_display.TurtleView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class TurtleFactory {
 	private List<Turtle> createdTurtles;
 
 	private int activeTurtleId;
+	private int queryTurtleId; // Used when turtle to be queried is different from active turtle
 	// For O(1) checking of duplicates while preserving insertion order
 	private LinkedHashSet<Integer> toldTurtleIds;
 
@@ -28,6 +30,7 @@ public class TurtleFactory {
 		createdTurtles = new ArrayList<>();
 		Turtle firstTurtle = new Turtle();
 		activeTurtleId = 1;
+		queryTurtleId = 0;
 		createdTurtles.add(firstTurtle);
 		toldTurtleIds = new LinkedHashSet<Integer>(Arrays.asList(new Integer[] { activeTurtleId }));
 	}
@@ -42,7 +45,7 @@ public class TurtleFactory {
 	}
 
 	// TURTLES
-	double getNumberTurtlesCreated() {
+	int getNumberTurtlesCreated() {
 		return createdTurtles.size();
 	}
 
@@ -73,25 +76,45 @@ public class TurtleFactory {
 		return activeTurtleId;
 	}
 
-	private double doForToldTurtles(IntToDoubleFunction forEachTurtle) {
+	Turtle getQueryTurtle() {
+		return getTurtle(queryTurtleId);
+	}
+
+	int getQueryTurtleId() {
+		return queryTurtleId >= 1 ? queryTurtleId : activeTurtleId;
+	}
+
+	// id has to exist or be 0 (to mark end of query so that subsequent queries
+	// reference activeTurtleId)
+	// return true if successfully set, else false
+	boolean setQueryTurtleId(int id) {
+		if (id < 0 || id > createdTurtles.size()) {
+			return false;
+		}
+		queryTurtleId = id;
+		return true;
+	}
+
+	private double doForTurtles(IntToDoubleFunction forEachTurtle, Collection<Integer> turtles) {
 		double result = 0;
-		for (int toldTurtleId : toldTurtleIds) {
+		for (int toldTurtleId : turtles) {
 			activeTurtleId = toldTurtleId;
 			result = forEachTurtle.applyAsDouble(toldTurtleId);
 		}
 		return result;
 	}
 
+	private double doForToldTurtles(IntToDoubleFunction forEachTurtle) {
+		return doForTurtles(forEachTurtle, toldTurtleIds);
+	}
+
 	double setActiveTurtles(Integer[] ids) {
-		if (ids.length == 0) {
-			throw new IllegalArgumentException();
-		}
 		toldTurtleIds.clear();
 		toldTurtleIds.addAll(Arrays.asList(ids));
 		for (int turtleId : toldTurtleIds) {
 			addTurtles(turtleId);
 		}
-		activeTurtleId = ids[ids.length - 1];
+		activeTurtleId = ids.length > 0 ? ids[ids.length - 1] : 0;
 		System.out.println("Set activeTurtleId to " + activeTurtleId);
 		return activeTurtleId;
 	}
@@ -142,7 +165,7 @@ public class TurtleFactory {
 	}
 
 	double setCurrentTurtlesHeading(double angleInDegrees) {
-		return doForToldTurtles(turtleId -> setHeading(activeTurtleId, angleInDegrees));
+		return doForToldTurtles(turtleId -> setHeading(turtleId, angleInDegrees));
 	}
 
 	double setTowards(int index, double x, double y) {
@@ -199,7 +222,7 @@ public class TurtleFactory {
 	}
 
 	double showCurrentTurtles() {
-		return doForToldTurtles(turtleId -> showTurtle(activeTurtleId));
+		return doForToldTurtles(turtleId -> showTurtle(turtleId));
 	}
 
 	double hideTurtle(int index) {
@@ -223,7 +246,7 @@ public class TurtleFactory {
 	}
 
 	double currentTurtlesXCor() {
-		return doForToldTurtles(turtleId -> xCor(turtleId));
+		return xCor(getQueryTurtleId());
 	}
 
 	double yCor(int index) {
@@ -231,7 +254,7 @@ public class TurtleFactory {
 	}
 
 	double currentTurtlesYCor() {
-		return doForToldTurtles(turtleId -> yCor(turtleId));
+		return yCor(getQueryTurtleId());
 	}
 
 	double heading(int index) {
@@ -239,7 +262,7 @@ public class TurtleFactory {
 	}
 
 	double currentTurtlesHeading() {
-		return doForToldTurtles(turtleId -> heading(turtleId));
+		return heading(getQueryTurtleId());
 	}
 
 	double isPenDown(int index) {
@@ -247,7 +270,7 @@ public class TurtleFactory {
 	}
 
 	double isCurrentTurtlesPenDown() {
-		return doForToldTurtles(turtleId -> isPenDown(turtleId));
+		return isPenDown(getQueryTurtleId());
 	}
 
 	double isShowing(int index) {
@@ -255,11 +278,7 @@ public class TurtleFactory {
 	}
 
 	double isCurrentTurtlesShowing() {
-		return doForToldTurtles(turtleId -> isShowing(turtleId));
-	}
-
-	double getID() {
-		return activeTurtleId;
+		return isShowing(getQueryTurtleId());
 	}
 
 	private double toggleTurtleShow(int index, boolean showing) {
@@ -273,7 +292,7 @@ public class TurtleFactory {
 			return 0;
 		}
 	}
-	
+
 	private void handleTurtleWrapping(int index) {
 		Turtle turtle = getTurtle(index);
 		double oldX = turtle.getX();
@@ -291,7 +310,7 @@ public class TurtleFactory {
 		turtleView.putDownPen();
 		keepTurtleInBounds(index);
 	}
-	
+
 	// only called if either X or Y or both are out of bounds
 	private double[] getExceedingEdgeXY(int index, double oldX, double oldY) {
 		Turtle turtle = getTurtle(index);
@@ -305,21 +324,21 @@ public class TurtleFactory {
 			}
 			if (turtleX > xBounds) {
 				edgeX = xBounds;
-			}			
+			}
 			edgeY = (edgeX - oldX) * Math.tan(turtle.getAngle()) + oldY;
 		}
 		if (turtleY < -yBounds || turtleY > yBounds) {
 			if (turtleY < -yBounds) {
 				edgeY = -yBounds;
-			} 
+			}
 			if (turtleY > yBounds) {
 				edgeY = yBounds;
 			}
 			edgeX = (edgeY - oldY) / Math.tan(turtle.getAngle()) + oldX;
 		}
-		return new double[] {edgeX, edgeY};
+		return new double[] { edgeX, edgeY };
 	}
-	
+
 	private boolean crossesBounds(int index) {
 		Turtle turtle = getTurtle(index);
 		double turtleX = turtle.getX();
@@ -345,15 +364,14 @@ public class TurtleFactory {
 		if (edgeY == yBounds) {
 			reflectionY = -yBounds;
 		}
-		return new double[] {reflectionX, reflectionY};
+		return new double[] { reflectionX, reflectionY };
 	}
-	
+
 	private void keepTurtleInBounds(int index) {
 		keepTurtleInXBounds(index);
 		keepTurtleInYBounds(index);
 	}
-	
-	
+
 	private void keepTurtleInXBounds(int index) {
 		Turtle turtle = getTurtle(index);
 		double turtleX = turtle.getX();
@@ -378,9 +396,9 @@ public class TurtleFactory {
 	private double wrapX(double xCoords, double xBounds) {
 		return Math.floorMod((int) (xCoords + xBounds), (int) (2 * xBounds)) - xBounds;
 	}
-	
+
 	private double wrapY(double yCoords, double yBounds) {
-		return Math.floorMod((int) (yCoords + yBounds), (int) (2 * yBounds)) - yBounds;		
+		return Math.floorMod((int) (yCoords + yBounds), (int) (2 * yBounds)) - yBounds;
 	}
 
 	// ASKWITH [ condition ] -- handled in turtle nodes
