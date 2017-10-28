@@ -1,6 +1,8 @@
 package backend.control;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import backend.error_handling.WorkspaceFileNotFoundException;
 
@@ -31,7 +35,6 @@ public class WorkspaceManager {
 	public static final String VARIABLE_VALUE = "variableValue";
 
 	public WorkspaceManager() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void saveWorkspaceToFile(ScopedStorage storage, String fileName) {
@@ -54,11 +57,21 @@ public class WorkspaceManager {
 			pce.printStackTrace();
 		}
 	}
-	
+
+	// TODO - Refactor into helper methods
 	public void loadWorkspaceFromFile(ScopedStorage storage, String fileName) throws WorkspaceFileNotFoundException {
 		File workspaceFile = new File(fileName);
 		if (!workspaceFile.exists()) {
 			throw new WorkspaceFileNotFoundException();
+		}
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(workspaceFile);
+			doc.getDocumentElement().normalize();
+			loadFunctionsFromDocument(storage, doc);
+		} catch (ParserConfigurationException | IOException | SAXException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -111,17 +124,91 @@ public class WorkspaceManager {
 		}
 	}
 
+	private void loadFunctionsFromDocument(ScopedStorage storage, Document doc) {
+		NodeList functionNodesList = doc.getElementsByTagName(FUNCTION);
+		for (int functionNum = 0; functionNum < functionNodesList.getLength(); functionNum++) {
+			Node functionNode = functionNodesList.item(functionNum);
+			if (functionNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element functionElement = (Element) functionNode;
+				String functionName = functionElement.getAttribute(FUNCTION_NAME);
+				loadParamsForFunction(storage, functionName, functionElement);
+				loadVariablesForFunction(storage, functionName, functionElement);
+			}
+		}
+	}
+
+	private void loadParamsForFunction(ScopedStorage storage, String functionName, Element functionElement) {
+		// Load params for function
+		NodeList paramNodesList = functionElement.getElementsByTagName(FUNCTION_PARAM);
+		List<String> paramsList = new ArrayList<>();
+		for (int paramNum = 0; paramNum < paramNodesList.getLength(); paramNum++) {
+			Node paramNode = paramNodesList.item(paramNum);
+			if (paramNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element paramElement = (Element) paramNode;
+				String paramName = paramElement.getTextContent();
+				paramsList.add(paramName);
+			}
+		}
+		storage.addFunctionParameterNames(functionName, paramsList);
+	}
+
+	private void loadVariablesForFunction(ScopedStorage storage, String functionName, Element functionElement) {
+		// Load variables for function
+		NodeList variablesList = functionElement.getElementsByTagName(VARIABLE);
+		storage.enterScope(functionName);
+		for (int varNum = 0; varNum < variablesList.getLength(); varNum++) {
+			Node varNode = variablesList.item(varNum);
+			if (varNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element varElement = (Element) varNode;
+				String varName = varElement.getAttribute(VARIABLE_NAME);
+				double varValue = Double.parseDouble(varElement.getAttribute(VARIABLE_VALUE));
+				storage.setVariable(varName, varValue);
+			}
+		}
+		storage.exitScope();
+	}
+
 	public static void main(String argv[]) {
-		ScopedStorage testStorage = new ScopedStorage();
+		ScopedStorage testSave = new ScopedStorage();
 		WorkspaceManager testManager = new WorkspaceManager();
 		String[] funcParamNames = new String[] { "x", "y", "z" };
 		List<String> funcParamNamesList = (List<String>) Arrays.asList(funcParamNames);
-		testStorage.addFunctionParameterNames("booya", funcParamNamesList);
-		testStorage.enterScope("booya");
-		testStorage.setVariable("a", 7.0);
-		testStorage.setVariable("x", 3.0);
-		testStorage.setVariable("y", 5.0);
-		testManager.saveWorkspaceToFile(testStorage, "test.xml");
+		testSave.addFunctionParameterNames("booya", funcParamNamesList);
+		testSave.enterScope("booya");
+		testSave.setVariable("a", 7.0);
+		testSave.setVariable("x", 3.0);
+		testSave.setVariable("y", 5.0);
+		testManager.saveWorkspaceToFile(testSave, "test.xml");
+		ScopedStorage testLoad = new ScopedStorage();
+		try {
+			testManager.loadWorkspaceFromFile(testLoad, "test.xml");
+			Map<String, Map<String, Double>> functionsInfo = testLoad.getFunctionInfo();
+			System.out.println("Functions loaded: ");
+			for (String funcName : functionsInfo.keySet()) {
+				System.out.print(funcName + "; ");
+			}
+			System.out.println();
+			for (String funcName : functionsInfo.keySet()) {
+				List<String> functionParams = testLoad.getFunctionParameters(funcName);
+				if (functionParams != null) {
+					System.out.println("Parameters for function");
+					for (String funcParam : functionParams) {
+						System.out.print(funcParam + ";");
+					}
+					System.out.println();
+				}
+				Map<String, Double> funcVariables = functionsInfo.get(funcName);
+				if (funcVariables != null) {
+					System.out.println("Variables for function");
+					for (String varName : funcVariables.keySet()) {
+						System.out.print(varName + " : " + funcVariables.get(varName));
+					}
+					System.out.println();
+				}
+			}
+		} catch (WorkspaceFileNotFoundException e) {
+			System.out.println("File not found");
+		}
 	}
 
 }
