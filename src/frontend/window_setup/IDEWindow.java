@@ -23,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -204,16 +205,26 @@ public class IDEWindow implements Observer {
 		turtleView.displayInitialTurtle();
 	}
 	
+	private ImageView makeImageViewFromName(String imageName) {
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
+		ImageView imageNode = new ImageView(image);
+		return imageNode;
+	}
+	
 	private void makeButtons(Stage s) {
 		Text enterCommand = new Text("Enter Command:");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
-		buttonMaker.makeGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
-		buttonMaker.makeGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
-		buttonMaker.makeGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, ">", 2, 1);
-		buttonMaker.makeGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, "<", 0, 1);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, ">", 2, 1);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, "<", 0, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, makeImageViewFromName("Right_Arrow.png"), 2, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, makeImageViewFromName("Left_Arrow.png"), 0, 1);
 //		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
