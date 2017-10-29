@@ -3,6 +3,7 @@ package backend;
 import backend.control.ScopedStorage;
 import backend.control.WorkspaceManager;
 import backend.error_handling.SLogoException;
+import backend.error_handling.TurtleOutOfScreenException;
 import backend.error_handling.WorkspaceFileNotFoundException;
 import backend.turtle.TurtleFactory;
 import backend.view_manipulation.PaletteStorage;
@@ -65,7 +66,7 @@ public class Controller {
     		return turtleFactory.moveCurrentTurtlesForward(pixels);
     }
     
-    public double moveTurtlesBackward(double pixels) {
+    public double moveTurtlesBackward(double pixels){
     		return turtleFactory.moveCurrentTurtlesForward(-pixels);
     }
     
@@ -83,6 +84,10 @@ public class Controller {
     
     public double setPenUp(int index) {
     	return turtleFactory.setPenUp(index);
+    }
+    
+    public double isPenDown(int index) {
+    	return turtleFactory.isPenDown(index);
     }
     
     public void saveWorkspaceToFile(String fileName) {
