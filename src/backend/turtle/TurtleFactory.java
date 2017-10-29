@@ -126,7 +126,7 @@ public class TurtleFactory {
 		return new LinkedHashSet<>(toldTurtleIds);
 	}
 
-	double moveTurtleForward(int index, double pixels) throws TurtleOutOfScreenException {
+	double moveTurtleForward(int index, double pixels) {// throws TurtleOutOfScreenException {
 		System.out.println("Moving turtle " + index + " by " + pixels);
 		Turtle turtle = getTurtle(index);
 		double oldX = turtle.getX();
@@ -134,29 +134,23 @@ public class TurtleFactory {
 		turtle.moveForward(pixels);
 		double turtleX = turtle.getX();
 		double turtleY = turtle.getY();
+		double absDistanceMoved = Math.abs(pixels);
 		if (crossesBounds(turtleX, turtleY)) {
-			turtle.setXY(oldX, oldY);
-			throw new TurtleOutOfScreenException();
+			absDistanceMoved = Math.abs(handleTurtleWrapping(index, oldX, oldY));
+		} else {
+			turtleView.move(getZeroBasedId(index), turtleX, turtleY);			
 		}
 		// Update front end
 		System.out.println("New x: " + turtleX + "; New y: " + turtleY);
-		turtleView.move(getZeroBasedId(index), turtleX, turtleY);
+		if (absDistanceMoved < Math.abs(pixels)) {
+			moveTurtleForward(index, pixels > 0 ? pixels - absDistanceMoved : pixels + absDistanceMoved);
+		}
 		return pixels;
 	}
 
 	// NOTE : Made public to support Controller
 	public double moveCurrentTurtlesForward(double pixels) throws TurtleOutOfScreenException {
-		double result = doForToldTurtles(turtleId -> {
-			try {
-				return moveTurtleForward(turtleId, pixels);			
-			} catch (TurtleOutOfScreenException e) {
-				return -pixels;
-			}
-		});
-		if (result != pixels) {
-			throw new TurtleOutOfScreenException();
-		}
-		return result;
+		return doForToldTurtles(turtleId -> moveTurtleForward(turtleId, pixels));
 	}
 
 	double rotateTurtle(int index, boolean clockwise, double angleInDegrees) {
@@ -316,15 +310,20 @@ public class TurtleFactory {
 		}
 	}
 
-	/* DEPRECATE IN FAVOR OF NOT ALLOWING WRAPPING?
  
 	// If amount moved is returned, can use to keep moving until fully moved
 	private double handleTurtleWrapping(int index, double oldX, double oldY) {
 		Turtle turtle = getTurtle(index);
 		double unwrappedX = turtle.getX();
 		double unwrappedY = turtle.getY();
+		
+		System.out.println("Old X: " + oldX);
+		System.out.print("Old Y: " + oldY);
+
 		// First, draw line to edge
 		double[] edgeXY = getExceedingEdgeXY(index, unwrappedX, unwrappedY);
+		System.out.println("Edge X: " + edgeXY[0]);
+		System.out.println("Edge Y: " + edgeXY[1]);
 		// Call move to edgeX, edgeY to register that line segment
 		turtleView.move(getZeroBasedId(index), edgeXY[0], edgeXY[1]);
 		// SetXY to reflection point
@@ -332,17 +331,10 @@ public class TurtleFactory {
 		System.out.println("Reflection X: " + reflectionXY[0]);
 		System.out.println("Reflection Y: " + reflectionXY[1]);
 		setXY(index, reflectionXY[0], reflectionXY[1]);		
-		keepTurtleInBounds(index);
 		// Calculate amount moved
-		System.out.println("Old X: " + oldX);
-		System.out.print("Old Y: " + oldY);
-		System.out.println("Edge X: " + edgeXY[0]);
-		System.out.println("Edge Y: " + edgeXY[1]);
 		double distanceMovedToEdge = Math.sqrt(Math.pow(edgeXY[0] - oldX, 2) + Math.pow(edgeXY[1] - oldY, 2));
 		System.out.println("Distance moved to edge : " + distanceMovedToEdge);
-		double distanceMovedFromReflectionPoint = Math.sqrt(Math.pow(turtle.getX() - reflectionXY[0], 2) + Math.pow(turtle.getY() - reflectionXY[1], 2));
-		System.out.println("Distance moved from reflection point: " + distanceMovedFromReflectionPoint);
-		return distanceMovedToEdge + distanceMovedFromReflectionPoint;
+		return distanceMovedToEdge;
 	}
 
 	// only called if either X or Y or both are out of bounds
@@ -423,7 +415,6 @@ public class TurtleFactory {
 		double newY = turtleY > yBounds || turtleY < -yBounds  ? wrapY(turtleY, yBounds) : turtleY;
 		turtle.setXY(turtle.getX(), newY);
 	}
-	*/
 	
 	private boolean crossesBounds(double turtleX, double turtleY) {
 		if (turtleX < -xBounds || turtleX > xBounds || turtleY < -yBounds || turtleY > yBounds) {
