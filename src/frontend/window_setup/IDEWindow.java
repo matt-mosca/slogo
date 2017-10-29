@@ -9,6 +9,7 @@ import frontend.factory.MenuItemFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.Drawer;
+import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
 import javafx.geometry.Insets;
@@ -22,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -114,6 +116,7 @@ public class IDEWindow implements Observer {
 	private ScrollPane consoleScrollable;
 	ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
+	private GridPane turtleMovementKeys;
 	private int variableCount = 0;
 	
 	public IDEWindow() {
@@ -122,7 +125,7 @@ public class IDEWindow implements Observer {
 		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
-		
+		turtleMovementKeys = new GridPane();
 		
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
@@ -144,18 +147,24 @@ public class IDEWindow implements Observer {
 		
 		formatScrollPane(consoleScrollable, 150, console, rightGroup);
 		formatScrollPane(variableScrollable, 150, variables, rightGroup);
-	
 		
-		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
-		
-		makeButtons(primaryStage);
-		setBorderArrangement();
-
 		turtleView = new TurtleView(borderLayout, turtleField);
 
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
 		controller = new Controller(scopedStorage, turtleView, turtleField);
+		
+		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
+		
+		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
+		
+		makeButtons(primaryStage);
+		setBorderArrangement();
+	}
+	
+	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
+		keysPane.setPrefSize(prefSize, prefSize * (2/3));
+		root.getChildren().add(keysPane);
 	}
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
@@ -196,15 +205,42 @@ public class IDEWindow implements Observer {
 		turtleView.displayInitialTurtle();
 	}
 	
+	//Change index to depend on selected turtle once Pen is specific to a turtle
+	private void changePenToUp() {
+		controller.setPenUp(1);
+	}
+	
+	//Change index to depend on selected turtle once Pen is specific to a turtle
+	private void changePenToDown() {
+		controller.setPenDown(1);
+	}
+
+	private ImageView makeImageViewFromName(String imageName) {
+		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
+		ImageView imageNode = new ImageView(image);
+		return imageNode;
+	}
+	
 	private void makeButtons(Stage s) {
 		Text enterCommand = new Text("Enter Command:");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
-		//commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
+		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, ">", 2, 1);
+//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, "<", 0, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, makeImageViewFromName("Right_Arrow.png"), 2, 1);
+		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, makeImageViewFromName("Left_Arrow.png"), 0, 1);
+//		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
+		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
+		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
 		penColorPicker.setValue(Color.BLACK);
