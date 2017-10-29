@@ -9,16 +9,16 @@ public class AskNode extends TellNode {
 
 	SyntaxNode commandsRoot;
 	
-	public AskNode(TurtleFactory turtleFactory, SyntaxNode commandsRoot) {
-		super(turtleFactory);
+	public AskNode(TurtleController turtleController, SyntaxNode commandsRoot) {
+		super(turtleController);
 		this.commandsRoot = commandsRoot;
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		TurtleFactory turtleFactory = getTurtleFactory();
+		TurtleController turtleController = getTurtleController();
 		// Need to save snapshot of original list of ids
-		Set<Integer> currentlyToldTurtleIds = turtleFactory.getToldTurtles();
+		Set<Integer> currentlyToldTurtleIds = turtleController.getToldTurtles();
 		setIDs(arguments);
 		// Execute root of commands list for every id in argument
 		double result = 0.0;
@@ -27,7 +27,7 @@ public class AskNode extends TellNode {
 		}
 		// Restore original list of ids
 		// Prefer casting of underlying collection to creating new list?
-		turtleFactory.setActiveTurtles(currentlyToldTurtleIds.toArray(new Integer[0]));
+		turtleController.setActiveTurtles(currentlyToldTurtleIds.toArray(new Integer[0]));
 		return result;
 	}
 

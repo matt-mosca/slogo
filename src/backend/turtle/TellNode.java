@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class TellNode extends TurtleNode {
 
-	public TellNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public TellNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class TellNode extends TurtleNode {
 		for (int index = 0; index < arguments.length; index ++) {
 			ids[index] = (int) arguments[index];
 		}
-		return getTurtleFactory().setActiveTurtles(ids);
+		return getTurtleController().setActiveTurtles(ids);
 	}
 
 }

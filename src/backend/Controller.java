@@ -2,18 +2,18 @@ package backend;
 
 import backend.control.ScopedStorage;
 import backend.control.WorkspaceManager;
+import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
-import backend.error_handling.TurtleOutOfScreenException;
-import backend.error_handling.WorkspaceFileNotFoundException;
-import backend.turtle.TurtleFactory;
+import backend.turtle.TurtleController;
 import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 import frontend.window_setup.IDEWindow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import utilities.CommandGetter;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,22 +23,30 @@ import java.util.Map;
 public class Controller {
 
     private Parser parser;
+    private TurtleController turtleController;
     private ScopedStorage scopedStorage;
+    private CommandGetter commandGetter;
     private PaletteStorage paletteStorage;
-    private TurtleFactory turtleFactory;
     private WorkspaceManager workspaceManager;
 
     public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
         this.scopedStorage = scopedStorage;
         this.paletteStorage = new PaletteStorage();
-        turtleFactory = new TurtleFactory(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2, IDEWindow.TURTLEFIELD_HEIGHT / 2);
+        turtleController = new TurtleController(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2, IDEWindow.TURTLEFIELD_HEIGHT / 2);
+        this.commandGetter = new CommandGetter();
         ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField);
-        this.parser = new Parser(turtleFactory, scopedStorage, viewController);
+        this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
         workspaceManager = new WorkspaceManager();
     }
 
+    // To support switching of language through front end
     public void setLanguage(String language) throws SLogoException {
-        parser.setLanguage(language);
+        try {
+            commandGetter.setLanguage(language);
+        } catch (IOException e) {
+            // Can only be because language passed in is not supported
+            throw new ProjectBuildException();
+        }
     }
 
     public boolean validateCommand(String commandString) throws SLogoException {
@@ -63,35 +71,34 @@ public class Controller {
     
     // THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
     public double moveTurtlesForward(double pixels) {
-    		return turtleFactory.moveCurrentTurtlesForward(pixels);
+    		return turtleController.moveCurrentTurtlesForward(pixels);
     }
     
     public double moveTurtlesBackward(double pixels){
-    		return turtleFactory.moveCurrentTurtlesForward(-pixels);
+    		return turtleController.moveCurrentTurtlesForward(-pixels);
     }
     
     public double turnTurtlesRight(double degrees) {
-    		return turtleFactory.rotateCurrentTurtles(true, degrees);
+    		return turtleController.rotateCurrentTurtles(true, degrees);
     }
     
     public double turnTurtlesLeft(double degrees) {
-    		return turtleFactory.rotateCurrentTurtles(false, degrees);
+    		return turtleController.rotateCurrentTurtles(false, degrees);
     }
     
     public double setPenDown(int index) {
-    	return turtleFactory.setPenDown(index);
+    	return turtleController.setPenDown(index);
     }
     
     public double setPenUp(int index) {
-    	return turtleFactory.setPenUp(index);
+    	return turtleController.setPenUp(index);
     }
     
     public double isPenDown(int index) {
-    	return turtleFactory.isPenDown(index);
+    	return turtleController.isPenDown(index);
     }
     
     public void saveWorkspaceToFile(String fileName) {
-    	
     		workspaceManager.saveWorkspaceToFile(scopedStorage, fileName);
     }
     

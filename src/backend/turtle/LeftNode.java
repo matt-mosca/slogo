@@ -4,14 +4,14 @@ import backend.error_handling.SLogoException;
 
 public class LeftNode extends TurtleNode {
 
-	public LeftNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public LeftNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double angle = arguments[0];
-		return getTurtleFactory().rotateCurrentTurtles(false, angle);
+		return getTurtleController().rotateCurrentTurtles(false, angle);
 	}
 
 	@Override
