@@ -1,6 +1,7 @@
 package frontend.turtle_display;
 
 import backend.Controller;
+import backend.error_handling.TurtleOutOfScreenException;
 
 public class TurtleGraphicalControls {
 	public static final double STANDARD_MOVE = 10;
@@ -11,10 +12,18 @@ public class TurtleGraphicalControls {
 		turtleControl = control;
 	}
 	public void moveForward() {
-		turtleControl.moveTurtlesForward(STANDARD_MOVE);
+		try {
+			turtleControl.moveTurtlesForward(STANDARD_MOVE);			
+		} catch (TurtleOutOfScreenException e) {
+			// TODO - Display error message on console?
+		}
 	}
 	public void moveBackward() {
-		turtleControl.moveTurtlesBackward(STANDARD_MOVE);
+		try {
+			turtleControl.moveTurtlesBackward(STANDARD_MOVE);			
+		} catch (TurtleOutOfScreenException e) {
+			// TODO - Display error message on console?
+		}
 	}
 	public void rotateRight() {
 		turtleControl.turnTurtlesRight(STANDARD_TURN);
