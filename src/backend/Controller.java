@@ -62,11 +62,11 @@ public class Controller {
     }
     
     // THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
-    public double moveTurtlesForward(double pixels) throws TurtleOutOfScreenException {
+    public double moveTurtlesForward(double pixels) {
     		return turtleFactory.moveCurrentTurtlesForward(pixels);
     }
     
-    public double moveTurtlesBackward(double pixels) throws TurtleOutOfScreenException {
+    public double moveTurtlesBackward(double pixels){
     		return turtleFactory.moveCurrentTurtlesForward(-pixels);
     }
     
@@ -84,6 +84,10 @@ public class Controller {
     
     public double setPenUp(int index) {
     	return turtleFactory.setPenUp(index);
+    }
+    
+    public double isPenDown(int index) {
+    	return turtleFactory.isPenDown(index);
     }
     
     public void saveWorkspaceToFile(String fileName) {

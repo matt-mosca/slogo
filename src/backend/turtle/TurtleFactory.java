@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.IntToDoubleFunction;
 
-import backend.error_handling.TurtleOutOfScreenException;
+//import backend.error_handling.TurtleOutOfScreenException;
 
 public class TurtleFactory {
 
@@ -149,7 +149,7 @@ public class TurtleFactory {
 	}
 
 	// NOTE : Made public to support Controller
-	public double moveCurrentTurtlesForward(double pixels) throws TurtleOutOfScreenException {
+	public double moveCurrentTurtlesForward(double pixels)  {
 		return doForToldTurtles(turtleId -> moveTurtleForward(turtleId, pixels));
 	}
 
@@ -282,7 +282,7 @@ public class TurtleFactory {
 		return heading(getQueryTurtleId());
 	}
 
-	double isPenDown(int index) {
+	public double isPenDown(int index) {
 		return getTurtle(index).isPenUp() ? 0 : 1;
 	}
 
