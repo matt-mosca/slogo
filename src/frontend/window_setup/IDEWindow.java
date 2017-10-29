@@ -87,15 +87,6 @@ public class IDEWindow implements Observer {
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
 	
-	private MenuItem chinese = new MenuItem();
-	private MenuItem english = new MenuItem();
-	private MenuItem french = new MenuItem();
-	private MenuItem german = new MenuItem();
-	private MenuItem italian = new MenuItem();
-	private MenuItem portuguese = new MenuItem();
-	private MenuItem russian = new MenuItem();
-	private MenuItem spanish = new MenuItem();
-
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
@@ -113,6 +104,8 @@ public class IDEWindow implements Observer {
 	private ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
 	private GridPane turtleMovementKeys;
+	
+	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -234,32 +227,8 @@ public class IDEWindow implements Observer {
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
 		penColorPicker.setValue(Color.BLACK);
-		
-		chinese = menuItemMaker.makeMenuItem(e->setMenuLanguage("Chinese"), "Chinese");
-		
-		english = menuItemMaker.makeMenuItem(e->setMenuLanguage("English"), "English");
-		
-		french = menuItemMaker.makeMenuItem(e->setMenuLanguage("French"), "French");
-		
-		german = menuItemMaker.makeMenuItem(e->setMenuLanguage("German"), "German");
-		
-		italian = menuItemMaker.makeMenuItem(e->setMenuLanguage("Italian"), "Italian");
-		
-		portuguese = menuItemMaker.makeMenuItem(e->setMenuLanguage("Portuguese"), "Portuguese");
-		
-		russian = menuItemMaker.makeMenuItem(e->setMenuLanguage("Russian"), "Russian");
-		
-		spanish = menuItemMaker.makeMenuItem(e->setMenuLanguage("Spanish"), "Spanish");
-		
-		Menu languageMenu = new Menu("Language");
-		languageMenu.getItems().add(chinese);
-		languageMenu.getItems().add(english);
-		languageMenu.getItems().add(french);
-		languageMenu.getItems().add(german);
-		languageMenu.getItems().add(italian);
-		languageMenu.getItems().add(portuguese);
-		languageMenu.getItems().add(russian);
-		languageMenu.getItems().add(spanish);
+
+		Menu languageMenu = setMenu("Language");
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
 		
@@ -269,6 +238,18 @@ public class IDEWindow implements Observer {
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
+	}
+	
+	private Menu setMenu(String name)
+	{
+		Menu sampleMenu = new Menu(name);
+		int i = 0;
+		for(i = 0; i<languageList.length;i++)
+		{
+			String temp = languageList[i];
+			sampleMenu.getItems().add(menuItemMaker.makeMenuItem(e->setMenuLanguage(temp), temp));
+		}
+		return sampleMenu;
 	}
 	
 	private void setMenuLanguage(String language) {
