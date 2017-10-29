@@ -321,7 +321,7 @@ public class TurtleFactory {
 		System.out.print("Old Y: " + oldY);
 
 		// First, draw line to edge
-		double[] edgeXY = getExceedingEdgeXY(index, unwrappedX, unwrappedY);
+		double[] edgeXY = wrapOnce(index, oldX, oldY);
 		System.out.println("Edge X: " + edgeXY[0]);
 		System.out.println("Edge Y: " + edgeXY[1]);
 		// Call move to edgeX, edgeY to register that line segment
@@ -337,44 +337,73 @@ public class TurtleFactory {
 		return distanceMovedToEdge;
 	}
 
-	// only called if either X or Y or both are out of bounds
-	private double[] getExceedingEdgeXY(int index, double oldX, double oldY) {
+		// only called if either X or Y or both are out of bounds
+	private double[] wrapOnce(int index, double oldX, double oldY) {
 		Turtle turtle = getTurtle(index);
-		double turtleX = turtle.getX();
-		double turtleY = turtle.getY();
-		double edgeX = turtleX;
-		double edgeY = turtleY;
-		if (turtleX < -xBounds || turtleX > xBounds) {
-			System.out.println("x exceeded");
-			if (turtleX < -xBounds) {
-				edgeX = -xBounds;
-			}
-			if (turtleX > xBounds) {
-				edgeX = xBounds;
-			}
-			edgeY = (edgeX - oldX) * Math.tan(turtle.getAngle()) + oldY;
-			if (crossesBounds(edgeX, edgeY)) {
-				edgeY = wrapY(edgeY, yBounds);
-			}
-			System.out.println("EdgeX is " + edgeX + " for turtleX of " + turtleX);
-			System.out.println("EdgeY is " + edgeY + " for turtleY of " + turtleY);
+		double updatedX = turtle.getX();
+		double updatedY = turtle.getY();
+		System.out.println("newX: " + updatedX + " newY: " + updatedY);
+		if ((updatedX < -xBounds || updatedX > xBounds) && (updatedY < -yBounds || updatedY > yBounds)) {
+			// need to figure out which direction "leaves" first, so figure out if Y was in bounds when X crossed
+			return handleXAndYExcess(turtle, oldX, oldY);
 		}
-		else if (turtleY < -yBounds || turtleY > yBounds) {
-			System.out.println("y exceeded");
-			if (turtleY < -yBounds) {
-				edgeY = -yBounds;
-			}
-			if (turtleY > yBounds) {
-				edgeY = yBounds;
-			}
-			edgeX = (edgeY - oldY) / Math.tan(turtle.getAngle()) + oldX;
-			if (crossesBounds(edgeX, edgeY)) {
-				edgeX = wrapX(edgeX, xBounds);
-			}
-			System.out.println("EdgeX is " + edgeX + " for turtleX of " + turtleX);
-			System.out.println("EdgeY is " + edgeY + " for turtleY of " + turtleY);
+		else if (updatedX < -xBounds || updatedX > xBounds) {
+			return handleXExcess(turtle, oldX, oldY);
 		}
-		return new double[] { edgeX, edgeY };
+		else if (updatedY < -yBounds || updatedY > yBounds) {
+			return handleYExcess(turtle, oldX, oldY);
+		} else {
+			// finished wrapping
+			return new double[] { updatedX, updatedY };
+		}
+	}
+
+	private double[] handleXAndYExcess(Turtle turtle, double oldX, double oldY) {
+		double updatedX = turtle.getX(), updatedY = turtle.getY();
+		double excessX = updatedX - (updatedX < -xBounds ? -xBounds : xBounds);
+		double slope = (updatedY - oldY) / (updatedX - oldX);
+		double yWhenXCrossed = updatedY - excessX * slope;
+		if (yWhenXCrossed < -yBounds || yWhenXCrossed > yBounds) {
+			// handle as if just y exceeded
+			return handleYExcess(turtle, oldX, oldY);
+		} else {
+			// handle as if just x exceeded
+			return handleXExcess(turtle, oldX, oldY);
+		}
+	}
+
+	private double[] handleXExcess(Turtle turtle, double oldX, double oldY) {
+		System.out.println("x exceeded");
+		double updatedX = turtle.getX();
+		if (updatedX < -xBounds) {
+			updatedX = -xBounds;
+		} else if (updatedX > xBounds) {
+			updatedX = xBounds;
+		}
+		double updatedY = (updatedX - oldX) * Math.tan(turtle.getAngle()) + oldY;
+		if (crossesBounds(updatedX, updatedY)) {
+			updatedY = wrapY(updatedY, yBounds);
+		}
+		System.out.println("EdgeX is " + updatedX + " for turtleX of " + turtle.getX());
+		System.out.println("EdgeY is " + updatedY + " for turtleY of " + turtle.getY());
+		return new double[] { updatedX, updatedY };
+	}
+
+	private double[] handleYExcess(Turtle turtle, double oldX, double oldY) {
+		System.out.println("y exceeded");
+		double updatedY = turtle.getY();
+		if (updatedY < -yBounds) {
+			updatedY = -yBounds;
+		} else if (updatedY > yBounds) {
+			updatedY = yBounds;
+		}
+		double updatedX = (updatedY - oldY) / Math.tan(turtle.getAngle()) + oldX;
+		if (crossesBounds(updatedX, updatedY)) {
+			updatedX = wrapX(updatedX, xBounds);
+		}
+		System.out.println("EdgeX is " + updatedX + " for turtleX of " + turtle.getX());
+		System.out.println("EdgeY is " + updatedY + " for turtleY of " + turtle.getY());
+		return new double[] { updatedX, updatedY };
 	}
 
 	private double[] getReflectionPoint(int index, double edgeX, double edgeY) {
@@ -397,25 +426,6 @@ public class TurtleFactory {
 		return new double[] { reflectionX, reflectionY };
 	}
 
-	private void keepTurtleInBounds(int index) {
-		keepTurtleInXBounds(index);
-		keepTurtleInYBounds(index);
-	}
-
-	private void keepTurtleInXBounds(int index) {
-		Turtle turtle = getTurtle(index);
-		double turtleX = turtle.getX();
-		double newX = turtleX > xBounds  || turtleX < -xBounds ? wrapX(turtleX, xBounds) : turtleX;
-		turtle.setXY(newX, turtle.getY());
-	}
-
-	private void keepTurtleInYBounds(int index) {
-		Turtle turtle = getTurtle(index);
-		double turtleY = turtle.getY();
-		double newY = turtleY > yBounds || turtleY < -yBounds  ? wrapY(turtleY, yBounds) : turtleY;
-		turtle.setXY(turtle.getX(), newY);
-	}
-
 	private boolean crossesBounds(double turtleX, double turtleY) {
 		if (turtleX < -xBounds || turtleX > xBounds || turtleY < -yBounds || turtleY > yBounds) {
 			return true;
@@ -431,7 +441,6 @@ public class TurtleFactory {
 	}
 
 	private double wrapX(double xCoords, double xBounds) {
-		//double wrappedX = Math.floorMod((int) (xCoords + xBounds), (int) (2 * xBounds)) - xBounds;
 		double wrappedX;
 		double modNumerator = xCoords + xBounds;
 		double modDenominator = 2 * xBounds;
@@ -445,7 +454,6 @@ public class TurtleFactory {
 	}
 
 	private double wrapY(double yCoords, double yBounds) {
-		//double wrappedY = Math.floorMod((int) (yCoords + yBounds), (int) (2 * yBounds)) - yBounds;
 		double wrappedY;
 		double modNumerator = yCoords + yBounds;
 		double modDenominator = 2 * yBounds;
