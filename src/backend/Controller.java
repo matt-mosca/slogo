@@ -78,6 +78,14 @@ public class Controller {
     		return turtleFactory.rotateCurrentTurtles(false, degrees);
     }
     
+    public double setPenDown(int index) {
+    	return turtleFactory.setPenDown(index);
+    }
+    
+    public double setPenUp(int index) {
+    	return turtleFactory.setPenUp(index);
+    }
+    
     public void saveWorkspaceToFile(String fileName) {
     	
     		workspaceManager.saveWorkspaceToFile(scopedStorage, fileName);
