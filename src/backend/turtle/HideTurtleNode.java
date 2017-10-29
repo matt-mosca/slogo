@@ -4,13 +4,13 @@ import backend.error_handling.SLogoException;
 
 public class HideTurtleNode extends TurtleNode {
 
-	public HideTurtleNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public HideTurtleNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().hideCurrentTurtles();
+		return getTurtleController().hideCurrentTurtles();
 	}
 
 	@Override

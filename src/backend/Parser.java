@@ -11,7 +11,6 @@ import backend.control.ScopedStorage;
 import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
-import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
@@ -19,14 +18,13 @@ import backend.math.ConstantNode;
 import backend.turtle.AskNode;
 import backend.turtle.AskWithNode;
 import backend.turtle.TellNode;
-import backend.turtle.TurtleFactory;
+import backend.turtle.TurtleController;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
 import backend.view_manipulation.ViewNode;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,11 +49,11 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
-	private TurtleFactory turtleManager;
+	private TurtleController turtleManager;
 	private ScopedStorage scopedStorage;
 	private ViewController viewController;
 
-	public Parser(TurtleFactory turtleManager, ScopedStorage storage,
+	public Parser(TurtleController turtleManager, ScopedStorage storage,
 				  ViewController viewController, CommandGetter commandGetter) {
 
 		syntaxTrees = new HashMap<>();
@@ -151,7 +149,7 @@ public class Parser {
 			Constructor constructor;
 			Object[] constructorArgs;
 			if (isTurtleNode(commandClass)) {
-				constructor = commandClass.getConstructor(TurtleFactory.class);
+				constructor = commandClass.getConstructor(TurtleController.class);
 				constructorArgs = new Object[] {turtleManager};
 			}
 			// Note - I added this so I can test the commands (Ben), free to change as you see fit

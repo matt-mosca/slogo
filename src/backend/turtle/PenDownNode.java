@@ -4,13 +4,13 @@ import backend.error_handling.SLogoException;
 
 public class PenDownNode extends TurtleNode {
 
-	public PenDownNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public PenDownNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().setCurrentTurtlesPenDown();
+		return getTurtleController().setCurrentTurtlesPenDown();
 	}
 
 	@Override

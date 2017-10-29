@@ -4,15 +4,15 @@ import backend.error_handling.SLogoException;
 
 public class SetPositionNode extends TurtleNode {
 
-	public SetPositionNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public SetPositionNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double x = arguments[0];
 		double y = arguments[1];
-		return getTurtleFactory().setCurrentTurtlesXY(x, y);
+		return getTurtleController().setCurrentTurtlesXY(x, y);
 	}
 
 	@Override
