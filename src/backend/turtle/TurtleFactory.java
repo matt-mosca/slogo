@@ -265,7 +265,7 @@ public class TurtleFactory {
 		return heading(getQueryTurtleId());
 	}
 
-	double isPenDown(int index) {
+	public double isPenDown(int index) {
 		return getTurtle(index).isPenUp() ? 0 : 1;
 	}
 

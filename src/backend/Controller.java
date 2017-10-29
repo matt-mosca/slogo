@@ -85,6 +85,10 @@ public class Controller {
     	return turtleFactory.setPenUp(index);
     }
     
+    public double isPenDown(int index) {
+    	return turtleFactory.isPenDown(index);
+    }
+    
     public void saveWorkspaceToFile(String fileName) {
     	
     		workspaceManager.saveWorkspaceToFile(scopedStorage, fileName);

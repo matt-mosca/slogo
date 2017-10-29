@@ -10,6 +10,7 @@ import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.Drawer;
 import frontend.turtle_display.TurtleGraphicalControls;
+import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
 import javafx.geometry.Insets;
@@ -24,6 +25,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -119,13 +121,14 @@ public class IDEWindow implements Observer {
 	private GridPane turtleMovementKeys;
 	private int variableCount = 0;
 	
-	public IDEWindow() {
+	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 		borderLayout.setMaxSize(totalWidth, totalHeight);
 		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
 		turtleMovementKeys = new GridPane();
+		primaryStage = primary;
 		
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
@@ -160,6 +163,33 @@ public class IDEWindow implements Observer {
 		
 		makeButtons(primaryStage);
 		setBorderArrangement();
+		
+		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
+		keyControls.connectKeysToScene();
+		
+//		Scene title
+//		title.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
+//		private void handleKeyInput (KeyCode code) {
+//	        if(code == KeyCode.RIGHT) {
+//	            mainPaddle.setX(mainPaddle.getX() + KEY_INPUT_SPEED);
+//	        }
+	}
+		
+//	private void handleKeyInput(KeyCode code) {
+//		TurtleGraphicalControls test = new TurtleGraphicalControls(controller);
+//		if(code == KeyCode.UP) {
+//			System.out.println("UP");
+//			test.moveForward();
+//        }
+//	}
+	
+	public void setUpWindow() {
+		primaryStage.setScene(primaryScene);
+		setUpTurtleField();
+	}
+	
+	private void setUpTurtleField() {
+		turtleView.displayInitialTurtle();
 	}
 	
 	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
@@ -194,15 +224,6 @@ public class IDEWindow implements Observer {
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);
 		borderLayout.setPrefSize(totalWidth, totalHeight);
-	}
-	
-	public void setUpWindow(Stage primary) {
-		primary.setScene(primaryScene);
-		setUpTurtleField();
-	}
-	
-	private void setUpTurtleField() {
-		turtleView.displayInitialTurtle();
 	}
 	
 	//Change index to depend on selected turtle once Pen is specific to a turtle

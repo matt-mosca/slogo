@@ -14,8 +14,8 @@ public class Main extends Application {
 		primaryStage.setTitle(APP_NAME);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		IDEWindow window = new IDEWindow();
-		window.setUpWindow(primaryStage);
+		IDEWindow window = new IDEWindow(primaryStage);
+		window.setUpWindow();
 	}
 	
 	public static void main(String[] args) {
