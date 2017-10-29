@@ -12,7 +12,7 @@ public class MenuFactory {
 		Menu menu = new Menu(name);
 		for(int i = 0; i<menuItemList.length;i++)
 		{
-			menuItemMaker.makeMenuItem(setLangue, "Chinese");
+			//menuItemMaker.makeMenuItem(setLangue, "Chinese");
 		}
 		return menu;
 	}

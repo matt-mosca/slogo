@@ -15,10 +15,10 @@ public class MenuBarFactory {
 	Menu languageMenu = new Menu("Language");
 	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	
-	public MenuBar makeMenuItem(EventHandler<ActionEvent> handle, String name)
-	{
-		for(int i = 0; i<languageList.length;i++)
-		{
-			menuItemMaker.makeMenuItem(e->setMenuLanguage("Chinese"), "Chinese");
+	public MenuBar makeMenuItem(EventHandler<ActionEvent> handle, String name) {
+		for (int i = 0; i < languageList.length; i++) {
+			//menuItemMaker.makeMenuItem(e->setMenuLanguage("Chinese"), "Chinese");
 		}
+		return null;
+	}
 }

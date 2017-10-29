@@ -126,7 +126,7 @@ public class TurtleFactory {
 		return new LinkedHashSet<>(toldTurtleIds);
 	}
 
-	double moveTurtleForward(int index, double pixels) throws TurtleOutOfScreenException {
+	double moveTurtleForward(int index, double pixels) {//throws TurtleOutOfScreenException {
 		System.out.println("Moving turtle " + index + " by " + pixels);
 		Turtle turtle = getTurtle(index);
 		double oldX = turtle.getX();
@@ -135,8 +135,9 @@ public class TurtleFactory {
 		double turtleX = turtle.getX();
 		double turtleY = turtle.getY();
 		if (crossesBounds(turtleX, turtleY)) {
-			turtle.setXY(oldX, oldY);
-			throw new TurtleOutOfScreenException();
+			//turtle.setXY(oldX, oldY);
+			//throw new TurtleOutOfScreenException();
+			handleTurtleWrapping(index, oldX, oldY);
 		}
 		// Update front end
 		System.out.println("New x: " + turtleX + "; New y: " + turtleY);
@@ -147,11 +148,11 @@ public class TurtleFactory {
 	// NOTE : Made public to support Controller
 	public double moveCurrentTurtlesForward(double pixels) throws TurtleOutOfScreenException {
 		double result = doForToldTurtles(turtleId -> {
-			try {
+			//try {
 				return moveTurtleForward(turtleId, pixels);			
-			} catch (TurtleOutOfScreenException e) {
+			/*} catch (TurtleOutOfScreenException e) {
 				return -pixels;
-			}
+			}*/
 		});
 		if (result != pixels) {
 			throw new TurtleOutOfScreenException();
@@ -316,10 +317,10 @@ public class TurtleFactory {
 		}
 	}
 
-	/* DEPRECATE IN FAVOR OF NOT ALLOWING WRAPPING?
+	// DEPRECATE IN FAVOR OF NOT ALLOWING WRAPPING?
  
 	// If amount moved is returned, can use to keep moving until fully moved
-	private double handleTurtleWrapping(int index, double oldX, double oldY) {
+	/*private double handleTurtleWrapping(int index, double oldX, double oldY) {
 		Turtle turtle = getTurtle(index);
 		double unwrappedX = turtle.getX();
 		double unwrappedY = turtle.getY();
@@ -335,7 +336,7 @@ public class TurtleFactory {
 		keepTurtleInBounds(index);
 		// Calculate amount moved
 		System.out.println("Old X: " + oldX);
-		System.out.print("Old Y: " + oldY);
+		System.out.println("Old Y: " + oldY);
 		System.out.println("Edge X: " + edgeXY[0]);
 		System.out.println("Edge Y: " + edgeXY[1]);
 		double distanceMovedToEdge = Math.sqrt(Math.pow(edgeXY[0] - oldX, 2) + Math.pow(edgeXY[1] - oldY, 2));
@@ -343,6 +344,37 @@ public class TurtleFactory {
 		double distanceMovedFromReflectionPoint = Math.sqrt(Math.pow(turtle.getX() - reflectionXY[0], 2) + Math.pow(turtle.getY() - reflectionXY[1], 2));
 		System.out.println("Distance moved from reflection point: " + distanceMovedFromReflectionPoint);
 		return distanceMovedToEdge + distanceMovedFromReflectionPoint;
+	}*/
+
+	private double handleTurtleWrapping(int index, double oldX, double oldY) {
+		Turtle turtle = getTurtle(index);
+		double unwrappedX = turtle.getX();
+		double unwrappedY = turtle.getY();
+		turtle.setXY(oldX, oldY);
+		double slope = (unwrappedY - oldY) / (unwrappedX - oldX);
+		double totalDistance = Math.sqrt(Math.pow(unwrappedX - oldX, 2) + Math.pow(unwrappedY - oldY, 2));
+		if (slope < 1 && slope > 0) {
+			double oneWrapX = xBounds * 2;
+			double oneWrapY = slope * oneWrapX;
+			double fullWrapDistance = Math.sqrt(Math.pow(oneWrapX, 2) + Math.pow(oneWrapY, 2));
+			while (totalDistance > 0) {
+				if (turtle.getX() + oneWrapX > xBounds && turtle.getY() + oneWrapY < -yBounds) {
+					// which hit first?
+				} else if (turtle.getX() + oneWrapX > xBounds) {
+
+				} else if (turtle.getY() + oneWrapY < -yBounds) {
+
+				} else {
+					// fits!
+					totalDistance -= fullWrapDistance;
+					turtle.setPenUp(false);
+					turtle.setXY(turtle.getX() + oneWrapX, turtle.getY() + oneWrapY);
+					turtle.setPenUp(true);
+					turtle.setXY(-xBounds, turtle.getY());
+				}
+			}
+		}
+		return 0;
 	}
 
 	// only called if either X or Y or both are out of bounds
@@ -423,7 +455,7 @@ public class TurtleFactory {
 		double newY = turtleY > yBounds || turtleY < -yBounds  ? wrapY(turtleY, yBounds) : turtleY;
 		turtle.setXY(turtle.getX(), newY);
 	}
-	*/
+
 	
 	private boolean crossesBounds(double turtleX, double turtleY) {
 		if (turtleX < -xBounds || turtleX > xBounds || turtleY < -yBounds || turtleY > yBounds) {
