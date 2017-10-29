@@ -3,6 +3,7 @@ package backend;
 import backend.control.ScopedStorage;
 import backend.control.WorkspaceManager;
 import backend.error_handling.SLogoException;
+import backend.error_handling.TurtleOutOfScreenException;
 import backend.error_handling.WorkspaceFileNotFoundException;
 import backend.turtle.TurtleFactory;
 import backend.view_manipulation.PaletteStorage;
@@ -61,11 +62,11 @@ public class Controller {
     }
     
     // THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
-    public double moveTurtlesForward(double pixels) {
+    public double moveTurtlesForward(double pixels) throws TurtleOutOfScreenException {
     		return turtleFactory.moveCurrentTurtlesForward(pixels);
     }
     
-    public double moveTurtlesBackward(double pixels) {
+    public double moveTurtlesBackward(double pixels) throws TurtleOutOfScreenException {
     		return turtleFactory.moveCurrentTurtlesForward(-pixels);
     }
     
