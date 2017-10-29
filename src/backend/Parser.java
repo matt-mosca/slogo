@@ -55,10 +55,12 @@ public class Parser {
 	private ScopedStorage scopedStorage;
 	private ViewController viewController;
 
-	public Parser(TurtleFactory turtleManager, ScopedStorage storage, ViewController viewController) {
-		commandGetter = new CommandGetter();
+	public Parser(TurtleFactory turtleManager, ScopedStorage storage,
+				  ViewController viewController, CommandGetter commandGetter) {
+
 		syntaxTrees = new HashMap<>();
 		scopedStorage = storage;
+		this.commandGetter = commandGetter;
 		this.turtleManager = turtleManager;
 		this.viewController = viewController;
 	}
@@ -83,17 +85,6 @@ public class Parser {
 		}
 		SyntaxNode tree = syntaxTrees.get(formattedCommand);
 		tree.execute();
-	}
-
-	// To support switching of language through front end
-	public void setLanguage(String language) {
-		try {
-			commandGetter.setLanguage(language);
-		} catch (IOException e) {
-			// Can only be because language passed in is not supported
-			SLogoException badLanguage = new ProjectBuildException();
-			badLanguage.getMessage();
-		}
 	}
 
 	// Top-Level parsing command that can add disjoint commands to root
