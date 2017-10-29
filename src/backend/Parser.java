@@ -283,9 +283,11 @@ public class Parser {
 	// TODO - SPLIT INTO SMALLER HELPERS
 	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making a FunctionDefinitionNode");
+		List<String> funcStrings = new ArrayList<>();
 		// Consume the MAKEUSERINSTRUCTION token
-		it.next();
+		funcStrings.add(it.next());
 		String funcName = it.next();
+		funcStrings.add(funcName);
 		// To support recursive functions, may need to store the funcName here
 		scopedStorage.registerFunctionName(funcName);
 		String listStartToken = it.next();
@@ -306,6 +308,7 @@ public class Parser {
 		// Consume the ']' token
 		it.next();
 		RootNode funcRoot = getCommandsListRoot(it);
+		// TODO - Save string to ScopedStorage for future loading of function
 		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot, variableNames);
 	}
 	
