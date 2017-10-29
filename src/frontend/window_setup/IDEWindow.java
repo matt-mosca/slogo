@@ -73,7 +73,7 @@ public class IDEWindow implements Observer {
 
 	private Stage primaryStage;
 	private Scene primaryScene;
-	private Stage helpStage = new Stage();
+	private HelpWindow helpWindow = new HelpWindow();
 	
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
@@ -230,7 +230,7 @@ public class IDEWindow implements Observer {
 		Text enterCommand = new Text("Enter Command:");
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->help(), bottomGroup, "Help");
+		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
@@ -333,21 +333,6 @@ public class IDEWindow implements Observer {
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
 		result.getExtensionFilters().setAll(new ExtensionFilter("Text Files", extensionAccepted));
 		return result;
-	}
-
-	private void help() {
-		Text t = new Text();
-		t.setFont(new Font(20));
-		t.setWrappingWidth(200);
-		t.setTextAlignment(TextAlignment.JUSTIFY);
-		t.setText("Commands/help");
-
-		VBox vbox = new VBox();
-		vbox.getChildren().add(t);
-		Scene scene = new Scene(vbox, 500, 150, Color.WHITE);
-		helpStage.setTitle("Help");
-		helpStage.setScene(scene);
-		helpStage.show();
 	}
 	
 	public Rectangle getTurtleField() {
