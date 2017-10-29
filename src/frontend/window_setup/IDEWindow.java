@@ -271,7 +271,6 @@ public class IDEWindow implements Observer {
 		turtleView.changeDrawColor(penColorPicker.getValue());
 		System.out.println(penColorPicker.getValue());
 	}
-	
 	private void enterCommand() {
 		Text history = new Text();
 		String commandInput = commandTextArea.getText();
@@ -280,7 +279,8 @@ public class IDEWindow implements Observer {
 			if(controller.validateCommand(commandInput)){
 				controller.executeCommand(commandInput);
 			}
-			history.setText(commandCount+". "+commandInput);
+			history.setText(commandInput);
+			history.setOnMouseClicked(e->commandTextArea.setText(history.getText()));
 		}
 		catch(SLogoException e) {
 			
