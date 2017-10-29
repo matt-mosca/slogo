@@ -377,5 +377,4 @@ public class IDEWindow implements Observer {
 		newVariable.setText(variablesBuffer.toString());
 		variables.add(newVariable, 0, variableCount);
 	}
-
 }
