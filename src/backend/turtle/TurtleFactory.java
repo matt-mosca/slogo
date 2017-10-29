@@ -193,7 +193,7 @@ public class TurtleFactory {
 		return doForToldTurtles(turtleId -> setXY(turtleId, x, y));
 	}
 
-	double setPenDown(int index) {
+	public double setPenDown(int index) {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(false);
@@ -205,7 +205,7 @@ public class TurtleFactory {
 		return doForToldTurtles(turtleId -> setPenDown(turtleId));
 	}
 
-	double setPenUp(int index) {
+	public double setPenUp(int index) {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(true);

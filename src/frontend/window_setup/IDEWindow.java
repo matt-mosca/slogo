@@ -205,6 +205,16 @@ public class IDEWindow implements Observer {
 		turtleView.displayInitialTurtle();
 	}
 	
+	//Change index to depend on selected turtle once Pen is specific to a turtle
+	private void changePenToUp() {
+		controller.setPenUp(1);
+	}
+	
+	//Change index to depend on selected turtle once Pen is specific to a turtle
+	private void changePenToDown() {
+		controller.setPenDown(1);
+	}
+
 	private ImageView makeImageViewFromName(String imageName) {
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
 		ImageView imageNode = new ImageView(image);
@@ -229,6 +239,8 @@ public class IDEWindow implements Observer {
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
+		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
+		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
 		penColorPicker.setValue(Color.BLACK);
