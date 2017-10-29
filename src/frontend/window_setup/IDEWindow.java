@@ -7,8 +7,6 @@ import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
 import frontend.factory.TextAreaFactory;
-import frontend.factory.TextFieldFactory;
-import frontend.turtle_display.Drawer;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
@@ -61,12 +59,20 @@ public class IDEWindow implements Observer {
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
+	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
+	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
+	private int commandCount = 0;
+	private int variableCount = 0;
+	
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
 	public static final String NEW_LINE = "\n";
+	private static final String DATA_FILE_EXTENSION = "*.jpg";
 
 	private Stage primaryStage;
 	private Scene primaryScene;
+	private Stage helpStage = new Stage();
+	
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
 	private VBox leftBox = new VBox();
@@ -74,17 +80,12 @@ public class IDEWindow implements Observer {
 	private HBox topBox = new HBox();
 	private HBox bottomBox = new HBox();
 	private TextArea commandTextArea;
-	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
-	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-		
-	private Stage helpStage = new Stage();
+	private GridPane console = new GridPane();
 	
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
-	
-	private GridPane console = new GridPane();
 	
 	private MenuItem chinese = new MenuItem();
 	private MenuItem english = new MenuItem();
@@ -96,28 +97,22 @@ public class IDEWindow implements Observer {
 	private MenuItem spanish = new MenuItem();
 
 	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
-	private static final String DATA_FILE_EXTENSION = "*.jpg";
 
-	ButtonFactory buttonMaker = new ButtonFactory();
-	ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
-	TextFieldFactory textFieldMaker = new TextFieldFactory();
-	TextAreaFactory textAreaMaker = new TextAreaFactory();
-	private TurtleView turtleView;
-	private Image turtlePic;
-	private int commandCount = 0;
+	private ButtonFactory buttonMaker = new ButtonFactory();
+	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
+	private TextAreaFactory textAreaMaker = new TextAreaFactory();
+	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	
+	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
-	private MenuItemFactory menuItemMaker = new MenuItemFactory();
-	private Drawer drawer = new Drawer();
 	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
 	private Text variableDisplay;
 	private Controller controller;
 	private ScrollPane consoleScrollable;
-	ScrollPane variableScrollable;
+	private ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
 	private GridPane turtleMovementKeys;
-	private int variableCount = 0;
 	
 	public IDEWindow() {
 		borderLayout = new BorderPane();
@@ -134,11 +129,9 @@ public class IDEWindow implements Observer {
 		setFormatH(topBox, OFFSET, TOP_WIDTH, TOP_HEIGHT, Pos.BOTTOM_CENTER);
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
-		
-		//console.setAlignment(Pos.CENTER);
+
 		console.setHgap(10);
 		console.setVgap(2);
-		//console.setPadding(new Insets(25, 25, 25, 25));
 		Text consoleLabel = new Text("Command History: ");
 		console.add(consoleLabel, 0, commandCount);
 		
@@ -155,8 +148,6 @@ public class IDEWindow implements Observer {
 		controller = new Controller(scopedStorage, turtleView, turtleField);
 		
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
-		
-		//bottomBox.setPrefSize(BOTTOM_WIDTH, BOTTOM_HEIGHT);
 		
 		makeButtons(primaryStage);
 		setBorderArrangement();
@@ -235,7 +226,6 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, makeImageViewFromName("Right_Arrow.png"), 2, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, makeImageViewFromName("Left_Arrow.png"), 0, 1);
-//		commandTextField = textFieldMaker.makeReturnableTextField(e->storeCommand(), leftGroup, "Command");
 		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
 		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
@@ -245,37 +235,21 @@ public class IDEWindow implements Observer {
 		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
 		penColorPicker.setValue(Color.BLACK);
 		
-		chinese = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("Chinese");
-		}, "Chinese");
+		chinese = menuItemMaker.makeMenuItem(e->setMenuLanguage("Chinese"), "Chinese");
 		
-		english = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("English");
-		}, "English");
+		english = menuItemMaker.makeMenuItem(e->setMenuLanguage("English"), "English");
 		
-		french = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("French");
-		}, "French");
+		french = menuItemMaker.makeMenuItem(e->setMenuLanguage("French"), "French");
 		
-		german = menuItemMaker.makeMenuItem(e->{
-			setMenuLanguage("German");
-		}, "German");
+		german = menuItemMaker.makeMenuItem(e->setMenuLanguage("German"), "German");
 		
-		italian = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("Italian");
-		}, "Italian");
+		italian = menuItemMaker.makeMenuItem(e->setMenuLanguage("Italian"), "Italian");
 		
-		portuguese = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("Portuguese");
-		}, "Portuguese");
+		portuguese = menuItemMaker.makeMenuItem(e->setMenuLanguage("Portuguese"), "Portuguese");
 		
-		russian = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("Russian");
-		}, "Russian");
+		russian = menuItemMaker.makeMenuItem(e->setMenuLanguage("Russian"), "Russian");
 		
-		spanish = menuItemMaker.makeMenuItem(e->{
-				setMenuLanguage("Spanish");
-		}, "Spanish");
+		spanish = menuItemMaker.makeMenuItem(e->setMenuLanguage("Spanish"), "Spanish");
 		
 		Menu languageMenu = new Menu("Language");
 		languageMenu.getItems().add(chinese);
