@@ -15,5 +15,9 @@ public class ConstantNode extends NoArgNode {
 	public double executeSelf(double... arguments) {
 		return value;
 	}
+	
+	public double getValue() {
+		return value;
+	}
 
 }

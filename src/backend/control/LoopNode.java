@@ -35,4 +35,19 @@ public class LoopNode extends ControlNode {
         getStore().exitScope();
         return result;
     }
+    
+    // Worth exposing this for the sake of serialization??
+    // If so, consider returning a deep-copy instead?
+    public SyntaxNode getCommandSubtree() {
+    		return subtree;
+    }
+    
+    public String getIterationVariable() {
+    		return iterationVariable;
+    }
+    
+    public SyntaxNode getEndExpression() {
+    		return endExpression;
+    }
+    
 }

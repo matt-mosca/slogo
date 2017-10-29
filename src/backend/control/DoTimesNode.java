@@ -19,5 +19,5 @@ public class DoTimesNode extends LoopNode {
     public DoTimesNode(ScopedStorage store, String iterationVariable, SyntaxNode limitExpression, SyntaxNode subtree) {
         super(store, iterationVariable, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
     }
-
+    
 }

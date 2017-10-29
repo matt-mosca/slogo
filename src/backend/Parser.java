@@ -46,7 +46,7 @@ public class Parser {
 	public static final String VARIABLE_ARGS_END_DELIMITER = ")";
 	public static final String LIST_START_DELIMITER = "[";
 	public static final String LIST_END_DELIMITER = "]";
-	
+
 	public static final String TURTLE_PACKAGE = "backend.turtle";
 
 	private CommandGetter commandGetter;
@@ -68,18 +68,21 @@ public class Parser {
 			return false;
 		}
 		// Avoid repeated computation for just differing whitespace
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
+		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
+		System.out.println("Formatted command: " + formattedCommand);
 		syntaxTrees.put(formattedCommand,
-				constructSyntaxTree(new PeekingIterator<>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
+				constructSyntaxTree(new PeekingIterator<>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
 		System.out.println("Validated command!");
+		System.out.println("Serializing Tree: ");
+		System.out.println(serializeTree(syntaxTrees.get(formattedCommand)));
 		return true;
 	}
 
 	public void executeCommand(String command) throws SLogoException {
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER);
+		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
 			syntaxTrees.put(formattedCommand, constructSyntaxTree(
-					new PeekingIterator<String>(Arrays.asList(command.split(DELIMITER_REGEX)).iterator())));
+					new PeekingIterator<String>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
 		}
 		SyntaxNode tree = syntaxTrees.get(formattedCommand);
 		tree.execute();
@@ -161,13 +164,14 @@ public class Parser {
 			Object[] constructorArgs;
 			if (isTurtleNode(commandClass)) {
 				constructor = commandClass.getConstructor(TurtleFactory.class);
-				constructorArgs = new Object[] {turtleManager};
+				constructorArgs = new Object[] { turtleManager };
 			}
-			// Note - I added this so I can test the commands (Ben), free to change as you see fit
+			// Note - I added this so I can test the commands (Ben), free to change as you
+			// see fit
 			else if (isViewNode(commandClass)) {
 				constructor = commandClass.getConstructor(ViewController.class);
-				constructorArgs = new Object[] {viewController};
-			}  else {
+				constructorArgs = new Object[] { viewController };
+			} else {
 				constructor = commandClass.getConstructor(null);
 				constructorArgs = null;
 			}
@@ -199,9 +203,9 @@ public class Parser {
 		// Resolve the expression into a tree
 		SyntaxNode expr = makeExpTree(it);
 		// TODO - make multiple vars ( make :a 10 :b 9 ... ) work
-		return new VariableDefinitionNode(scopedStorage, new String[]{varName}, new SyntaxNode[]{expr});
+		return new VariableDefinitionNode(scopedStorage, new String[] { varName }, new SyntaxNode[] { expr });
 	}
-	
+
 	private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making FunctionNode");
 		// Consume the function name
@@ -210,7 +214,7 @@ public class Parser {
 		int numberOfFunctionParameters = scopedStorage.getNumberOfFunctionParameters(funcName);
 		System.out.println("Number of function parameters: " + numberOfFunctionParameters);
 		List<SyntaxNode> functionParameters = new ArrayList<>();
-		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex ++) {
+		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex++) {
 			functionParameters.add(makeExpTree(it));
 		}
 		return new FunctionNode(scopedStorage, funcName, functionParameters);
@@ -320,7 +324,7 @@ public class Parser {
 		// TODO - Save string to ScopedStorage for future loading of function
 		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot, variableNames);
 	}
-	
+
 	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making TellNode");
 		// Consume the TELL token
@@ -330,10 +334,10 @@ public class Parser {
 		// TODO - use helper for this??
 		for (SyntaxNode child : idsRoot.getChildren()) {
 			tellNode.addChild(child);
-		} 
+		}
 		return tellNode;
 	}
-	
+
 	private AskNode makeAskNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making AskNode");
 		// Consume the ASK button
@@ -346,7 +350,7 @@ public class Parser {
 		}
 		return askNode;
 	}
-	
+
 	private AskWithNode makeAskWithNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.print("Making AskWithNode");
 		// Consume the ASKWITH button
@@ -356,7 +360,7 @@ public class Parser {
 		AskWithNode askWithNode = new AskWithNode(turtleManager, queriesRoot, commandsListRoot);
 		return askWithNode;
 	}
-	
+
 	// Only ValueNodes can have variable params
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
@@ -383,7 +387,7 @@ public class Parser {
 		it.next();
 		return root;
 	}
-	
+
 	// Called when expecting a list
 	private RootNode getCommandsListRoot(PeekingIterator<String> it) throws SLogoException {
 		if (it == null || !it.hasNext()) {
@@ -408,10 +412,95 @@ public class Parser {
 	private boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
-	
+
+	// TODO - Helper function for all these?
 	private boolean isTurtleNode(Class nodeClass) {
 		return TurtleNode.class.isAssignableFrom(nodeClass);
 	}
 
-	private boolean isViewNode(Class nodeClass) { return ViewNode.class.isAssignableFrom(nodeClass); }
+	private boolean isViewNode(Class nodeClass) {
+		return ViewNode.class.isAssignableFrom(nodeClass);
+	}
+
+	private boolean isValueNode(Class nodeClass) {
+		return ValueNode.class.isAssignableFrom(nodeClass);
+	}
+
+	// Special cases in serialization
+	private boolean isConstantNode(Class nodeClass) {
+		return ConstantNode.class.isAssignableFrom(nodeClass);
+	}
+
+	private boolean isVariableNode(Class nodeClass) {
+		return VariableNode.class.isAssignableFrom(nodeClass);
+	}
+
+	private boolean isFunctionDefinitionNode(Class nodeClass) {
+		return FunctionDefinitionNode.class.isAssignableFrom(nodeClass);
+	}
+
+	private boolean isDoTimesNode(Class nodeClass) {
+		return DoTimesNode.class.isAssignableFrom(nodeClass);
+	}
+	
+	private boolean isRootNode(Class nodeClass) {
+		return RootNode.class.isAssignableFrom(nodeClass);
+	}
+
+	// TODO - Move to debugger?
+	// TODO - Refactor, split into multiple helper methods
+	// TODO - Use reflection to dispatch each node to its appropriate parsing method?
+	public String serializeTree(SyntaxNode root) {
+		if (root == null) {
+			return "";
+		}
+		if (isConstantNode(root.getClass())) {
+			return Double.toString(((ConstantNode) root).getValue());
+		}
+		String rootString = "";
+		if (isValueNode(root.getClass())) {
+			ValueNode valueNode = (ValueNode) root;
+			boolean isTakingUnlimitedParams = false;
+			List<SyntaxNode> children = valueNode.getChildren();
+			if (!isRootNode(valueNode.getClass())) {
+				// Check for unlimited params - if so, need to add a '(' and ')'
+				if (valueNode.canTakeVariableNumberOfArguments()
+						&& children.size() != valueNode.getDefaultNumberOfArguments()) {
+					isTakingUnlimitedParams = true;
+					rootString += VARIABLE_ARGS_START_DELIMITER + STANDARD_DELIMITER;
+				}
+				rootString += commandGetter.getNameFromCommandClass(root.getClass());
+			}
+			for (SyntaxNode child : valueNode.getChildren()) {
+				rootString += STANDARD_DELIMITER + serializeTree(child);
+			}
+			if (isTakingUnlimitedParams) {
+				rootString += STANDARD_DELIMITER + VARIABLE_ARGS_END_DELIMITER;
+			}
+		}
+		if (isDoTimesNode(root.getClass())) {
+			return serializeDoTimesNode(root);
+		}
+		// TODO - handle other special cases - control nodes, tell, ask, askwith
+		return rootString;
+	}
+
+	public String serializeDoTimesNode(SyntaxNode root) {
+		if (root == null) {
+			return "";
+		}
+		if (!(root instanceof DoTimesNode)) {
+			// TODO - need custom SLogoException for serialization?
+			throw new IllegalArgumentException();
+		}
+		DoTimesNode doTimesNode = (DoTimesNode) root;
+		String rootString = commandGetter.getNameFromCommandClass(root.getClass());
+		String iterationVariableString = doTimesNode.getIterationVariable();
+		String endExpressionString = serializeTree(doTimesNode.getEndExpression());
+		String commandString = serializeTree(doTimesNode.getCommandSubtree());
+		return rootString + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + iterationVariableString
+				+ STANDARD_DELIMITER + endExpressionString + STANDARD_DELIMITER + LIST_END_DELIMITER
+				+ STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + commandString + STANDARD_DELIMITER
+				+ LIST_END_DELIMITER;
+	}
 }
