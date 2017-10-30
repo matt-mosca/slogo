@@ -9,8 +9,7 @@ import javafx.scene.control.TextField;
 public class TextFieldFactory implements GUIFactory {
 
 	@Override
-	public void makeGUIItem(EventHandler<ActionEvent> handle, Group root, String name) 
-	{
+	public void makeGUIItem(EventHandler<ActionEvent> handle, Group root, String name)  {
 		TextField sampleText = makeReturnableTextField(handle,root,name);	
 	}
 	public TextField makeReturnableTextField(EventHandler<ActionEvent> handle, Group root, String name) {

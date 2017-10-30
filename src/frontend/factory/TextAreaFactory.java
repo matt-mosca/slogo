@@ -9,8 +9,7 @@ import javafx.scene.control.TextArea;
 public class TextAreaFactory implements GUIFactory {
 
 	@Override
-	public void makeGUIItem(EventHandler<ActionEvent> handle, Group root, String name) 
-	{
+	public void makeGUIItem(EventHandler<ActionEvent> handle, Group root, String name)  {
 		TextArea sampleText = makeReturnableTextArea(handle,root,name);	
 	}
 	public TextArea makeReturnableTextArea(EventHandler<ActionEvent> handle, Group root, String name) {

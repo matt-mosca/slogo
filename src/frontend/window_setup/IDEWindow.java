@@ -67,8 +67,6 @@ public class IDEWindow implements Observer {
 	public static final int OFFSET = 8;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-	private int commandCount = 0;
-	private int variableCount = 0;
 	
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
@@ -88,8 +86,6 @@ public class IDEWindow implements Observer {
 	private VBox rightBox = new VBox();
 	private HBox topBox = new HBox();
 	private HBox bottomBox = new HBox();
-	//private TextArea commandTextArea;
-	//private GridPane console = new GridPane();
 	
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
@@ -102,7 +98,6 @@ public class IDEWindow implements Observer {
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
-	//private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
 	private TabFactory tabMaker = new TabFactory();
@@ -259,8 +254,7 @@ public class IDEWindow implements Observer {
 	{
 		Menu sampleMenu = new Menu(name);
 		int i = 0;
-		for(i = 0; i<languageList.length;i++)
-		{
+		for(i = 0; i<languageList.length;i++) {
 			String temp = languageList[i];
 			sampleMenu.getItems().add(menuItemMaker.makeMenuItem(e->setMenuLanguage(temp), temp));
 		}
@@ -337,7 +331,6 @@ public class IDEWindow implements Observer {
 
 	private void updateVariableDisplay() {
 		Map<String, Double> availableVariables = controller.retrieveAvailableVariables();
-		//System.out.println(availableVariables);
 		int variableCount = 0;
 		variables.getChildren().clear();
 		for (String variableName : availableVariables.keySet()) {
