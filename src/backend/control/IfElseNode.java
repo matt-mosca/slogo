@@ -28,4 +28,9 @@ public class IfElseNode extends IfNode {
         }
         return result;
     }
+    
+    public SyntaxNode getFalseBranch() {
+    		return falseBranch;
+    }
+    
 }
