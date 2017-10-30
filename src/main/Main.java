@@ -40,8 +40,7 @@ public class Main extends Application {
 		primaryScene = new Scene(hbox, TOTAL_WIDTH, TOTAL_HEIGHT, STANDARD_AREA_COLOR);
 		primaryStage.setScene(primaryScene);
 	}
-	private void setStageName()
-	{
+	private void setStageName() {
 		stageName = textField.getText();
 	}
 
