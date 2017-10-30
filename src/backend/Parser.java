@@ -39,6 +39,8 @@ import java.util.Set;
 public class Parser {
 
 	public static final String DELIMITER_REGEX = "\\s+";
+	public static final String NEWLINE_REGEX = "\n";
+	public static final char COMMENT = '#';
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 	public static final String VARIABLE_REGEX = ":[a-zA-Z_]+";
@@ -70,7 +72,10 @@ public class Parser {
 			return false;
 		}
 		// Avoid repeated computation for just differing whitespace
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
+		// Need to remove comments
+		String commandWithoutComments = stripComments(command);
+		System.out.println("Command without comments: " + commandWithoutComments);
+		String formattedCommand = commandWithoutComments.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
 		System.out.println("Formatted command: " + formattedCommand);
 		syntaxTrees.put(formattedCommand,
 				constructSyntaxTree(new PeekingIterator<>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
@@ -79,9 +84,10 @@ public class Parser {
 		//System.out.println(serializeTree(syntaxTrees.get(formattedCommand)));
 		return true;
 	}
-
+	
 	public void executeCommand(String command) throws SLogoException {
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
+		String commandWithoutComments = stripComments(command);
+		String formattedCommand = commandWithoutComments.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
 			syntaxTrees.put(formattedCommand, constructSyntaxTree(
 					new PeekingIterator<String>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
@@ -111,6 +117,10 @@ public class Parser {
 		}
 		String nextToken = it.peek();
 		System.out.println("Next token: " + nextToken);
+		if (nextToken.length() == 0 || nextToken.matches(DELIMITER_REGEX)) {
+			it.next();
+			makeExpTree(it);
+		}
 		if (nextToken.equals(VARIABLE_ARGS_START_DELIMITER)) {
 			it.next();
 			return makeExpTreeForVariableParameters(it);
@@ -440,76 +450,18 @@ public class Parser {
 	private boolean isRootNode(Class nodeClass) {
 		return RootNode.class.isAssignableFrom(nodeClass);
 	}
-
-	/*
 	
-	// TODO - Move to debugger?
-	public String serializeTree(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (isConstantNode(root.getClass())) {
-			return Double.toString(((ConstantNode) root).getValue());
-		}
-		// Dispatch appropriate method
-		try {
-			Method nextSerializingMethod = commandGetter.getSerializingMethod(root.getClass());
-			System.out.println("Next serializing method: " + nextSerializingMethod.getName());
-			return (String) nextSerializingMethod.invoke(this, root);
-		} catch (IllegalAccessException | InvocationTargetException badCommand) {
-			badCommand.printStackTrace();
-			throw new UndefinedCommandException(root.getClass().getName());
-		}
-	}
-	
-	public String serializeValueNode(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (!isValueNode(root.getClass())) {
-			throw new IllegalArgumentException();
-		}
-		String rootString = "";
-		ValueNode valueNode = (ValueNode) root;
-		boolean isTakingUnlimitedParams = false;
-		List<SyntaxNode> children = valueNode.getChildren();
-		if (!isRootNode(valueNode.getClass())) {
-			// Check for unlimited params - if so, need to add a '(' and ')'
-			if (valueNode.canTakeVariableNumberOfArguments()
-					&& children.size() != valueNode.getDefaultNumberOfArguments()) {
-				isTakingUnlimitedParams = true;
-				rootString += VARIABLE_ARGS_START_DELIMITER + STANDARD_DELIMITER;
+	private String stripComments(String command) {
+		String[] lines = command.split(NEWLINE_REGEX);
+		List<String> nonCommentedLines = new ArrayList<>();
+		for (String line : lines) {
+			String trimmedLine = line.trim();
+			if (trimmedLine.length() > 0 && trimmedLine.charAt(0) != COMMENT) {
+				nonCommentedLines.add(trimmedLine);
 			}
-			rootString += commandGetter.getNameFromCommandClass(root.getClass());
 		}
-		for (SyntaxNode child : valueNode.getChildren()) {
-			rootString += STANDARD_DELIMITER + serializeTree(child);
-		}
-		if (isTakingUnlimitedParams) {
-			rootString += STANDARD_DELIMITER + VARIABLE_ARGS_END_DELIMITER;
-		}
-		return rootString;
+		return String.join(STANDARD_DELIMITER, nonCommentedLines);
 	}
-
-	public String serializeDoTimesNode(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (!(root instanceof DoTimesNode)) {
-			// TODO - need custom SLogoException for serialization?
-			throw new IllegalArgumentException();
-		}
-		DoTimesNode doTimesNode = (DoTimesNode) root;
-		String rootString = commandGetter.getNameFromCommandClass(root.getClass());
-		String iterationVariableString = doTimesNode.getIterationVariable();
-		String endExpressionString = serializeTree(doTimesNode.getEndExpression());
-		String commandString = serializeTree(doTimesNode.getCommandSubtree());
-		return rootString + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + iterationVariableString
-				+ STANDARD_DELIMITER + endExpressionString + STANDARD_DELIMITER + LIST_END_DELIMITER
-				+ STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + commandString + STANDARD_DELIMITER
-				+ LIST_END_DELIMITER;
-	}
-	*/
 	
 	public Set<String> getSessionCommands() {
 		return syntaxTrees.keySet();
