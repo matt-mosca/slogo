@@ -11,8 +11,7 @@ import javafx.scene.text.Text;
 
 public class ColorPickerFactory implements GUIFactory{
 	
-	public void makeGUIItem (EventHandler<ActionEvent> handle, Group root, String name)
-	{
+	public void makeGUIItem (EventHandler<ActionEvent> handle, Group root, String name)	{
 		ColorPicker sampleColorPicker = makeReturnableColorPicker(handle, root, name);
 	}
 	public ColorPicker makeReturnableColorPicker(EventHandler<ActionEvent> handle, Group root, String name) {
