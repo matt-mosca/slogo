@@ -23,8 +23,6 @@ public class VariableDefinitionNode extends ControlNode {
         if (names.length != expressions.length) {
             throw new UnbalancedMakeException();
         }
-        Arrays.stream(names).filter(name -> !getStore().existsVariable(name))
-                .forEach(undefined -> getStore().setVariable(undefined, 0.0));
     }
 
     @Override
