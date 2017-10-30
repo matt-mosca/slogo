@@ -191,14 +191,18 @@ public class IDEWindow implements Observer {
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
-	//Change index to depend on selected turtle once Pen is specific to a turtle
 	private void changePenToUp() {
-		controller.setPenUp(1);
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			controller.setPenUp(toldTurtleIds.get(i));
+		}
 	}
 	
-	//Change index to depend on selected turtle once Pen is specific to a turtle
 	private void changePenToDown() {
-		controller.setPenDown(1);
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			controller.setPenDown(toldTurtleIds.get(i));
+		}
 	}
 
 	private ImageView makeImageViewFromName(String imageName) {
@@ -259,10 +263,11 @@ public class IDEWindow implements Observer {
 		turtleField.setFill(backGroundColorPicker.getValue());
 	}
 	
-	//Change 0 to the index of the selected turtle once selection is active
 	private void changePenColor() {
-		turtleView.changeDrawColor(0, penColorPicker.getValue());
-		System.out.println(penColorPicker.getValue());
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			turtleView.changeDrawColor(toldTurtleIds.get(i), penColorPicker.getValue());
+		}
 	}
 	
 	private void createWindow()
