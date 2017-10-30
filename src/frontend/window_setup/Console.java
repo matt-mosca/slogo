@@ -18,31 +18,23 @@ import javafx.scene.text.Text;
  */
 public class Console {
 
+    private final int MINIMUM_WIDTH = 600;
+
     private ObservableList<Node> commandElements;
-    private ListView<Node> commands;
+    private ListView<Node> commandsListView;
     private Controller controller;
     private TextArea commandEntry;
-    private Pane pane;
 
     private int index;
 
-    public Console() {
-        commandEntry = new TextArea();
-        commandElements = FXCollections.observableArrayList();
-        commandElements.add(commandEntry);
-        commands = new ListView<>(commandElements);
-        pane = new Pane(commands);
-        commandEntry.setOnKeyPressed(e -> handleKeyPress(e));
-    }
-    public Console(Controller controllerSample)
-    {
+    public Console(Controller controllerSample) {
     	controller = controllerSample;
     	commandEntry = new TextArea();
         commandElements = FXCollections.observableArrayList();
         commandElements.add(commandEntry);
-        commands = new ListView<>(commandElements);
-        pane = new Pane(commands);
+        commandsListView = new ListView<>(commandElements);
         commandEntry.setOnKeyPressed(e -> handleKeyPress(e));
+        commandsListView.setMinWidth(MINIMUM_WIDTH);
     }
 
     private void handleKeyPress(KeyEvent keyPress) {
@@ -81,7 +73,7 @@ public class Console {
 			addError(e.getMessage());
 		}
 		commandEntry.clear();
-		commands.scrollTo(getIndexOfLastEnteredCommand());
+		commandsListView.scrollTo(getIndexOfLastEnteredCommand());
 	}
 
     void addCommand(String command) {
@@ -97,7 +89,7 @@ public class Console {
         commandElements.add(getIndexOfLastEnteredCommand() + 1, commandError);
     }
 
-    public Pane getContainerPane() { return pane; }
+    public ListView<Node> getListView() { return commandsListView; }
 
     private int getIndexOfLastEnteredCommand() { return commandElements.size() - 2; }
 }
