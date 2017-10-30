@@ -100,7 +100,7 @@ public class IDEWindow implements Observer {
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
-	private Console console = new Console();
+	private Console console;
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
@@ -184,7 +184,7 @@ public class IDEWindow implements Observer {
 
 	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
-		borderLayout.setLeft(console.getContainerPane());
+		borderLayout.setLeft(console.getListView());
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);

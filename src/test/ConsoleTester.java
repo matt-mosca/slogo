@@ -17,8 +17,8 @@ public class ConsoleTester extends Application{
             primaryStage.setTitle(APP_NAME);
             primaryStage.setResizable(false);
             primaryStage.show();
-            Console window = new Console();
-            primaryStage.setScene(new Scene(window.getContainerPane()));
+            Console window = new Console(null);
+            primaryStage.setScene(new Scene(window.getListView()));
 
         }
 
