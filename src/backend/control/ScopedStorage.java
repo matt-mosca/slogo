@@ -57,7 +57,6 @@ public class ScopedStorage extends Observable {
 		// point at which frontend should update available variables
 		setChanged();
 		notifyObservers();
-		System.out.println(countObservers());
 		return value;
 	}
 
@@ -69,14 +68,14 @@ public class ScopedStorage extends Observable {
 		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
 		while (innerToOuterScope.hasNext()) {
 			String scope = innerToOuterScope.next();
-			if (functionVariables.get(scope).containsKey(variableName)) {
+			if (functionVariables.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
 				return scope;
 			}
 		}
 		return currentScope;
 	}
 
-	void addFunctionParameterNames(String functionName, List<String> parameterNames) {
+	public void addFunctionParameterNames(String functionName, List<String> parameterNames) {
 		functionParameterNames.put(functionName, parameterNames);
 		// point at which frontend should display the available "user-defined command" (function)
 		setChanged();
@@ -105,7 +104,7 @@ public class ScopedStorage extends Observable {
 	}
 
 	public boolean existsFunction(String name) {
-		return functionRoots.containsKey(name);
+		return functionParameterNames.containsKey(name);
 	}
 
 	// used by the parser
@@ -126,7 +125,7 @@ public class ScopedStorage extends Observable {
 		availableVariables.putAll(functionVariables.get(GLOBAL));
 		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
 		while (innerToOuterScope.hasNext()) {
-			availableVariables.putAll(functionVariables.get(innerToOuterScope.next()));
+			availableVariables.putAll(functionVariables.getOrDefault(innerToOuterScope.next(), new HashMap<>()));
 		}
 		return availableVariables;
 	}

@@ -22,6 +22,7 @@ import backend.turtle.TurtleController;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
 import backend.view_manipulation.ViewNode;
+import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -134,6 +135,7 @@ public class Parser {
 			System.out.println("Next parsing method: " + nextParsingMethod.getName());
 			return (SyntaxNode) nextParsingMethod.invoke(this, it);
 		} catch (IllegalAccessException | InvocationTargetException badCommand) {
+			System.out.print("WHAT THE \t");
 			badCommand.printStackTrace();
 			throw new UndefinedCommandException(nextToken);
 		}
@@ -179,7 +181,7 @@ public class Parser {
 			return valueNode;
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
 				| InstantiationException e) {
-			e.printStackTrace();
+			System.out.println("FUCK " + e.getMessage());
 			throw new UndefinedCommandException(commandName);
 		}
 	}
@@ -211,6 +213,7 @@ public class Parser {
 		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex++) {
 			functionParameters.add(makeExpTree(it));
 		}
+		functionParameters.forEach(e -> System.out.print(e.serialize() + " "));
 		return new FunctionNode(funcName, scopedStorage, funcName, functionParameters);
 	}
 
@@ -309,6 +312,8 @@ public class Parser {
 			}
 			variableNames.add(variableName);
 		}
+		// need to do this here for recursion to work
+		scopedStorage.addFunctionParameterNames(funcName, variableNames);
 		if (!it.hasNext()) {
 			throw new IllegalSyntaxException(LIST_END_DELIMITER);
 		}
@@ -316,7 +321,7 @@ public class Parser {
 		it.next();
 		RootNode funcRoot = getCommandsListRoot(it);
 		// TODO - Save string to ScopedStorage for future loading of function
-		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot, variableNames);
+		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot);
 	}
 
 	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
@@ -440,76 +445,6 @@ public class Parser {
 	private boolean isRootNode(Class nodeClass) {
 		return RootNode.class.isAssignableFrom(nodeClass);
 	}
-
-	/*
-	
-	// TODO - Move to debugger?
-	public String serializeTree(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (isConstantNode(root.getClass())) {
-			return Double.toString(((ConstantNode) root).getValue());
-		}
-		// Dispatch appropriate method
-		try {
-			Method nextSerializingMethod = commandGetter.getSerializingMethod(root.getClass());
-			System.out.println("Next serializing method: " + nextSerializingMethod.getName());
-			return (String) nextSerializingMethod.invoke(this, root);
-		} catch (IllegalAccessException | InvocationTargetException badCommand) {
-			badCommand.printStackTrace();
-			throw new UndefinedCommandException(root.getClass().getName());
-		}
-	}
-	
-	public String serializeValueNode(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (!isValueNode(root.getClass())) {
-			throw new IllegalArgumentException();
-		}
-		String rootString = "";
-		ValueNode valueNode = (ValueNode) root;
-		boolean isTakingUnlimitedParams = false;
-		List<SyntaxNode> children = valueNode.getChildren();
-		if (!isRootNode(valueNode.getClass())) {
-			// Check for unlimited params - if so, need to add a '(' and ')'
-			if (valueNode.canTakeVariableNumberOfArguments()
-					&& children.size() != valueNode.getDefaultNumberOfArguments()) {
-				isTakingUnlimitedParams = true;
-				rootString += VARIABLE_ARGS_START_DELIMITER + STANDARD_DELIMITER;
-			}
-			rootString += commandGetter.getNameFromCommandClass(root.getClass());
-		}
-		for (SyntaxNode child : valueNode.getChildren()) {
-			rootString += STANDARD_DELIMITER + serializeTree(child);
-		}
-		if (isTakingUnlimitedParams) {
-			rootString += STANDARD_DELIMITER + VARIABLE_ARGS_END_DELIMITER;
-		}
-		return rootString;
-	}
-
-	public String serializeDoTimesNode(SyntaxNode root) throws SLogoException {
-		if (root == null) {
-			return "";
-		}
-		if (!(root instanceof DoTimesNode)) {
-			// TODO - need custom SLogoException for serialization?
-			throw new IllegalArgumentException();
-		}
-		DoTimesNode doTimesNode = (DoTimesNode) root;
-		String rootString = commandGetter.getNameFromCommandClass(root.getClass());
-		String iterationVariableString = doTimesNode.getIterationVariable();
-		String endExpressionString = serializeTree(doTimesNode.getEndExpression());
-		String commandString = serializeTree(doTimesNode.getCommandSubtree());
-		return rootString + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + iterationVariableString
-				+ STANDARD_DELIMITER + endExpressionString + STANDARD_DELIMITER + LIST_END_DELIMITER
-				+ STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + commandString + STANDARD_DELIMITER
-				+ LIST_END_DELIMITER;
-	}
-	*/
 	
 	public Set<String> getSessionCommands() {
 		return syntaxTrees.keySet();
