@@ -23,7 +23,8 @@ public class TurtleController {
 	private static final int FIRST_TURTLE_ID = 1;
 
 	private int activeTurtleId;
-	private int queryTurtleId; // Used when turtle to be queried is different from active turtle
+	private int queryTurtleId; // Used when turtle to be queried is different
+								// from active turtle
 	// For O(1) checking of duplicates while preserving insertion order
 	private LinkedHashSet<Integer> toldTurtleIds;
 
@@ -49,7 +50,10 @@ public class TurtleController {
 			createdTurtles.add(newTurtle);
 			turtleView.addTurtle();
 			final int TURTLE_INDEX = getZeroBasedId(newTurtleId);
-			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> setActiveTurtles(new Integer[] {TURTLE_INDEX}));
+			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> {
+				System.out.println("Clicked index " + TURTLE_INDEX);
+				setActiveTurtles(new Integer[] { TURTLE_INDEX + 1  });
+			});
 		}
 	}
 
@@ -134,7 +138,7 @@ public class TurtleController {
 	}
 
 	// NOTE : Made public to support Controller
-	public double moveCurrentTurtlesForward(double pixels)  {
+	public double moveCurrentTurtlesForward(double pixels) {
 		return doForToldTurtles(turtleId -> {
 			addTurtles(turtleId);
 			return turtleMover.moveTurtleForward(getZeroBasedId(turtleId), pixels);
@@ -143,22 +147,16 @@ public class TurtleController {
 
 	// NOTE : Made public to support Controller
 	public double rotateCurrentTurtles(boolean clockwise, double angleInDegrees) {
-		return doForToldTurtles(turtleId ->
-				turtleRotater.rotateTurtle(getZeroBasedId(turtleId), clockwise, angleInDegrees));
+		return doForToldTurtles(
+				turtleId -> turtleRotater.rotateTurtle(getZeroBasedId(turtleId), clockwise, angleInDegrees));
 	}
-
-
 
 	double setCurrentTurtlesHeading(double angleInDegrees) {
-		return doForToldTurtles(turtleId ->
-				turtleRotater.setHeading(getZeroBasedId(turtleId), angleInDegrees));
+		return doForToldTurtles(turtleId -> turtleRotater.setHeading(getZeroBasedId(turtleId), angleInDegrees));
 	}
 
-
-
 	double setTowardsCurrentTurtles(double x, double y) {
-		return doForToldTurtles(turtleId ->
-				turtleRotater.setTowards(getZeroBasedId(turtleId), x, y));
+		return doForToldTurtles(turtleId -> turtleRotater.setTowards(getZeroBasedId(turtleId), x, y));
 	}
 
 	double setCurrentTurtlesXY(double x, double y) {
@@ -271,10 +269,13 @@ public class TurtleController {
 		}
 		return id - 1;
 	}
-	
+
 	private void initializeFirstTurtle() {
-		turtleView.selectTurtleOnClick(getZeroBasedId(FIRST_TURTLE_ID), e -> setActiveTurtles(new Integer[] {getZeroBasedId(FIRST_TURTLE_ID)}));
+		turtleView.selectTurtleOnClick(getZeroBasedId(FIRST_TURTLE_ID),
+				e -> setActiveTurtles(new Integer[] { FIRST_TURTLE_ID }));
 	}
 
-	public List<Integer> getToldTurtleIds() { return new ArrayList<>(toldTurtleIds); }
+	public List<Integer> getToldTurtleIds() {
+		return new ArrayList<>(toldTurtleIds);
+	}
 }
