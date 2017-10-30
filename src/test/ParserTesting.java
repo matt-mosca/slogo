@@ -12,7 +12,7 @@ public class ParserTesting {
 	public static void main(String[] args) {
 		
 		// TEMP
-		Parser parser = new Parser(null, null, null);
+		Parser parser = new Parser(null, null, null, null);
 		// Simulate call by the front end
 		TurtleListener.initializeSingleton(null);
 		Scanner in = new Scanner(System.in);

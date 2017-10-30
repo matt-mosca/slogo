@@ -4,14 +4,14 @@ import backend.ValueNode;
 
 public abstract class TurtleNode extends ValueNode {
 
-	private TurtleFactory turtleFactory;
+	private TurtleController turtleController;
 
-	public TurtleNode(TurtleFactory turtleFactory) {
-		this.turtleFactory = turtleFactory;
+	public TurtleNode(TurtleController turtleController) {
+		this.turtleController = turtleController;
 	}
 
-	protected TurtleFactory getTurtleFactory() {
-		return turtleFactory;
+	protected TurtleController getTurtleController() {
+		return turtleController;
 	}
 
 	public boolean canTakeVariableNumberOfArguments() {

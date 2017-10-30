@@ -4,13 +4,13 @@ import backend.error_handling.SLogoException;
 
 public class XCoordinateNode extends TurtleNode {
 
-	public XCoordinateNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public XCoordinateNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().currentTurtlesXCor();
+		return getTurtleController().currentTurtlesXCor();
 	}
 
 	@Override

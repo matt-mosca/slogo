@@ -21,6 +21,8 @@ public class CommandGetter {
 	private final Properties COMMAND_PROPERTIES;
 	private Properties languageProperties;
 	private Map<String, String> commandMap = new HashMap<>();
+	private Map<String, String> reverseCommandMap = new HashMap<>();
+	private Map<String, String> commandClassesToNames = new HashMap<>();
 
 	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
 	private final Class PARSER_CLASS = Parser.class;
@@ -38,7 +40,7 @@ public class CommandGetter {
 			InputStream commandParsingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_PARSING_FILE);
 			COMMAND_PARSING_PROPERTIES.load(commandParsingStream);
 			setLanguage(DEFAULT_LANGUAGE);
-
+			initializeReverseCommandProperties();
 		} catch (IOException fileNotFound) {
 			// TODO - need frontend method to launch failure dialog box
 			System.out.println("Missing File!"); // TEMP
@@ -58,10 +60,17 @@ public class CommandGetter {
 		for (String baseCommand : baseCommands) {
 			String aliasesString = languageProperties.getProperty(baseCommand, "");
 			String[] languageAliases = aliasesString.split("\\|");
+			String firstAlias = languageAliases[0];
 			for (String alias : languageAliases) {
 				commandMap.put(alias.replace("\\", ""), baseCommand);
 			}
+			reverseCommandMap.put(baseCommand, firstAlias);
 		}
+	}
+	
+	// To facilitate debugger - get name (in current locale?) from command class
+	public String getNameFromCommandClass(Class commandClass) {
+		return commandClassesToNames.get(commandClass.getName());
 	}
 
 	public Class getCommandNodeClass(String commandName) throws SLogoException {
@@ -93,5 +102,14 @@ public class CommandGetter {
 			throw new UndefinedCommandException(command);
 		}
 		return commandMap.get(command.toLowerCase());
+	}
+	
+	private void initializeReverseCommandProperties() {
+		for (String canonicalName : COMMAND_PROPERTIES.stringPropertyNames()) {
+			String localeSpecificInfo = reverseCommandMap.get(canonicalName);
+			String[] languageAliases = localeSpecificInfo.split("\\|");
+			String chosenAlias = languageAliases[0];
+			commandClassesToNames.put(COMMAND_PROPERTIES.getProperty(canonicalName), chosenAlias);
+		}
 	}
 }

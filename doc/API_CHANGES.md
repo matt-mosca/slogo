@@ -1,7 +1,1 @@
-We had four planned APIs: GUIFactory.java, Display.java, Turtle.java, and Parser.java.
-The biggest change to the back end is we added a turtleFactory.java API and we added a controller to
-communicate externally (front-end to back-end). We also modified the Display.Java into a turtleDisplay.java
-and added some of the planned functionality (add created variables and commands to a display pane)
-into the IDEWindow.java class. For the GUIFactory.java API, we were not able to implement Menu and MenuItems
-with the GUIFactory. The reason is because creating those features were too different from the rest of the
-features created by the GUIFactory,
+We had nine planned APIs, listed [here](src/apis). The biggest change to the APIs is that we added controllers for external communication for both frontend to backend, for example the main Controller, and backend to frontend, for example ViewController. This change was for the better as it allowed for better isolation of the frontend and backend parts of the project. It also helped us with extensions; for example, adding a TurtleController helped with the implementation of multiple turtle commands. We also modified the Display.Java into a turtleDisplay.java and added some of the planned functionality (add created variables and commands to a display pane) into the IDEWindow.java class. For the GUIFactory.java API, we were not able to implement Menu and MenuItems with the GUIFactory. The reason is because creating those features were too different from the rest of the features created by the GUIFactory. In order to implement the UNDO extension, we will likely need to implement and change the HistoryStore API. 
