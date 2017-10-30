@@ -14,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 import utilities.CommandGetter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,10 @@ public class Controller {
     
     public double isPenDown(int index) {
     	return turtleController.isPenDown(index);
+    }
+    
+    public List<Integer> getToldTurtleIds() {
+    	return turtleController.getToldTurtleIds();
     }
     
     public void saveWorkspaceToFile(String fileName) {
