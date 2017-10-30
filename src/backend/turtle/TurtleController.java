@@ -49,7 +49,7 @@ public class TurtleController {
 			createdTurtles.add(newTurtle);
 			turtleView.addTurtle();
 			final int TURTLE_INDEX = getZeroBasedId(newTurtleId);
-			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> setActiveTurtles(new Integer[] {TURTLE_INDEX}));
+			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> setActiveTurtles(new Integer[] {TURTLE_INDEX + 1}));
 		}
 	}
 
@@ -273,7 +273,7 @@ public class TurtleController {
 	}
 	
 	private void initializeFirstTurtle() {
-		turtleView.selectTurtleOnClick(getZeroBasedId(FIRST_TURTLE_ID), e -> setActiveTurtles(new Integer[] {getZeroBasedId(FIRST_TURTLE_ID)}));
+		turtleView.selectTurtleOnClick(getZeroBasedId(FIRST_TURTLE_ID), e -> setActiveTurtles(new Integer[] {FIRST_TURTLE_ID}));
 	}
 
 	public List<Integer> getToldTurtleIds() { return new ArrayList<>(toldTurtleIds); }
