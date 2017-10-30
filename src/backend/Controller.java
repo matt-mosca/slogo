@@ -34,7 +34,7 @@ public class Controller {
         this.paletteStorage = new PaletteStorage();
         turtleController = new TurtleController(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2, IDEWindow.TURTLEFIELD_HEIGHT / 2);
         this.commandGetter = new CommandGetter();
-        ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField);
+        ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
         this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
         workspaceManager = new WorkspaceManager();
     }

@@ -122,6 +122,8 @@ public class TurtleView implements TurtleDisplay{
 	public void changeStrokeWidth(int turtleIndex, double width) { 
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
 	}
+	//Change from 0 to selected index
+	//Make conditional, so that you do not have to select the turtle if there is only one
 	public void changeImage(Image image) {
 		displayedTurtles.get(0).changeImage(image);
 	}

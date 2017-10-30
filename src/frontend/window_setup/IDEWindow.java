@@ -72,7 +72,9 @@ public class IDEWindow implements Observer {
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
 	public static final String NEW_LINE = "\n";
-	private static final String DATA_FILE_EXTENSION = "*.jpg";
+	private static final String PNG_FILE_EXTENSION = "*.png",
+		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
+
 
 	private Stage primaryStage;
 	private Scene primaryScene;
@@ -85,27 +87,26 @@ public class IDEWindow implements Observer {
 	private HBox topBox = new HBox();
 	private HBox bottomBox = new HBox();
 	private TextArea commandTextArea;
-	private GridPane console = new GridPane();
+	//private GridPane console = new GridPane();
 	
 	private Group bottomGroup = new Group();
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
 	
-	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
+	private FileChooser myChooser = makeChooser(PNG_FILE_EXTENSION, JPG_FILE_EXTENSION, GIF_FILE_EXTENSION);
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
+	private Console console = new Console();
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
-	private TurtlePen turtlePen = new TurtlePen(totalHeight, totalHeight);
 	private Text variableDisplay;
 	private Controller controller;
-	private ScrollPane consoleScrollable;
 	private ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
 	private GridPane turtleMovementKeys;
@@ -128,16 +129,10 @@ public class IDEWindow implements Observer {
 		setFormatH(topBox, OFFSET, TOP_WIDTH, TOP_HEIGHT, Pos.BOTTOM_CENTER);
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
-
-		console.setHgap(10);
-		console.setVgap(2);
-		Text consoleLabel = new Text("Command History: ");
-		console.add(consoleLabel, 0, commandCount);
 		
 		variableDisplay = new Text(VARIABLES_HEADER);
 		variables.add(variableDisplay, 0, variableCount);
 		
-		formatScrollPane(consoleScrollable, 150, console, rightGroup);
 		formatScrollPane(variableScrollable, 150, variables, rightGroup);
 		
 		turtleView = new TurtleView(borderLayout, turtleField);
@@ -145,30 +140,14 @@ public class IDEWindow implements Observer {
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
 		controller = new Controller(scopedStorage, turtleView, turtleField);
-		
+		console = new Console(controller);
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
 		makeButtons(primaryStage);
 		setBorderArrangement();
 		
 		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
 		keyControls.connectKeysToScene();
-		
-//		Scene title
-//		title.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
-//		private void handleKeyInput (KeyCode code) {
-//	        if(code == KeyCode.RIGHT) {
-//	            mainPaddle.setX(mainPaddle.getX() + KEY_INPUT_SPEED);
-//	        }
 	}
-		
-//	private void handleKeyInput(KeyCode code) {
-//		TurtleGraphicalControls test = new TurtleGraphicalControls(controller);
-//		if(code == KeyCode.UP) {
-//			System.out.println("UP");
-//			test.moveForward();
-//        }
-//	}
-	
 	public void setUpWindow() {
 		primaryStage.setScene(primaryScene);
 		setUpTurtleField();
@@ -205,7 +184,7 @@ public class IDEWindow implements Observer {
 
 	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
-		borderLayout.setLeft(leftBox);
+		borderLayout.setLeft(console.getContainerPane());
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);
@@ -229,8 +208,6 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void makeButtons(Stage s) {
-		Text enterCommand = new Text("Enter Command:");
-		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
@@ -239,8 +216,6 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, makeImageViewFromName("Right_Arrow.png"), 2, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, makeImageViewFromName("Left_Arrow.png"), 0, 1);
-		commandTextArea = textAreaMaker.makeReturnableTextArea(null, leftGroup, null);
-		buttonMaker.makeGUIItem(e->enterCommand(), leftGroup, "Enter Command");
 		backGroundColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changeBGColor(), topGroup, "BackGround Color");
 		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
 		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
@@ -276,10 +251,7 @@ public class IDEWindow implements Observer {
 		try {
 			controller.setLanguage(language);
 		} catch (SLogoException badLanguage) {
-			Text errorMessage = new Text();
-			errorMessage.setText(commandCount+". "+badLanguage.getMessage());
-			errorMessage.setFill(Color.RED);
-			console.add(errorMessage, 0, ++commandCount);
+			console.addError(badLanguage.getMessage());
 		}
 	}
 	
@@ -303,26 +275,6 @@ public class IDEWindow implements Observer {
 		window.setUpWindow();
 	}
 	
-	private void enterCommand() {
-		Text history = new Text();
-		String commandInput = commandTextArea.getText();
-		try {
-			if(controller.validateCommand(commandInput)){
-				controller.executeCommand(commandInput);
-			}
-			history.setText(commandInput);
-			history.setOnMouseClicked(e->commandTextArea.setText(history.getText()));
-		}
-		catch(SLogoException e) {
-			
-			history.setText(commandCount+". "+e.getMessage());
-			history.setFill(Color.RED);
-		}
-		history.setWrappingWidth(WRAPPING_WIDTH);
-		console.add(history, 0, commandCount);
-		commandTextArea.setText("");
-	}
-	
 	private void openFile(Stage s) {
 		File dataFile = null; 
 		dataFile = myChooser.showOpenDialog(s);
@@ -336,11 +288,11 @@ public class IDEWindow implements Observer {
 	 * @return This method makes the FileChooser object that allows users to open an
 	 *         XML File.
 	 */
-	private FileChooser makeChooser(String extensionAccepted) {
+	private FileChooser makeChooser(String... extensionsAccepted) {
 		FileChooser result = new FileChooser();
 		result.setTitle("open");
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
-		result.getExtensionFilters().setAll(new ExtensionFilter("Text Files", extensionAccepted));
+		result.getExtensionFilters().setAll(new ExtensionFilter("Image Files", extensionsAccepted));
 		return result;
 	}
 	

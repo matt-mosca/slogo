@@ -267,4 +267,6 @@ public class TurtleController {
 		}
 		return id - 1;
 	}
+
+	public List<Integer> getToldTurtleIds() { return new ArrayList<>(toldTurtleIds); }
 }
