@@ -13,7 +13,6 @@ import java.util.List;
 
 public class TurtleView implements TurtleDisplay{
 
-	private double DEFAULT_STROKE_WIDTH = 1.0;
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
 
@@ -22,9 +21,6 @@ public class TurtleView implements TurtleDisplay{
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
-	private Paint drawColor;
-	private double strokeWidth;
-	private boolean isPenDown;
 	
 	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
@@ -32,9 +28,6 @@ public class TurtleView implements TurtleDisplay{
 		turtleField = field;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
-		drawColor = Color.BLACK;
-		strokeWidth = DEFAULT_STROKE_WIDTH;
-		isPenDown = true;
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
@@ -71,12 +64,13 @@ public class TurtleView implements TurtleDisplay{
      * @param yCoordinate - the new y-coordinate of the turtle
      */
     public void move(int turtleIndex, double newXCoord, double newYCoord) {
+    	TurtlePen current = displayedTurtles.get(turtleIndex);
     	double newXCoordinate = BackendValProcessor.translateXCoord(fieldCenterX, newXCoord) - TurtlePen.DEFAULT_WIDTH / 2;
     	double newYCoordinate = BackendValProcessor.translateYCoord(fieldCenterY, newYCoord) - TurtlePen.DEFAULT_HEIGHT / 2;
-    	double currentLineXCoordinate = displayedTurtles.get(turtleIndex).getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
-    	double currentLineYCoordinate = displayedTurtles.get(turtleIndex).getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
-    	displayedTurtles.get(turtleIndex).moveTurtle(newXCoordinate, newYCoordinate);
-    	Drawer lineMaker = new Drawer(drawColor, strokeWidth, isPenDown);
+    	double currentLineXCoordinate = current.getXCoordinate() + TurtlePen.DEFAULT_WIDTH / 2;
+    	double currentLineYCoordinate = current.getYCoordinate() + TurtlePen.DEFAULT_HEIGHT / 2;
+    	current.moveTurtle(newXCoordinate, newYCoordinate);
+    	Drawer lineMaker = new Drawer(current.getPenColor(), current.getStrokeWidth(), current.getIsPenDown());
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
 //    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
@@ -112,24 +106,23 @@ public class TurtleView implements TurtleDisplay{
 	}*/
     
     @Override
-	public void pickUpPen() {
-		isPenDown = false;
+	public void pickUpPen(int turtleIndex) {
+		displayedTurtles.get(turtleIndex).pickUpPen();
 	}
 	
     @Override
-	public void putDownPen() {
-		isPenDown = true;
+	public void putDownPen(int turtleIndex) {
+		displayedTurtles.get(turtleIndex).putDownPen();
 	}
 	
-	public void changeDrawColor(Paint color) {
-		drawColor = color;
+	public void changeDrawColor(int turtleIndex, Paint color) {
+		displayedTurtles.get(turtleIndex).setPenColor(color);
 	}
 
-	public void changeStrokeWidth(double width) { 
-		strokeWidth = width; 
+	public void changeStrokeWidth(int turtleIndex, double width) { 
+		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
 	}
-	public void changeImage(Image image)
-	{
+	public void changeImage(Image image) {
 		displayedTurtles.get(0).changeImage(image);
 	}
 }

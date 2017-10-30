@@ -287,10 +287,12 @@ public class IDEWindow implements Observer {
 		turtleField.setFill(backGroundColorPicker.getValue());
 	}
 	
+	//Change 0 to the index of the selected turtle once selection is active
 	private void changePenColor() {
-		turtleView.changeDrawColor(penColorPicker.getValue());
+		turtleView.changeDrawColor(0, penColorPicker.getValue());
 		System.out.println(penColorPicker.getValue());
 	}
+	
 	private void createWindow()
 	{
 		Stage newStage = new Stage();
