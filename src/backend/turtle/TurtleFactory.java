@@ -198,10 +198,10 @@ public class TurtleFactory {
 			y = wrapY(y, yBounds);			
 		}
 		double distanceMoved = turtle.setXY(x, y);
-		turtleView.pickUpPen();
+		turtleView.pickUpPen(index);
 		turtleView.move(getZeroBasedId(index), turtle.getX(), turtle.getY());
 		if (!turtle.isPenUp()) {
-			turtleView.putDownPen();			
+			turtleView.putDownPen(index);			
 		}
 		return distanceMoved;
 	}
@@ -214,7 +214,7 @@ public class TurtleFactory {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(false);
-		turtleView.putDownPen();
+		turtleView.putDownPen(index);
 		return 1;
 	}
 
@@ -226,7 +226,7 @@ public class TurtleFactory {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(true);
-		turtleView.pickUpPen();
+		turtleView.pickUpPen(index);
 		return 0;
 	}
 
