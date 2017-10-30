@@ -30,9 +30,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Parser {
 
@@ -56,7 +58,7 @@ public class Parser {
 	public Parser(TurtleController turtleManager, ScopedStorage storage,
 				  ViewController viewController, CommandGetter commandGetter) {
 
-		syntaxTrees = new HashMap<>();
+		syntaxTrees = new LinkedHashMap<>();
 		scopedStorage = storage;
 		this.commandGetter = commandGetter;
 		this.turtleManager = turtleManager;
@@ -508,4 +510,8 @@ public class Parser {
 				+ LIST_END_DELIMITER;
 	}
 	*/
+	
+	public Set<String> getSessionCommands() {
+		return syntaxTrees.keySet();
+	}
 }

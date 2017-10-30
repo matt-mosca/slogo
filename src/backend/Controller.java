@@ -99,10 +99,10 @@ public class Controller {
     }
     
     public void saveWorkspaceToFile(String fileName) {
-    		workspaceManager.saveWorkspaceToFile(scopedStorage, fileName);
+    		workspaceManager.saveWorkspaceToFile(parser, scopedStorage, fileName);
     }
     
     public void loadWorkspaceFromFile(String fileName) throws SLogoException {
-    		workspaceManager.loadWorkspaceFromFile(scopedStorage, fileName);
+    		workspaceManager.loadWorkspaceFromFile(parser, scopedStorage, fileName);
     }
 }
