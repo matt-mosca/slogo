@@ -53,12 +53,27 @@ public class ScopedStorage extends Observable {
 	double setVariable(String name, double value) {
 		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
 		functionVariableMap.put(name, value);
-		functionVariables.put(currentScope, functionVariableMap);
+		functionVariables.put(getScopeOfDefinition(name), functionVariableMap);
 		// point at which frontend should update available variables
 		setChanged();
 		notifyObservers();
 		System.out.println(countObservers());
 		return value;
+	}
+
+	/**
+	 *
+	 * @return scope where the variable is already defined, or current scope if it's not defined yet
+	 */
+	private String getScopeOfDefinition(String variableName) {
+		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
+		while (innerToOuterScope.hasNext()) {
+			String scope = innerToOuterScope.next();
+			if (functionVariables.get(scope).containsKey(variableName)) {
+				return scope;
+			}
+		}
+		return currentScope;
 	}
 
 	void addFunctionParameterNames(String functionName, List<String> parameterNames) {
