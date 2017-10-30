@@ -26,7 +26,7 @@ public class CommandGetter {
 	private Map<String, String> commandClassesToNames = new HashMap<>();
 
 	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
-	private final String COMMAND_SERIALIZING_FILE = "resources/CommandSerializing.properties";
+	private final String COMMAND_SERIALIZING_FILE = "resources/CommandDebugging.properties";
 	private final Class PARSER_CLASS = Parser.class;
 	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {PeekingIterator.class};
 	private final Class[] SERIALIZE_METHOD_ARGUMENT_CLASSES = {SyntaxNode.class};
