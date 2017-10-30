@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class PenIndexNode extends ViewNode {
 
-    public PenIndexNode(ViewController viewController) {
-        super(viewController);
+    public PenIndexNode(String commandString, ViewController viewController) {
+        super(commandString, viewController);
     }
 
     @Override

@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class SetPenColorNode extends ViewNode {
 
-    public SetPenColorNode(ViewController viewController) {
-        super(viewController);
+    public SetPenColorNode(String commandString, ViewController viewController) {
+        super(commandString, viewController);
     }
 
     @Override

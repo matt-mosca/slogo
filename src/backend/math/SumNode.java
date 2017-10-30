@@ -9,7 +9,11 @@ import java.util.Arrays;
  */
 public class SumNode extends VarArgNode {
 
-    @Override
+    public SumNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) {
         return Arrays.stream(operands).sum();
     }

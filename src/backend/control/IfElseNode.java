@@ -10,9 +10,9 @@ public class IfElseNode extends IfNode {
 
     private SyntaxNode falseBranch;
 
-    public IfElseNode(ScopedStorage store, SyntaxNode conditionExpression,
+    public IfElseNode(String commandName, ScopedStorage store, SyntaxNode conditionExpression,
                       SyntaxNode trueBranch, SyntaxNode falseBranch) {
-        super(store, conditionExpression, trueBranch);
+        super(commandName, store, conditionExpression, trueBranch);
         this.falseBranch = falseBranch;
     }
 

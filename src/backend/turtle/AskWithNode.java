@@ -10,8 +10,8 @@ public class AskWithNode extends AskNode {
 
 	SyntaxNode queryRoot;
 	
-	public AskWithNode(TurtleController turtleController, SyntaxNode queryRoot, SyntaxNode commandsRoot) {
-		super(turtleController, commandsRoot);
+	public AskWithNode(String commandString, TurtleController turtleController, SyntaxNode queryRoot, SyntaxNode commandsRoot) {
+		super(commandString, turtleController, commandsRoot);
 		this.queryRoot = queryRoot;
 	}
 	

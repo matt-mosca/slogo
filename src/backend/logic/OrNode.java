@@ -9,7 +9,11 @@ import java.util.Arrays;
  */
 public class OrNode extends VarArgNode {
 
-    @Override
+    public OrNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) {
         for (double operand : operands) {
             if (operand != 0) {

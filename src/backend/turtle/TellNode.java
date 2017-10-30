@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class TellNode extends TurtleNode {
 
-	public TellNode(TurtleController turtleController) {
-		super(turtleController);
+	public TellNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 	@Override
