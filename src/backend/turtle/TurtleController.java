@@ -20,6 +20,7 @@ public class TurtleController {
 
 	private TurtleMover turtleMover;
 	private TurtleRotater turtleRotater;
+	private static final int FIRST_TURTLE_ID = 1;
 
 	private int activeTurtleId;
 	private int queryTurtleId; // Used when turtle to be queried is different from active turtle
@@ -38,6 +39,7 @@ public class TurtleController {
 		toldTurtleIds = new LinkedHashSet<Integer>(Arrays.asList(new Integer[] { activeTurtleId }));
 		turtleMover = new TurtleMover(turtleView, createdTurtles, xBounds, yBounds);
 		turtleRotater = new TurtleRotater(turtleView, createdTurtles);
+		initializeFirstTurtle();
 	}
 
 	// TELL [ 100 ] -- creates all turtles up to 100
@@ -46,6 +48,8 @@ public class TurtleController {
 			Turtle newTurtle = new Turtle();
 			createdTurtles.add(newTurtle);
 			turtleView.addTurtle();
+			final int TURTLE_INDEX = getZeroBasedId(newTurtleId);
+			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> setActiveTurtles(new Integer[] {TURTLE_INDEX}));
 		}
 	}
 
@@ -266,6 +270,10 @@ public class TurtleController {
 			throw new IllegalArgumentException();
 		}
 		return id - 1;
+	}
+	
+	private void initializeFirstTurtle() {
+		turtleView.selectTurtleOnClick(getZeroBasedId(FIRST_TURTLE_ID), e -> setActiveTurtles(new Integer[] {getZeroBasedId(FIRST_TURTLE_ID)}));
 	}
 
 	public List<Integer> getToldTurtleIds() { return new ArrayList<>(toldTurtleIds); }
