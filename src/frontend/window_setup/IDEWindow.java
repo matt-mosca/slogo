@@ -72,7 +72,9 @@ public class IDEWindow implements Observer {
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
 	public static final String NEW_LINE = "\n";
-	private static final String DATA_FILE_EXTENSION = "*";
+	private static final String PNG_FILE_EXTENSION = "*.png",
+		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
+
 
 	private Stage primaryStage;
 	private Scene primaryScene;
@@ -92,7 +94,7 @@ public class IDEWindow implements Observer {
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
 	
-	private FileChooser myChooser = makeChooser(DATA_FILE_EXTENSION);
+	private FileChooser myChooser = makeChooser(PNG_FILE_EXTENSION, JPG_FILE_EXTENSION, GIF_FILE_EXTENSION);
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
@@ -286,11 +288,11 @@ public class IDEWindow implements Observer {
 	 * @return This method makes the FileChooser object that allows users to open an
 	 *         XML File.
 	 */
-	private FileChooser makeChooser(String extensionAccepted) {
+	private FileChooser makeChooser(String... extensionsAccepted) {
 		FileChooser result = new FileChooser();
 		result.setTitle("open");
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
-		result.getExtensionFilters().setAll(new ExtensionFilter("Text Files", extensionAccepted));
+		result.getExtensionFilters().setAll(new ExtensionFilter("Image Files", extensionsAccepted));
 		return result;
 	}
 	

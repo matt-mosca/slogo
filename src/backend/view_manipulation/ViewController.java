@@ -1,6 +1,7 @@
 package backend.view_manipulation;
 
 import backend.error_handling.SLogoException;
+import backend.turtle.TurtleController;
 import frontend.turtle_display.TurtleView;
 import javafx.scene.shape.Rectangle;
 
@@ -15,16 +16,22 @@ public class ViewController {
     private SizeController penSizeController;
     private ColorController penColorController;
 
-    public ViewController(PaletteStorage paletteStorage, TurtleView turtleView, Rectangle turtleField) {
+    private TurtleController turtleController;
+
+    public ViewController(PaletteStorage paletteStorage, TurtleView turtleView,
+                          Rectangle turtleField, TurtleController turtleController) {
         this.paletteStorage = paletteStorage;
         PenController penController = new PenController(paletteStorage);
         this.penColorController = penController;
         this.penSizeController = penController;
+        this.turtleController = turtleController;
         this.backgroundController = new BackgroundController(paletteStorage);
         penSizeController.addSizeListener((fillProperty, oldSize, newSize) ->
-                turtleView.changeStrokeWidth(newSize.doubleValue()));
+                turtleController.getToldTurtleIds().forEach(toldTurtleId ->
+                        turtleView.changeStrokeWidth(toldTurtleId, newSize.doubleValue())));
         penController.addColorListener((fillProperty, oldColor, newColor) ->
-                turtleView.changeDrawColor(newColor));
+                turtleController.getToldTurtleIds().forEach(toldTurtleId ->
+                        turtleView.changeDrawColor(toldTurtleId, newColor)));
         backgroundController.addColorListener((fillProperty, oldColor, newColor) ->
                 turtleField.setFill(newColor));
     }
