@@ -7,7 +7,11 @@ import backend.OneArgNode;
  */
 public class CosineNode extends OneArgNode {
 
-    @Override
+    public CosineNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) { return Math.cos(operands[0]); }
     
 }

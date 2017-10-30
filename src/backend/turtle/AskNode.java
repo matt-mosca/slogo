@@ -9,8 +9,8 @@ public class AskNode extends TellNode {
 
 	SyntaxNode commandsRoot;
 	
-	public AskNode(TurtleFactory turtleFactory, SyntaxNode commandsRoot) {
-		super(turtleFactory);
+	public AskNode(String commandString, TurtleFactory turtleFactory, SyntaxNode commandsRoot) {
+		super(commandString, turtleFactory);
 		this.commandsRoot = commandsRoot;
 	}
 

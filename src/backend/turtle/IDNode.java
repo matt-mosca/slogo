@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class IDNode extends TurtleNode {
 
-	public IDNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public IDNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 
 	@Override

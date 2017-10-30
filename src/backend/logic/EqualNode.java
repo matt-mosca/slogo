@@ -7,7 +7,11 @@ import backend.VarArgNode;
  */
 public class EqualNode extends VarArgNode {
 
-    @Override
+    public EqualNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) {
         double firstOperand = operands[0];
         for (double operand : operands) {

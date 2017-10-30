@@ -12,8 +12,8 @@ public class IfNode extends ControlNode {
 
     private SyntaxNode trueBranch;
 
-    public IfNode(ScopedStorage store, SyntaxNode conditionExpression, SyntaxNode trueBranch) {
-        super(store);
+    public IfNode(String commandName, ScopedStorage store, SyntaxNode conditionExpression, SyntaxNode trueBranch) {
+        super(commandName, store);
         this.conditionExpression = conditionExpression;
         this.trueBranch = trueBranch;
     }
@@ -35,4 +35,10 @@ public class IfNode extends ControlNode {
         }
         return result;
     }
+
+	@Override
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

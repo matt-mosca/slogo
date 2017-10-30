@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class BackwardNode extends TurtleNode {
 
-	public BackwardNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public BackwardNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 
 	@Override

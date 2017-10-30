@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class HomeNode extends TurtleNode {
 
-	public HomeNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public HomeNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 
 	@Override

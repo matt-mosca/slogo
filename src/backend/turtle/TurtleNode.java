@@ -6,7 +6,8 @@ public abstract class TurtleNode extends ValueNode {
 
 	private TurtleFactory turtleFactory;
 
-	public TurtleNode(TurtleFactory turtleFactory) {
+	public TurtleNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString);
 		this.turtleFactory = turtleFactory;
 	}
 

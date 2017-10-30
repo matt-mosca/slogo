@@ -11,10 +11,10 @@ public class LoopNode extends ControlNode {
     private String iterationVariable;
     private SyntaxNode startExpression, endExpression, incrementExpression, subtree;
 
-    public LoopNode(ScopedStorage store, String iterationVariable,
+    public LoopNode(String commandName, ScopedStorage store, String iterationVariable,
                     SyntaxNode startExpression, SyntaxNode endExpression,
                     SyntaxNode incrementExpression, SyntaxNode subtree) {
-        super(store);
+        super(commandName, store);
         this.iterationVariable = iterationVariable;
         this.startExpression = startExpression;
         this.endExpression = endExpression;
@@ -49,5 +49,11 @@ public class LoopNode extends ControlNode {
     public SyntaxNode getEndExpression() {
     		return endExpression;
     }
+
+	@Override
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

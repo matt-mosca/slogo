@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class PenUpNode extends TurtleNode {
 
-	public PenUpNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public PenUpNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 
 	@Override

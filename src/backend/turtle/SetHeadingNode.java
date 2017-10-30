@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class SetHeadingNode extends TurtleNode {
 
-	public SetHeadingNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public SetHeadingNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 	
 	@Override

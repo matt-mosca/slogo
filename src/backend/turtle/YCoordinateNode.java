@@ -5,8 +5,8 @@ import backend.error_handling.SLogoException;
 public class YCoordinateNode extends TurtleNode {
 
 
-	public YCoordinateNode(TurtleFactory turtleFactory) {
-		super(turtleFactory);
+	public YCoordinateNode(String commandString, TurtleFactory turtleFactory) {
+		super(commandString, turtleFactory);
 	}
 
 	@Override

@@ -14,8 +14,8 @@ public class FunctionNode extends ControlNode {
     private List<SyntaxNode> parameters;
     private final String FUNCTION_NAME;
 
-    public FunctionNode(ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
-        super(store);
+    public FunctionNode(String commandName, ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
+        super(commandName, store);
         this.parameters = parameters;
         FUNCTION_NAME = functionName;
     }
@@ -35,4 +35,10 @@ public class FunctionNode extends ControlNode {
         store.exitScope();
         return result;
     }
+
+	@Override
+	public String serialize() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

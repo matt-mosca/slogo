@@ -345,6 +345,7 @@ public class TurtleFactory {
 		double edgeX = turtleX;
 		double edgeY = turtleY;
 		if (turtleX < -xBounds || turtleX > xBounds) {
+			// if both exceed, check which exceeds more
 			System.out.println("x exceeded");
 			if (turtleX < -xBounds) {
 				edgeX = -xBounds;
@@ -368,11 +369,13 @@ public class TurtleFactory {
 				edgeY = yBounds;
 			}
 			edgeX = (edgeY - oldY) / Math.tan(turtle.getAngle()) + oldX;
+			/*
 			if (crossesBounds(edgeX, edgeY)) {
 				edgeX = wrapX(edgeX, xBounds);
 			}
 			System.out.println("EdgeX is " + edgeX + " for turtleX of " + turtleX);
 			System.out.println("EdgeY is " + edgeY + " for turtleY of " + turtleY);
+			*/
 		}
 		return new double[] { edgeX, edgeY };
 	}
