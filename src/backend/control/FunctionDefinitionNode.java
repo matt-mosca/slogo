@@ -32,4 +32,8 @@ public class FunctionDefinitionNode extends ControlNode {
 	public String serialize() {
 		return null;
 	}
+	
+	public SyntaxNode getFunctionRoot() {
+		return functionRoot;
+	}
 }

@@ -1,5 +1,6 @@
 package backend.control;
 
+import backend.Parser;
 import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 
@@ -28,13 +29,25 @@ public class LoopNode extends ControlNode {
         double start = startExpression.execute(),
                 end = endExpression.execute(),
                 increment = incrementExpression.execute();
+        //addBoundsToSerialization(iterationVariable, start, end, increment);
         for (double i = start; i <= end; i += increment) {
             getStore().setVariable(iterationVariable, i);
             result = subtree.execute();
+            
         }
         getStore().exitScope();
         return result;
     }
+    
+    /*
+    private void addBoundsToSerialization(String iterationVariable, double start, double end, double increment) {
+		String commandName = getCommandName();
+		String serializedBounds = commandName + Parser.STANDARD_DELIMITER + Parser.LIST_START_DELIMITER + Parser.STANDARD_DELIMITER
+				+ iterationVariable + Parser.STANDARD_DELIMITER + Double.toString(start)
+				+ Parser.STANDARD_DELIMITER + Double.toString(end) + Parser.STANDARD_DELIMITER
+				+ Double.toString(increment) + Parser.STANDARD_DELIMITER + Parser.LIST_END_DELIMITER;
+    }
+    */
     
     // Worth exposing this for the sake of serialization??
     // If so, consider returning a deep-copy instead?
@@ -50,10 +63,15 @@ public class LoopNode extends ControlNode {
     		return endExpression;
     }
 
+    // Deprecated in favor of Debugger's custom execute method
 	@Override
 	public String serialize() {
-		// TODO Auto-generated method stub
+		// Dont serialize the subtree
 		return null;
 	}
     
+    public SyntaxNode getLoopedCommand() {
+		return subtree;
+    }
+
 }

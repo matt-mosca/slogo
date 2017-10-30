@@ -41,4 +41,8 @@ public class IfNode extends ControlNode {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public SyntaxNode getTrueBranch() {
+		return trueBranch;
+	}
 }
