@@ -2,6 +2,8 @@ package frontend.turtle_display;
 
 import apis.TurtleDisplay;
 import frontend.window_setup.IDEWindow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -12,6 +14,8 @@ import java.util.List;
 public class TurtleView implements TurtleDisplay{
 
 	private double DEFAULT_STROKE_WIDTH = 1.0;
+	public static final double DEFAULT_WIDTH = 20;
+	public static final double DEFAULT_HEIGHT = 25;
 
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
@@ -101,6 +105,12 @@ public class TurtleView implements TurtleDisplay{
     	return newAddition;
     }
     
+    /*public void changeI(Image newTurtle) {
+		tur= new ImageView(newTurtle);
+		turtleImage.setFitWidth(DEFAULT_WIDTH);
+		turtleImage.setFitHeight(DEFAULT_HEIGHT);
+	}*/
+    
     @Override
 	public void pickUpPen() {
 		isPenDown = false;
@@ -117,5 +127,9 @@ public class TurtleView implements TurtleDisplay{
 
 	public void changeStrokeWidth(double width) { 
 		strokeWidth = width; 
+	}
+	public void changeImage(Image image)
+	{
+		displayedTurtles.get(0).changeImage(image);
 	}
 }
