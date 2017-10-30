@@ -240,7 +240,7 @@ public class IDEWindow implements Observer {
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
-		buttonMaker.makeGUIItem(e->createTab(), topGroup, "Create New Tab");
+		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
@@ -301,6 +301,15 @@ public class IDEWindow implements Observer {
 	private void changePenColor() {
 		turtleView.changeDrawColor(penColorPicker.getValue());
 		System.out.println(penColorPicker.getValue());
+	}
+	private void createWindow()
+	{
+		Stage newStage = new Stage();
+		newStage.setTitle("New Slogo");
+		newStage.setResizable(false);
+		newStage.show();
+		IDEWindow window = new IDEWindow(newStage);
+		window.setUpWindow();
 	}
 	private void createTab()
 	{
