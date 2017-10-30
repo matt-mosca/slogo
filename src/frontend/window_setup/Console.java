@@ -18,8 +18,8 @@ import javafx.scene.text.Text;
  */
 public class Console {
 
-    private final int MINIMUM_WIDTH = 600;
-
+    private final int PREFERED_WIDTH = 800;
+    private final int PREFERED_HEIGHT = 200;
     private ObservableList<Node> commandElements;
     private ListView<Node> commandsListView;
     private Controller controller;
@@ -30,11 +30,13 @@ public class Console {
     public Console(Controller controllerSample) {
     	controller = controllerSample;
     	commandEntry = new TextArea();
+    	//commandEntry.setMaxHeight(100);
         commandElements = FXCollections.observableArrayList();
         commandElements.add(commandEntry);
         commandsListView = new ListView<>(commandElements);
         commandEntry.setOnKeyPressed(e -> handleKeyPress(e));
-        commandsListView.setMinWidth(MINIMUM_WIDTH);
+        commandsListView.setMaxWidth(PREFERED_WIDTH);
+        commandsListView.setMaxHeight(PREFERED_HEIGHT);
     }
 
     private void handleKeyPress(KeyEvent keyPress) {
