@@ -15,6 +15,7 @@ public class EqualNode extends VarArgNode {
 
 	@Override
     public double executeSelf(double... operands) {
+        System.out.println(Arrays.stream(operands).distinct().limit(2).count() <= 1 ? 1 : 0);
         return Arrays.stream(operands).distinct().limit(2).count() <= 1 ? 1 : 0;
     }
 
