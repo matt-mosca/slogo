@@ -6,6 +6,7 @@ import backend.error_handling.SLogoException;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
+import frontend.factory.TabFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
@@ -104,6 +105,7 @@ public class IDEWindow implements Observer {
 	//private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
+	private TabFactory tabMaker = new TabFactory();
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
@@ -139,13 +141,15 @@ public class IDEWindow implements Observer {
 		variableGroup.getChildren().add(variableTitle);
 		formatScrollPane(variableScrollable, 150, variables, variableGroup);
 		TabPane tabPane = new TabPane();
-		rightGroup.getChildren().addAll(variableGroup.getChildren());
+		//rightGroup.getChildren().addAll(variableGroup.getChildren());
+		tabMaker.makeTab("Variables",variableGroup, tabPane);
 		
 		Text functionTitle = new Text(FUNCTIONS_HEADER);
 		functionGroup.getChildren().add(functionTitle);
 		formatScrollPane(functionScrollable, 150, functions, functionGroup);
-		rightGroup.getChildren().addAll(functionGroup.getChildren());
-		
+		//rightGroup.getChildren().addAll(functionGroup.getChildren());
+		tabMaker.makeTab("Functions",functionGroup, tabPane);
+		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
 
 		ScopedStorage scopedStorage = new ScopedStorage();
