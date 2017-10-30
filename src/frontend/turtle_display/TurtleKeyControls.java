@@ -1,5 +1,7 @@
 package frontend.turtle_display;
 
+import java.util.List;
+
 import backend.Controller;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -30,10 +32,13 @@ public class TurtleKeyControls {
 			graphicalControl.rotateRight();
         }
 		if(code == KeyCode.P) {
-			if(turtleControl.isPenDown(1) == 1)
-				turtleControl.setPenUp(1);
-			else
-				turtleControl.setPenDown(1);
+			List<Integer> toldTurtleIds = turtleControl.getToldTurtleIds();
+			for(int i = 0; i < toldTurtleIds.size(); i++) {
+				if(turtleControl.isPenDown(toldTurtleIds.get(i)) == 1)
+					turtleControl.setPenUp(toldTurtleIds.get(i));
+				else
+					turtleControl.setPenDown(toldTurtleIds.get(i));
+			}
         }
 	}
 }

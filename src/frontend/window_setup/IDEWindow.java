@@ -100,7 +100,7 @@ public class IDEWindow implements Observer {
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
-	private Console console = new Console();
+	private Console console;
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
@@ -184,21 +184,25 @@ public class IDEWindow implements Observer {
 
 	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
-		borderLayout.setLeft(console.getContainerPane());
+		borderLayout.setLeft(console.getListView());
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
 		borderLayout.setBottom(bottomBox);
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
-	//Change index to depend on selected turtle once Pen is specific to a turtle
 	private void changePenToUp() {
-		controller.setPenUp(1);
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			controller.setPenUp(toldTurtleIds.get(i));
+		}
 	}
 	
-	//Change index to depend on selected turtle once Pen is specific to a turtle
 	private void changePenToDown() {
-		controller.setPenDown(1);
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			controller.setPenDown(toldTurtleIds.get(i));
+		}
 	}
 
 	private ImageView makeImageViewFromName(String imageName) {
@@ -259,10 +263,11 @@ public class IDEWindow implements Observer {
 		turtleField.setFill(backGroundColorPicker.getValue());
 	}
 	
-	//Change 0 to the index of the selected turtle once selection is active
 	private void changePenColor() {
-		turtleView.changeDrawColor(0, penColorPicker.getValue());
-		System.out.println(penColorPicker.getValue());
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			turtleView.changeDrawColor(toldTurtleIds.get(i), penColorPicker.getValue());
+		}
 	}
 	
 	private void createWindow()
