@@ -22,6 +22,7 @@ import backend.turtle.TurtleController;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
 import backend.view_manipulation.ViewNode;
+import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -144,6 +145,7 @@ public class Parser {
 			System.out.println("Next parsing method: " + nextParsingMethod.getName());
 			return (SyntaxNode) nextParsingMethod.invoke(this, it);
 		} catch (IllegalAccessException | InvocationTargetException badCommand) {
+			System.out.print("WHAT THE \t");
 			badCommand.printStackTrace();
 			throw new UndefinedCommandException(nextToken);
 		}
@@ -189,7 +191,7 @@ public class Parser {
 			return valueNode;
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
 				| InstantiationException e) {
-			e.printStackTrace();
+			System.out.println("FUCK " + e.getMessage());
 			throw new UndefinedCommandException(commandName);
 		}
 	}
@@ -221,6 +223,7 @@ public class Parser {
 		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex++) {
 			functionParameters.add(makeExpTree(it));
 		}
+		functionParameters.forEach(e -> System.out.print(e.serialize() + " "));
 		return new FunctionNode(funcName, scopedStorage, funcName, functionParameters);
 	}
 
@@ -319,6 +322,8 @@ public class Parser {
 			}
 			variableNames.add(variableName);
 		}
+		// need to do this here for recursion to work
+		scopedStorage.addFunctionParameterNames(funcName, variableNames);
 		if (!it.hasNext()) {
 			throw new IllegalSyntaxException(LIST_END_DELIMITER);
 		}
@@ -326,7 +331,7 @@ public class Parser {
 		it.next();
 		RootNode funcRoot = getCommandsListRoot(it);
 		// TODO - Save string to ScopedStorage for future loading of function
-		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot, variableNames);
+		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot);
 	}
 
 	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {

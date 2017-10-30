@@ -6,6 +6,7 @@ import backend.error_handling.SLogoException;
 import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
+import frontend.factory.TabFactory;
 import frontend.factory.TextAreaFactory;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
@@ -71,6 +72,7 @@ public class IDEWindow implements Observer {
 	
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
+	public static final String FUNCTIONS_HEADER = "Functions: ";
 	public static final String NEW_LINE = "\n";
 	private static final String PNG_FILE_EXTENSION = "*.png",
 		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
@@ -93,6 +95,8 @@ public class IDEWindow implements Observer {
 	private Group topGroup = new Group();
 	private Group leftGroup = new Group();
 	private Group rightGroup = new Group();
+	private Group variableGroup = new Group();
+	private Group functionGroup = new Group();
 	
 	private FileChooser myChooser = makeChooser(PNG_FILE_EXTENSION, JPG_FILE_EXTENSION, GIF_FILE_EXTENSION);
 
@@ -101,14 +105,17 @@ public class IDEWindow implements Observer {
 	//private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
+	private TabFactory tabMaker = new TabFactory();
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
 	private ColorPicker penColorPicker = new ColorPicker();
-	private Text variableDisplay;
+
 	private Controller controller;
 	private ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
+	private ScrollPane functionScrollable;
+	private GridPane functions = new GridPane();
 	private GridPane turtleMovementKeys;
 	
 	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
@@ -129,11 +136,20 @@ public class IDEWindow implements Observer {
 		setFormatH(topBox, OFFSET, TOP_WIDTH, TOP_HEIGHT, Pos.BOTTOM_CENTER);
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
-		//VBox variable
-		variableDisplay = new Text(VARIABLES_HEADER);
 		
-		formatScrollPane(variableScrollable, 150, variables, rightGroup);
+		Text variableTitle = new Text(VARIABLES_HEADER);
+		variableGroup.getChildren().add(variableTitle);
+		formatScrollPane(variableScrollable, 150, variables, variableGroup);
+		TabPane tabPane = new TabPane();
+		//rightGroup.getChildren().addAll(variableGroup.getChildren());
+		tabMaker.makeTab("Variables",variableGroup, tabPane);
 		
+		Text functionTitle = new Text(FUNCTIONS_HEADER);
+		functionGroup.getChildren().add(functionTitle);
+		formatScrollPane(functionScrollable, 150, functions, functionGroup);
+		//rightGroup.getChildren().addAll(functionGroup.getChildren());
+		tabMaker.makeTab("Functions",functionGroup, tabPane);
+		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
 
 		ScopedStorage scopedStorage = new ScopedStorage();
@@ -322,12 +338,12 @@ public class IDEWindow implements Observer {
 	private void updateVariableDisplay() {
 		Map<String, Double> availableVariables = controller.retrieveAvailableVariables();
 		//System.out.println(availableVariables);
-		variableCount = 0;
+		int variableCount = 0;
 		variables.getChildren().clear();
 		for (String variableName : availableVariables.keySet()) {
 			Text newVariable = new Text(variableName+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
 			newVariable.setWrappingWidth(WRAPPING_WIDTH);
-			newVariable.setOnMouseClicked(e->updateFunctionsDisplay());
+			newVariable.setOnMouseClicked(e->changeVariables());
 			variableCount++;
 			variables.add(newVariable, 0, variableCount);
 		}
@@ -335,15 +351,22 @@ public class IDEWindow implements Observer {
 
 	// TODO - need to change to a separate variables display not just functions display;
 	private void updateFunctionsDisplay() {
-		Text newVariable = new Text();
-		Map<String, List<String>> availableVariables = controller.retrieveDefinedFunctions();
-		StringBuilder variablesBuffer = new StringBuilder();
-		for (String variableName : availableVariables.keySet()) {
-			variablesBuffer.append(NEW_LINE + variableName + availableVariables.get(variableName));
+		Map<String, List<String>> availableFunctions = controller.retrieveDefinedFunctions();
+		int functionCount = 0;
+		functions.getChildren().clear();
+		for (String functionName : availableFunctions.keySet()) {
+			Text newFunction = new Text(functionName+ VARIABLE_SEPARATOR + availableFunctions.get(functionName));
+			newFunction.setWrappingWidth(WRAPPING_WIDTH);
+			newFunction.setOnMouseClicked(e->changeFunctions());
+			functionCount++;
+			functions.add(newFunction, 0, functionCount);
 		}
-		// TODO - change below
-		newVariable.setWrappingWidth(WRAPPING_WIDTH);
-		newVariable.setText(variablesBuffer.toString());
-		variables.add(newVariable, 0, variableCount);
+	}
+	private void changeVariables() {
+		
+	}
+	
+	private void changeFunctions() {
+		
 	}
 }
