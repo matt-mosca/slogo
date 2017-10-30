@@ -45,6 +45,9 @@ public class WorkspaceManager {
 				workspaceFileScanner.close();
 				throw new InvalidSessionLoadedException();
 			}
+			// Execute upon loading? Will lead to side-effects but necessary to resolve 
+			// variable definitions with side-effects, e.g. make :x fd 50
+			parser.executeCommand(sessionText);
 			workspaceFileScanner.close();
 		} catch (FileNotFoundException e) {
 			throw new WorkspaceFileNotFoundException();
