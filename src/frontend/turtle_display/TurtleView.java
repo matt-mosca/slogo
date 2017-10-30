@@ -1,9 +1,12 @@
 package frontend.turtle_display;
 
 import apis.TurtleDisplay;
+import backend.Controller;
 import frontend.window_setup.IDEWindow;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -35,6 +38,10 @@ public class TurtleView implements TurtleDisplay{
 	
 	public void displayInitialTurtle() {
 		showTurtle(displayedTurtles.get(0));
+	}
+	
+	public void selectTurtleOnClick(int turtleIndex, EventHandler<? super MouseEvent> value) {
+		displayedTurtles.get(turtleIndex).getImage().setOnMouseClicked(value);
 	}
 	
 	// TODO - possible to make this package-friendly instead of public?
@@ -124,7 +131,7 @@ public class TurtleView implements TurtleDisplay{
 	}
 	//Change from 0 to selected index
 	//Make conditional, so that you do not have to select the turtle if there is only one
-	public void changeImage(Image image) {
-		displayedTurtles.get(0).changeImage(image);
+	public void changeImage(int turtleIndex, Image image) {
+		displayedTurtles.get(turtleIndex).changeImage(image);
 	}
 }

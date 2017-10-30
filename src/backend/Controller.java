@@ -101,7 +101,7 @@ public class Controller {
 	}
 
 	public void tellTurtle(int index) {
-    		turtleController.setActiveTurtles(new Integer[] {index});
+    	turtleController.setActiveTurtles(new Integer[] {index});
 	}
 
 	public List<Integer> getToldTurtleIds() {
