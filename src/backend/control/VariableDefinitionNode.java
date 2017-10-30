@@ -3,9 +3,6 @@ package backend.control;
 import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UnbalancedMakeException;
-import backend.math.ConstantNode;
-
-import java.util.Arrays;
 
 /**
  * @author Ben Schwennesen

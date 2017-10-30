@@ -11,7 +11,7 @@ public abstract class ControlNode implements SyntaxNode {
     private String commandName;
     private String serializedString;
 
-    public ControlNode(String commandName, ScopedStorage store) {
+    protected ControlNode(String commandName, ScopedStorage store) {
     		this.commandName = commandName;    	
     		this.serializedString = commandName;
         this.store = store;
