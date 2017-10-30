@@ -7,7 +7,7 @@ import backend.TwoArgNode;
  */
 public class DifferenceNode extends TwoArgNode {
 
-    protected DifferenceNode(String commandString) {
+    public DifferenceNode(String commandString) {
 		super(commandString);
 	}
 

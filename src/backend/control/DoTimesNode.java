@@ -23,14 +23,5 @@ public class DoTimesNode extends LoopNode {
 		super(commandName, store, iterationVariable, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
 	}
 
-	@Override
-	public String serialize() {
-		String commandName = getCommandName();
-		return commandName + Parser.STANDARD_DELIMITER + Parser.LIST_START_DELIMITER + Parser.STANDARD_DELIMITER
-				+ getIterationVariable() + Parser.STANDARD_DELIMITER + START_EXPRESSION.serialize()
-				+ Parser.STANDARD_DELIMITER + getEndExpression().serialize() + Parser.STANDARD_DELIMITER
-				+ INCREMENT_EXPRESSION.serialize() + Parser.STANDARD_DELIMITER + Parser.LIST_END_DELIMITER;
-
-	}
 
 }

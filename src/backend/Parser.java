@@ -40,6 +40,8 @@ import java.util.Set;
 public class Parser {
 
 	public static final String DELIMITER_REGEX = "\\s+";
+	public static final String NEWLINE_REGEX = "\n";
+	public static final char COMMENT = '#';
 	public static final String STANDARD_DELIMITER = " ";
 	public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
 	public static final String VARIABLE_REGEX = ":[a-zA-Z_]+";
@@ -71,7 +73,10 @@ public class Parser {
 			return false;
 		}
 		// Avoid repeated computation for just differing whitespace
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
+		// Need to remove comments
+		String commandWithoutComments = stripComments(command);
+		System.out.println("Command without comments: " + commandWithoutComments);
+		String formattedCommand = commandWithoutComments.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
 		System.out.println("Formatted command: " + formattedCommand);
 		syntaxTrees.put(formattedCommand,
 				constructSyntaxTree(new PeekingIterator<>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
@@ -80,9 +85,10 @@ public class Parser {
 		//System.out.println(serializeTree(syntaxTrees.get(formattedCommand)));
 		return true;
 	}
-
+	
 	public void executeCommand(String command) throws SLogoException {
-		String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
+		String commandWithoutComments = stripComments(command);
+		String formattedCommand = commandWithoutComments.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
 			syntaxTrees.put(formattedCommand, constructSyntaxTree(
 					new PeekingIterator<String>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
@@ -112,6 +118,10 @@ public class Parser {
 		}
 		String nextToken = it.peek();
 		System.out.println("Next token: " + nextToken);
+		if (nextToken.length() == 0 || nextToken.matches(DELIMITER_REGEX)) {
+			it.next();
+			makeExpTree(it);
+		}
 		if (nextToken.equals(VARIABLE_ARGS_START_DELIMITER)) {
 			it.next();
 			return makeExpTreeForVariableParameters(it);
@@ -444,6 +454,18 @@ public class Parser {
 	
 	private boolean isRootNode(Class nodeClass) {
 		return RootNode.class.isAssignableFrom(nodeClass);
+	}
+	
+	private String stripComments(String command) {
+		String[] lines = command.split(NEWLINE_REGEX);
+		List<String> nonCommentedLines = new ArrayList<>();
+		for (String line : lines) {
+			String trimmedLine = line.trim();
+			if (trimmedLine.length() > 0 && trimmedLine.charAt(0) != COMMENT) {
+				nonCommentedLines.add(trimmedLine);
+			}
+		}
+		return String.join(STANDARD_DELIMITER, nonCommentedLines);
 	}
 	
 	public Set<String> getSessionCommands() {

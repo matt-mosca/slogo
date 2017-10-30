@@ -67,7 +67,7 @@ public class LoopNode extends ControlNode {
 	@Override
 	public String serialize() {
 		// Dont serialize the subtree
-		return null;
+		return getSerializedString();
 	}
     
     public SyntaxNode getLoopedCommand() {
