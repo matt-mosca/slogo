@@ -165,7 +165,7 @@ public class TurtleController {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(false);
-		turtleView.putDownPen();
+		turtleView.putDownPen(index);
 		return 1;
 	}
 
@@ -177,7 +177,7 @@ public class TurtleController {
 		Turtle turtle = getTurtle(index);
 		// TODO - should this need index as arguments too?
 		turtle.setPenUp(true);
-		turtleView.pickUpPen();
+		turtleView.pickUpPen(index);
 		return 0;
 	}
 

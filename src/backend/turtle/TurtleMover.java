@@ -26,11 +26,11 @@ public class TurtleMover {
             y = wrapY(y, yBounds);
         }
         double distanceMoved = turtle.setXY(x, y);
-        turtleView.pickUpPen();
+        turtleView.pickUpPen(index);
         // index zero based already
         turtleView.move(index, turtle.getX(), turtle.getY());
         if (!turtle.isPenUp()) {
-            turtleView.putDownPen();
+            turtleView.putDownPen(index);
         }
         return distanceMoved;
     }
