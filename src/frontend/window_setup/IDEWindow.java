@@ -148,6 +148,7 @@ public class IDEWindow implements Observer {
 		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
 		keyControls.connectKeysToScene();
 	}
+	
 	public void setUpWindow() {
 		primaryStage.setScene(primaryScene);
 		setUpTurtleField();
@@ -285,7 +286,10 @@ public class IDEWindow implements Observer {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			turtleView.changeImage(new Image(fileLocation));  
+			List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+			for(int i = 0; i < toldTurtleIds.size(); i++) {
+				turtleView.changeImage(toldTurtleIds.get(i), new Image(fileLocation));
+			}
 		}
 	}
 	/**
