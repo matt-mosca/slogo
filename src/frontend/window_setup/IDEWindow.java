@@ -86,7 +86,7 @@ public class IDEWindow implements Observer {
 	private VBox rightBox = new VBox();
 	private HBox topBox = new HBox();
 	private HBox bottomBox = new HBox();
-	private TextArea commandTextArea;
+	//private TextArea commandTextArea;
 	//private GridPane console = new GridPane();
 	
 	private Group bottomGroup = new Group();
@@ -98,7 +98,7 @@ public class IDEWindow implements Observer {
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
-	private TextAreaFactory textAreaMaker = new TextAreaFactory();
+	//private TextAreaFactory textAreaMaker = new TextAreaFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
 	
@@ -129,9 +129,8 @@ public class IDEWindow implements Observer {
 		setFormatH(topBox, OFFSET, TOP_WIDTH, TOP_HEIGHT, Pos.BOTTOM_CENTER);
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
-		
+		//VBox variable
 		variableDisplay = new Text(VARIABLES_HEADER);
-		variables.add(variableDisplay, 0, variableCount);
 		
 		formatScrollPane(variableScrollable, 150, variables, rightGroup);
 		
@@ -185,10 +184,10 @@ public class IDEWindow implements Observer {
 
 	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
-		borderLayout.setLeft(console.getListView());
+		borderLayout.setLeft(leftBox);
 		borderLayout.setRight(rightBox);
 		borderLayout.setTop(topBox);
-		borderLayout.setBottom(bottomBox);
+		borderLayout.setBottom(console.getListView());
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
@@ -214,7 +213,7 @@ public class IDEWindow implements Observer {
 	
 	private void makeButtons(Stage s) {
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
+		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
@@ -232,8 +231,8 @@ public class IDEWindow implements Observer {
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
 		
-		bottomGroup.getChildren().add(languageMenuBar);
-		
+		leftGroup.getChildren().add(languageMenuBar);
+		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
@@ -321,17 +320,17 @@ public class IDEWindow implements Observer {
 	}
 
 	private void updateVariableDisplay() {
-		Text newVariable = new Text();
 		Map<String, Double> availableVariables = controller.retrieveAvailableVariables();
-		System.out.println(availableVariables);
-		StringBuilder variablesBuffer = new StringBuilder(VARIABLES_HEADER);
+		//System.out.println(availableVariables);
+		variableCount = 0;
+		variables.getChildren().clear();
 		for (String variableName : availableVariables.keySet()) {
-			variablesBuffer.append(NEW_LINE + variableName
-					+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
+			Text newVariable = new Text(variableName+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
+			newVariable.setWrappingWidth(WRAPPING_WIDTH);
+			newVariable.setOnMouseClicked(e->updateFunctionsDisplay());
+			variableCount++;
+			variables.add(newVariable, 0, variableCount);
 		}
-		newVariable.setWrappingWidth(WRAPPING_WIDTH);
-		newVariable.setText(variablesBuffer.toString());
-		variables.add(newVariable, 0, variableCount);
 	}
 
 	// TODO - need to change to a separate variables display not just functions display;
