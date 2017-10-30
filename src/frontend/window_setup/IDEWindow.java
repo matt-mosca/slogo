@@ -138,6 +138,7 @@ public class IDEWindow implements Observer {
 		Text variableTitle = new Text(VARIABLES_HEADER);
 		variableGroup.getChildren().add(variableTitle);
 		formatScrollPane(variableScrollable, 150, variables, variableGroup);
+		TabPane tabPane = new TabPane();
 		rightGroup.getChildren().addAll(variableGroup.getChildren());
 		
 		Text functionTitle = new Text(FUNCTIONS_HEADER);
