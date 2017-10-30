@@ -2,6 +2,7 @@ package main;
 
 import frontend.factory.ButtonFactory;
 import frontend.factory.TextFieldFactory;
+import frontend.window_setup.HelpWindow;
 import frontend.window_setup.IDEWindow;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -25,6 +26,8 @@ public class Main extends Application {
 	private String stageName = "SLogo";
 	private TextField textField;
 	private Scene primaryScene;
+	private HelpWindow helpWindow = new HelpWindow();
+	
 	public void start(Stage primary) {
 		primaryStage = primary;
 		primaryStage.setTitle(APP_NAME);
@@ -32,6 +35,7 @@ public class Main extends Application {
 		primaryStage.show();
 		buttonMaker.makeGUIItem(e->createIDEWindow(), root, "Create SLogo Workspace");
 		textField = textFieldMaker.makeReturnableTextField(e->setStageName(), root, "Name SLogo Workspace");
+		buttonMaker.makeGUIItem(e->helpWindow.help(), root, "Help");
 		hbox.getChildren().addAll(root.getChildren());
 		primaryScene = new Scene(hbox, TOTAL_WIDTH, TOTAL_HEIGHT, STANDARD_AREA_COLOR);
 		primaryStage.setScene(primaryScene);
