@@ -16,10 +16,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -65,6 +68,7 @@ public class IDEWindow implements Observer {
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	private int commandCount = 0;
 	private int variableCount = 0;
+	private int tabCount = 0;
 	
 	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables: ";
@@ -106,14 +110,19 @@ public class IDEWindow implements Observer {
 	private ScrollPane variableScrollable;
 	private GridPane variables = new GridPane();
 	private GridPane turtleMovementKeys;
+	private TabPane tabPane = new TabPane();
+	private BorderPane borderMain;
 	
 	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	
 	public IDEWindow(Stage primary) {
+		borderMain = new BorderPane();
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 		borderLayout.setMaxSize(totalWidth, totalHeight);
-		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
+		borderMain.setCenter(borderLayout);
+		borderMain.setTop(tabPane);
+		primaryScene = new Scene(borderMain, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
 		turtleMovementKeys = new GridPane();
 		primaryStage = primary;
@@ -144,7 +153,7 @@ public class IDEWindow implements Observer {
 		controller = new Controller(scopedStorage, turtleView, turtleField);
 		
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
-		
+		topBox.getChildren().add(tabPane);
 		makeButtons(primaryStage);
 		setBorderArrangement();
 		
@@ -231,6 +240,7 @@ public class IDEWindow implements Observer {
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
+		buttonMaker.makeGUIItem(e->createTab(), topGroup, "Create New Tab");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
 //		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
@@ -292,10 +302,20 @@ public class IDEWindow implements Observer {
 		turtleView.changeDrawColor(penColorPicker.getValue());
 		System.out.println(penColorPicker.getValue());
 	}
+	private void createTab()
+	{
+		tabCount++;
+		Tab tab = new Tab("Tab"+tabCount);
+		tabPane.getTabs().add(tab);
+		HBox hbox = new HBox();
+        hbox.getChildren().add(new Label("Tab" + tabCount));
+        hbox.setAlignment(Pos.CENTER);
+        tab.setContent(hbox);
+        tabPane.getTabs().add(tab);
+	}
 	private void enterCommand() {
 		Text history = new Text();
 		String commandInput = commandTextArea.getText();
-		commandCount++;
 		try {
 			if(controller.validateCommand(commandInput)){
 				controller.executeCommand(commandInput);
