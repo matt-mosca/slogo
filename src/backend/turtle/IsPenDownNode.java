@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class IsPenDownNode extends TurtleNode {
 
-	public IsPenDownNode(TurtleController turtleController) {
-		super(turtleController);
+	public IsPenDownNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 	@Override

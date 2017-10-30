@@ -26,11 +26,11 @@ public interface TurtleDisplay {
     void rotate(int turtleIndex, double angle);
     
     // TODO - index for multiple turtles??
-    void pickUpPen();
+    void pickUpPen(int turtleIndex);
     
-    void putDownPen();
+    void putDownPen(int turtleIndex);
     
-    void showTurtle(int index);
+    void showTurtle(int turtleIndex);
     
-    void hideTurtle(int index);
+    void hideTurtle(int turtleIndex);
 }

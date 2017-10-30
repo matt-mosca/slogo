@@ -9,7 +9,11 @@ import java.util.Arrays;
  */
 public class EqualNode extends VarArgNode {
 
-    @Override
+    public EqualNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) {
         return Arrays.stream(operands).distinct().limit(2).count() <= 1 ? 1 : 0;
     }

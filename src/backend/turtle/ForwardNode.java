@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class ForwardNode extends TurtleNode {
 
-	public ForwardNode(TurtleController turtleController) {
-		super(turtleController);
+	public ForwardNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 

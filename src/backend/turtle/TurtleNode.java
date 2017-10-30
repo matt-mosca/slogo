@@ -6,8 +6,9 @@ public abstract class TurtleNode extends ValueNode {
 
 	private TurtleController turtleController;
 
-	public TurtleNode(TurtleController turtleController) {
-		this.turtleController = turtleController;
+	public TurtleNode(String commandString, TurtleController turtleFactory) {
+		super(commandString);
+		this.turtleController = turtleFactory;
 	}
 
 	protected TurtleController getTurtleController() {

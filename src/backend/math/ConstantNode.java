@@ -7,7 +7,7 @@ public class ConstantNode extends NoArgNode {
 	double value;
 	
 	public ConstantNode(double value) {
-		super();
+		super(Double.toString(value));
 		this.value = value;
 	}
 	

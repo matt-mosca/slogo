@@ -2,16 +2,22 @@ package frontend.turtle_display;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class TurtlePen {
 	public static final String DEFAULT_TURTLE = "Cartoon-Turtle.png";
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
+	private double DEFAULT_STROKE_WIDTH = 1.0;
 	
 	private ImageView turtleImage;
 	private double xCoordinateOnRegion;
 	private double yCoordinateOnRegion;
 	private double angle;
+	private Paint penColor;
+	private boolean isPenDown;
+	private double strokeWidth;
 	
 	public TurtlePen(double xCoord, double yCoord) {
 		String imageName = DEFAULT_TURTLE;
@@ -23,38 +29,70 @@ public class TurtlePen {
 		yCoordinateOnRegion = yCoord;
 		turtleImage.setX(xCoord);
 		turtleImage.setY(yCoord);
+		penColor = Color.BLACK;
+		isPenDown = true;
+		strokeWidth = DEFAULT_STROKE_WIDTH;	
 	}
 	
-	public void moveTurtle(double newXCoord, double newYCoord) {
+	void moveTurtle(double newXCoord, double newYCoord) {
 		xCoordinateOnRegion = newXCoord;
 		yCoordinateOnRegion = newYCoord;
 		turtleImage.setX(newXCoord);
 		turtleImage.setY(newYCoord);
 	}
 	
-	public void rotateTurtle(double newAngle) {
+	void rotateTurtle(double newAngle) {
 		turtleImage.setRotate(newAngle);
 		angle = newAngle;
 	}
 	
-	public double getXCoordinate() {
+	double getXCoordinate() {
 		return xCoordinateOnRegion;
 	}
 	
-	public double getYCoordinate() {
+	double getYCoordinate() {
 		return yCoordinateOnRegion;
 	}
 	
-	public double getAngle() { 
+	double getAngle() { 
 		return angle;
 	}
 	
-	public ImageView getImage() {
+	ImageView getImage() {
 		return turtleImage;
 	}
-	public void changeImage(Image newTurtle) {
+	
+	void changeImage(Image newTurtle) {
 		turtleImage.setImage(newTurtle);
 		turtleImage.setFitWidth(DEFAULT_WIDTH);
 		turtleImage.setFitHeight(DEFAULT_HEIGHT);
+	}
+	
+	void putDownPen() {
+		isPenDown = true;
+	}
+	
+	void pickUpPen() {
+		isPenDown = false;
+	}
+	
+	void setPenColor(Paint color) {
+		penColor = color;
+	}
+	
+	boolean getIsPenDown() {
+		return isPenDown;
+	}
+	
+	Paint getPenColor() {
+		return penColor;
+	}
+	
+	void setStrokeWidth(double width) {
+		strokeWidth = width;
+	}
+	
+	double getStrokeWidth() {
+		return strokeWidth;
 	}
 }

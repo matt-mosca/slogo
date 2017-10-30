@@ -1,6 +1,7 @@
 package utilities;
 
 import backend.Parser;
+import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 
@@ -25,13 +26,17 @@ public class CommandGetter {
 	private Map<String, String> commandClassesToNames = new HashMap<>();
 
 	private final String COMMAND_PARSING_FILE = "resources/CommandParsing.properties";
+	private final String COMMAND_SERIALIZING_FILE = "resources/CommandSerializing.properties";
 	private final Class PARSER_CLASS = Parser.class;
 	private final Class[] PARSE_METHOD_ARGUMENT_CLASSES = {PeekingIterator.class};
+	private final Class[] SERIALIZE_METHOD_ARGUMENT_CLASSES = {SyntaxNode.class};
 	private final Properties COMMAND_PARSING_PROPERTIES;
+	private final Properties COMMAND_SERIALIZING_PROPERTIES;
 
 	public CommandGetter() {
 		COMMAND_PROPERTIES = new Properties();
 		COMMAND_PARSING_PROPERTIES = new Properties();
+		COMMAND_SERIALIZING_PROPERTIES = new Properties();
 		languageProperties = new Properties();
 		try {
 			InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(COMMAND_INFO_FILE);
@@ -39,8 +44,13 @@ public class CommandGetter {
 			
 			InputStream commandParsingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_PARSING_FILE);
 			COMMAND_PARSING_PROPERTIES.load(commandParsingStream);
+						
 			setLanguage(DEFAULT_LANGUAGE);
 			initializeReverseCommandProperties();
+			
+			InputStream commandSerializingStream = getClass().getClassLoader().getResourceAsStream(COMMAND_SERIALIZING_FILE);
+			COMMAND_SERIALIZING_PROPERTIES.load(commandSerializingStream);
+			
 		} catch (IOException fileNotFound) {
 			// TODO - need frontend method to launch failure dialog box
 			System.out.println("Missing File!"); // TEMP
@@ -95,6 +105,20 @@ public class CommandGetter {
 			badMethod.printStackTrace();
 			throw new UndefinedCommandException(commandName);
 		}
+	}
+	
+	public Method getSerializingMethod(Class commandClass) throws SLogoException {
+		System.out.println("Getting serialization method");
+		String commandName = getNameFromCommandClass(commandClass);
+		String canonicalName = getCanonicalName(commandName);
+		String methodName = COMMAND_SERIALIZING_PROPERTIES.getProperty(canonicalName);
+		try {
+			return PARSER_CLASS.getDeclaredMethod(methodName, SERIALIZE_METHOD_ARGUMENT_CLASSES);
+		} catch (NoSuchMethodException badMethod) {
+			badMethod.printStackTrace();
+			throw new UndefinedCommandException(commandName);
+		}
+		
 	}
 
 	private String getCanonicalName (String command) throws SLogoException {

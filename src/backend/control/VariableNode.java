@@ -8,7 +8,8 @@ public class VariableNode extends NoArgNode {
 	ScopedStorage store;
 	String varName;
 
-	public VariableNode(ScopedStorage scopedStorage, String varName) {
+	public VariableNode(String commandName, ScopedStorage scopedStorage, String varName) {
+		super(commandName);
 		this.store = scopedStorage;
 		this.varName = varName;
 	}

@@ -7,7 +7,11 @@ import backend.OneArgNode;
  */
 public class SineNode extends OneArgNode {
 
-    @Override
+    public SineNode(String commandString) {
+		super(commandString);
+	}
+
+	@Override
     public double executeSelf(double... operands) { return Math.sin(operands[0]); }
 
 }

@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class SetTowardsNode extends TurtleNode {
 
-	public SetTowardsNode(TurtleController turtleController) {
-		super(turtleController);
+	public SetTowardsNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 	@Override
