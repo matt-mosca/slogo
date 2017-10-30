@@ -116,13 +116,13 @@ public class IDEWindow implements Observer {
 	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	
 	public IDEWindow(Stage primary) {
-		borderMain = new BorderPane();
+		//borderMain = new BorderPane();
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 		borderLayout.setMaxSize(totalWidth, totalHeight);
-		borderMain.setCenter(borderLayout);
-		borderMain.setTop(tabPane);
-		primaryScene = new Scene(borderMain, totalWidth, totalHeight, STANDARD_AREA_COLOR);
+		//borderMain.setCenter(borderLayout);
+		//borderMain.setTop(tabPane);
+		primaryScene = new Scene(borderLayout, totalWidth, totalHeight, STANDARD_AREA_COLOR);
 		turtleField = new Rectangle(TURTLEFIELD_WIDTH, TURTLEFIELD_HEIGHT, STANDARD_AREA_COLOR);
 		turtleMovementKeys = new GridPane();
 		primaryStage = primary;
