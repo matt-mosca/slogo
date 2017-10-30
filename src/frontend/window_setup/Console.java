@@ -81,6 +81,7 @@ public class Console {
 			addError(e.getMessage());
 		}
 		commandEntry.clear();
+		commands.scrollTo(getIndexOfLastEnteredCommand());
 	}
 
     void addCommand(String command) {
