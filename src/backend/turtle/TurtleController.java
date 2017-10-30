@@ -113,7 +113,7 @@ public class TurtleController {
 		return doForTurtles(forEachTurtle, toldTurtleIds);
 	}
 
-	double setActiveTurtles(Integer[] ids) {
+	public double setActiveTurtles(Integer[] ids) {
 		toldTurtleIds.clear();
 		toldTurtleIds.addAll(Arrays.asList(ids));
 		for (int turtleId : toldTurtleIds) {

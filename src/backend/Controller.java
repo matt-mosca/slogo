@@ -98,6 +98,10 @@ public class Controller {
     	return turtleController.isPenDown(index);
     }
     
+    public void tellTurtle(int index) {
+    		turtleController.setActiveTurtles(new Integer[] {index});
+    }
+    
     public void saveWorkspaceToFile(String fileName) {
     		workspaceManager.saveWorkspaceToFile(parser, scopedStorage, fileName);
     }
