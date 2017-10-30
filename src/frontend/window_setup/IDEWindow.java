@@ -16,10 +16,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -144,7 +147,6 @@ public class IDEWindow implements Observer {
 		controller = new Controller(scopedStorage, turtleView, turtleField);
 		
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
-		
 		makeButtons(primaryStage);
 		setBorderArrangement();
 		
@@ -231,11 +233,8 @@ public class IDEWindow implements Observer {
 		leftGroup.getChildren().add(enterCommand);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), bottomGroup, "Help");
+		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
-//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, "^", 1, 0);
-//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, "v", 1, 1);
-//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, ">", 2, 1);
-//		buttonMaker.makeTextGUIItemInGrid(e->graphicalControls.rotateLeft(), turtleMovementKeys, "<", 0, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.rotateRight(), turtleMovementKeys, makeImageViewFromName("Right_Arrow.png"), 2, 1);
@@ -292,10 +291,19 @@ public class IDEWindow implements Observer {
 		turtleView.changeDrawColor(penColorPicker.getValue());
 		System.out.println(penColorPicker.getValue());
 	}
+	private void createWindow()
+	{
+		Stage newStage = new Stage();
+		newStage.setTitle("New Slogo");
+		newStage.setResizable(false);
+		newStage.show();
+		IDEWindow window = new IDEWindow(newStage);
+		window.setUpWindow();
+	}
+	
 	private void enterCommand() {
 		Text history = new Text();
 		String commandInput = commandTextArea.getText();
-		commandCount++;
 		try {
 			if(controller.validateCommand(commandInput)){
 				controller.executeCommand(commandInput);
@@ -318,8 +326,7 @@ public class IDEWindow implements Observer {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			turtlePen.setImage(new Image(fileLocation));  
-			turtleView.showTurtle(turtlePen);
+			turtleView.changeImage(new Image(fileLocation));  
 		}
 	}
 	/**

@@ -5,13 +5,13 @@ import backend.error_handling.SLogoException;
 public class YCoordinateNode extends TurtleNode {
 
 
-	public YCoordinateNode(String commandString, TurtleFactory turtleFactory) {
-		super(commandString, turtleFactory);
+	public YCoordinateNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().currentTurtlesYCor();
+		return getTurtleController().currentTurtlesYCor();
 	}
 
 	@Override

@@ -4,13 +4,13 @@ import backend.error_handling.SLogoException;
 
 public class IDNode extends TurtleNode {
 
-	public IDNode(String commandString, TurtleFactory turtleFactory) {
-		super(commandString, turtleFactory);
+	public IDNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		return getTurtleFactory().getActiveTurtleId();
+		return getTurtleController().getActiveTurtleId();
 	}
 
 	@Override

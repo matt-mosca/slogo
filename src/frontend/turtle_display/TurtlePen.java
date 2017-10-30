@@ -52,8 +52,8 @@ public class TurtlePen {
 	public ImageView getImage() {
 		return turtleImage;
 	}
-	public void setImage(Image newTurtle) {
-		turtleImage = new ImageView(newTurtle);
+	public void changeImage(Image newTurtle) {
+		turtleImage.setImage(newTurtle);
 		turtleImage.setFitWidth(DEFAULT_WIDTH);
 		turtleImage.setFitHeight(DEFAULT_HEIGHT);
 	}

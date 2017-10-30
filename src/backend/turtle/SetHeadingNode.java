@@ -4,14 +4,14 @@ import backend.error_handling.SLogoException;
 
 public class SetHeadingNode extends TurtleNode {
 
-	public SetHeadingNode(String commandString, TurtleFactory turtleFactory) {
-		super(commandString, turtleFactory);
+	public SetHeadingNode(String commandString, TurtleController turtleController) {
+		super(commandString, turtleController);
 	}
 	
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
 		double angle = arguments[0];
-		return getTurtleFactory().setCurrentTurtlesHeading(angle);
+		return getTurtleController().setCurrentTurtlesHeading(angle);
 	}
 
 	@Override
