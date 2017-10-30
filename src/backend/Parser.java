@@ -31,8 +31,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,18 +56,23 @@ public class Parser {
 
 	private CommandGetter commandGetter;
 	private Map<String, SyntaxNode> syntaxTrees; // cache of parsed commands
+	private List<SyntaxNode> commandHistory; // for undo/redo
 	private TurtleController turtleManager;
 	private ScopedStorage scopedStorage;
 	private ViewController viewController;
+
+	private int undoIndex;
 
 	public Parser(TurtleController turtleManager, ScopedStorage storage,
 				  ViewController viewController, CommandGetter commandGetter) {
 
 		syntaxTrees = new LinkedHashMap<>();
+		commandHistory = new ArrayList<>();
 		scopedStorage = storage;
 		this.commandGetter = commandGetter;
 		this.turtleManager = turtleManager;
 		this.viewController = viewController;
+		undoIndex = 0;
 	}
 
 	public boolean validateCommand(String command) throws SLogoException {
@@ -92,9 +99,40 @@ public class Parser {
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
 			syntaxTrees.put(formattedCommand, constructSyntaxTree(
 					new PeekingIterator<String>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
+			undoIndex = syntaxTrees.size();
 		}
 		SyntaxNode tree = syntaxTrees.get(formattedCommand);
 		tree.execute();
+		commandHistory.add(tree);
+		undoIndex = commandHistory.size();
+	}
+
+	public boolean canUndo() {
+		System.out.println(undoIndex + " " + commandHistory.size());
+		return undoIndex > 0 && commandHistory.size() > 0; }
+
+	// need to do a CLEAR before calling
+	void undo() throws SLogoException {
+		if (canUndo()) {
+			undoIndex--;
+			for (int i = 0; i < undoIndex; i++) {
+				commandHistory.get(i).execute();
+			}
+		}
+	}
+
+	boolean canRedo() {
+		System.out.println(undoIndex + " " + commandHistory.size());
+		return undoIndex < commandHistory.size() && commandHistory.size() > 0; }
+
+	// need to do a CLEAR before calling
+	void redo() throws SLogoException {
+		if (canRedo()) {
+			undoIndex++;
+			for (int i = 0; i < undoIndex; i++) {
+				commandHistory.get(i).execute();
+			}
+		}
 	}
 
 	// Top-Level parsing command that can add disjoint commands to root

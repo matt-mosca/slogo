@@ -10,9 +10,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TurtleView implements TurtleDisplay{
 
@@ -133,5 +135,18 @@ public class TurtleView implements TurtleDisplay{
 	//Make conditional, so that you do not have to select the turtle if there is only one
 	public void changeImage(int turtleIndex, Image image) {
 		displayedTurtles.get(turtleIndex).changeImage(image);
+	}
+
+	// for undo/redo
+	public void clear() {
+		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
+				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
+		displayedTurtles.forEach(turtlePen -> {
+			layout.getChildren().remove(turtlePen.getImage());
+			layout.getChildren().removeAll(layout.getChildren().filtered(node ->  node instanceof Line));
+		});
+		displayedTurtles.clear();
+		displayedTurtles.add(original);
+		displayInitialTurtle();
 	}
 }

@@ -115,4 +115,22 @@ public class Controller {
 	public void loadWorkspaceFromFile(String fileName) throws SLogoException {
 		workspaceManager.loadWorkspaceFromFile(parser, scopedStorage, fileName);
 	}
+
+	public void undo() throws SLogoException {
+		System.out.println("TRYING TO UNDO");
+		if (parser.canUndo()) {
+			scopedStorage.clear();
+			turtleController.clear();
+			parser.undo();
+		}
+	}
+
+	public void redo() throws SLogoException {
+		System.out.println("TRYING TO REDO");
+		if (parser.canRedo()) {
+			scopedStorage.clear();
+			turtleController.clear();
+			parser.redo();
+		}
+	}
 }

@@ -16,6 +16,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -241,8 +242,26 @@ public class IDEWindow implements Observer {
 		Menu languageMenu = setMenu("Language");
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
+
+		// UNDO/REDO TESTING
+		Button undo = new Button("Undo");
+		undo.setOnAction(e -> {
+			try {
+				controller.undo();
+			} catch (SLogoException badUndo) {
+				console.addError(badUndo.getMessage());
+			}
+		});
+		Button redo = new Button("Redo");
+		redo.setOnAction(e -> {
+			try {
+				controller.redo();
+			} catch (SLogoException badUndo) {
+				console.addError(badUndo.getMessage());
+			}
+		});
 		
-		leftGroup.getChildren().add(languageMenuBar);
+		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
