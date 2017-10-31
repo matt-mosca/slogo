@@ -141,6 +141,10 @@ public class IDEWindow implements Observer {
 	private GridPane turtleInfoPane;
 	private ScrollPane turtleInfoScrollable;
 	
+	/**
+	 * @param primary
+	 * Constructor for IDEWindow
+	 */
 	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
@@ -160,21 +164,21 @@ public class IDEWindow implements Observer {
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
 		
-		TabPane tabPane = new TabPane();
-		tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		TabPane displayTabPane = new TabPane();
+		displayTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		formatScrollPane(variableScrollable, 150, variables, variableGroup);
-		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, tabPane);
+		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, displayTabPane);
 		
 		formatScrollPane(colorScrollable, 150, colors, colorGroup);
-		tabMaker.makeTab(COLORS_HEADER,colorGroup, tabPane);
+		tabMaker.makeTab(COLORS_HEADER,colorGroup, displayTabPane);
 		
 		formatScrollPane(functionScrollable, 150, functions, functionGroup);
-		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, tabPane);
+		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, displayTabPane);
 		
 		formatScrollPane(turtleInfoScrollable, 150, turtleInfoPane, turtleInfoGroup);
-		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, tabPane);
+		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, displayTabPane);
 		
-		rightGroup.getChildren().add(tabPane);
+		rightGroup.getChildren().add(displayTabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
 		turtleView.addObserver(this);
 		
@@ -201,15 +205,27 @@ public class IDEWindow implements Observer {
 		assembleTurtleInfoDisplay();
 	}
 	
+	/**
+	 * Sets up IDEWindow to display by setting the scene and calling setUpTurtleField
+	 */
 	public void setUpWindow() {
 		primaryStage.setScene(primaryScene);
 		setUpTurtleField();
 	}
 	
+	/**
+	 * Set up the starting scene with the Turtle at its starting position
+	 */
 	private void setUpTurtleField() {
 		turtleView.displayInitialTurtle();
 	}
 	
+	/**
+	 * @param keysPane
+	 * @param root
+	 * @param prefSize
+	 * Formats the keys pane that when clicked on moves the turtle
+	 */
 	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
 		keysPane.setPrefSize(prefSize, prefSize * (2/3));
 		root.getChildren().add(keysPane);
