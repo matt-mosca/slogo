@@ -1,5 +1,9 @@
 package backend;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import backend.control.ScopedStorage;
 import backend.control.WorkspaceManager;
 import backend.error_handling.ProjectBuildException;
@@ -9,16 +13,9 @@ import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 import frontend.window_setup.IDEWindow;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.w3c.dom.css.Rect;
 import utilities.CommandGetter;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Ben Schwennesen
