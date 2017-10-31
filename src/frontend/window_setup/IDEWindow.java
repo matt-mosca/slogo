@@ -622,10 +622,10 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void updateColorDisplay() {
-		Map<Double, Color> availableColors = controller.retrieveAvailableColors();
+		Map<Integer, Color> availableColors = controller.retrieveAvailableColors();
 		int colorCount = 0;
 		colors.getChildren().clear();
-		for (Double colorNumber : availableColors.keySet()) {
+		for (Integer colorNumber : availableColors.keySet()) {
 			Text newColor = new Text(COLORS_HEADER +colorNumber+ VARIABLE_SEPARATOR);
 			newColor.setWrappingWidth(WRAPPING_WIDTH);
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));

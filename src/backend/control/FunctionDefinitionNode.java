@@ -2,8 +2,6 @@ package backend.control;
 
 import backend.SyntaxNode;
 
-import java.util.List;
-
 /**
  * @author Ben Schwennesen
  */

@@ -23,7 +23,7 @@ public class ParserTesting {
 					parser.executeCommand(command);
 				}
 			} catch (SLogoException e) {
-				System.out.println(e.getMessage());
+
 			}
 		}
 	}

@@ -31,7 +31,6 @@ public class Drawer {
 			lineToDraw.setStroke(drawColor);
 			lineToDraw.setStrokeWidth(strokeWidth);
 			layout.getChildren().add(lineToDraw);
-			System.out.println(drawColor);
 		}
 	}
 }

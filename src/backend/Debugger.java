@@ -7,11 +7,9 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.math.ConstantNode;
 import utilities.CommandGetter;
-import utilities.PeekingIterator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 public class Debugger {
@@ -51,7 +49,6 @@ public class Debugger {
 		// Dispatch appropriate method
 		try {
 			Method nextSerializingMethod = commandGetter.getSerializingMethod(root.getClass());
-			System.out.println("Next serializing method: " + nextSerializingMethod.getName());
 			return (String) nextSerializingMethod.invoke(this, root);
 		} catch (IllegalAccessException | InvocationTargetException badCommand) {
 			badCommand.printStackTrace();
