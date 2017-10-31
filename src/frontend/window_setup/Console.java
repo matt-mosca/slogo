@@ -92,6 +92,11 @@ public class Console {
     }
 
     public ListView<Node> getListView() { return commandsListView; }
+    
+    public void setCommandEntry(String function) {
+    	commandEntry.setText(function);
+    }
+    
 
     private int getIndexOfLastEnteredCommand() { return commandElements.size() - 2; }
 }

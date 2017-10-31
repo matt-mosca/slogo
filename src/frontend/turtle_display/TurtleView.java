@@ -24,6 +24,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
+	public static final double TOLD_OPACITY = 1.0;
+	public static final double UNTOLD_OPACITY = 0.5;
 
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
@@ -42,7 +44,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
-		currentPenColor.setValue(original.DEFAULT_COLOR);
+		currentPenColor.setValue(TurtlePen.DEFAULT_COLOR);
+		notifyObservers();
 	}
 	
 	public void displayInitialTurtle() {
@@ -56,9 +59,9 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	public void changeRepresentationOfActive(List<Integer> toldTurtles) {
 		for(int i = 0; i < displayedTurtles.size(); i++) {
 			if(toldTurtles.contains(i))
-				displayedTurtles.get(i).getImage().setOpacity(1.0);
+				displayedTurtles.get(i).getImage().setOpacity(TOLD_OPACITY);
 			else
-				displayedTurtles.get(i).getImage().setOpacity(0.5);
+				displayedTurtles.get(i).getImage().setOpacity(UNTOLD_OPACITY);
 		}
 	}
 	
@@ -98,6 +101,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	Drawer lineMaker = new Drawer(current.getPenColor(), current.getStrokeWidth(), current.getIsPenDown());
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
+    	notifyObservers();
 //    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
 //    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
@@ -115,12 +119,14 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
     	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
+    	notifyObservers();
     }
     
     public TurtlePen addTurtle() {
     	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
+    	notifyObservers();
     	return newAddition;
     }
     
@@ -133,20 +139,24 @@ public class TurtleView extends Observable implements TurtleDisplay {
     @Override
 	public void pickUpPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).pickUpPen();
+		notifyObservers();
 	}
 	
     @Override
 	public void putDownPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).putDownPen();
+		notifyObservers();
 	}
 	
 	public void changeDrawColor(int turtleIndex, Color color) {
     	currentPenColor.setValue(color);
 		displayedTurtles.get(turtleIndex).setPenColor(color);
+		notifyObservers();
 	}
 
 	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
+		notifyObservers();
 	}
 	//Change from 0 to selected index
 	//Make conditional, so that you do not have to select the turtle if there is only one
@@ -168,4 +178,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	}
 
 	public ObjectProperty<Color> getCurrentPenColorProperty() { return currentPenColor; }
+	
+	public List<TurtlePen> getDisplayedTurtles() {
+		return displayedTurtles;
+	}
 }

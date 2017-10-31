@@ -2,6 +2,7 @@ package utilities;
 
 import backend.Parser;
 import backend.SyntaxNode;
+import backend.error_handling.ProjectBuildException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 
@@ -33,7 +34,7 @@ public class CommandGetter {
 	private final Properties COMMAND_PARSING_PROPERTIES;
 	private final Properties COMMAND_SERIALIZING_PROPERTIES;
 
-	public CommandGetter() {
+	public CommandGetter() throws SLogoException {
 		COMMAND_PROPERTIES = new Properties();
 		COMMAND_PARSING_PROPERTIES = new Properties();
 		COMMAND_SERIALIZING_PROPERTIES = new Properties();
@@ -52,8 +53,7 @@ public class CommandGetter {
 			COMMAND_SERIALIZING_PROPERTIES.load(commandSerializingStream);
 			
 		} catch (IOException fileNotFound) {
-			// TODO - need frontend method to launch failure dialog box
-			System.out.println("Missing File!"); // TEMP
+			throw new ProjectBuildException();
 		}
 	}
 
