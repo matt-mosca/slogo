@@ -25,6 +25,7 @@ import backend.turtle.TurtleController;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
 import backend.view_manipulation.ViewNode;
+import jdk.nashorn.internal.runtime.regexp.joni.Syntax;
 import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
@@ -501,29 +502,8 @@ public class Parser {
         return ViewNode.class.isAssignableFrom(nodeClass);
     }
 
-    private boolean isValueNode(Class nodeClass) {
+    boolean isValueNode(Class nodeClass) {
         return ValueNode.class.isAssignableFrom(nodeClass);
-    }
-
-    // Special cases in serialization
-    private boolean isConstantNode(Class nodeClass) {
-        return ConstantNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isVariableNode(Class nodeClass) {
-        return VariableNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isFunctionDefinitionNode(Class nodeClass) {
-        return FunctionDefinitionNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isDoTimesNode(Class nodeClass) {
-        return DoTimesNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isRootNode(Class nodeClass) {
-        return RootNode.class.isAssignableFrom(nodeClass);
     }
 
     private String stripComments(String command) {
@@ -547,4 +527,7 @@ public class Parser {
         commandHistory.clear();
         undoIndex = 0;
     }
+
+    //for debugger
+    Map<String, SyntaxNode> getSyntaxTrees() { return syntaxTrees; }
 }

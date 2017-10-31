@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class MenuGetter {
 
     public static final String INFO_DELIMITER = ",";
@@ -32,16 +35,15 @@ public class MenuGetter {
         }
     }
 
-    public List<Menu> getMenuDropdowns() throws SLogoException {
+    public List<Menu> getMenuDropdowns(IDEWindow runner) throws SLogoException {
         Map<String, Menu> dropdownsMap = new HashMap<>();
         for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
-            generateMenuItem(dropdownsMap, itemName);
+            generateMenuItem(dropdownsMap, itemName, runner);
         }
-        System.out.println(dropdownsMap);
         return new ArrayList<>(dropdownsMap.values());
     }
 
-    private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName) throws ProjectBuildException {
+    private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName, IDEWindow runner) throws ProjectBuildException {
     	System.out.println(itemName);
         String[] dropdownInfo = MENU_PROPERTIES.getProperty(itemName).split(INFO_DELIMITER);
         if (dropdownInfo.length != INFO_LENGTH) {
@@ -50,19 +52,21 @@ public class MenuGetter {
         String dropdownName = dropdownInfo[0];
         Menu dropdown = dropdownsMap.getOrDefault(dropdownName, new Menu(dropdownName));
         try {
-            Method actionMethod = MENU_RUNNABLES_CLASS.getDeclaredMethod(dropdownInfo[1]);
+            Method actionMethod = runner.getClass().getDeclaredMethod(dropdownInfo[1]);
+            System.out.println(actionMethod.getName());
             MenuItem menuItem = new MenuItem(itemName);
-            menuItem.setOnAction(e -> runMenuAction(actionMethod));
-            dropdown.getItems().add(new MenuItem(itemName));
+            menuItem.setOnAction(e -> runMenuAction(actionMethod, runner));
+            dropdown.getItems().add(menuItem);
         } catch (ReflectiveOperationException badMethod) {
             throw new ProjectBuildException();
         }
         dropdownsMap.put(dropdownName, dropdown);
     }
 
-    private void runMenuAction(Method actionMethod) {
+    private void runMenuAction(Method actionMethod, IDEWindow runner) {
         try {
-            actionMethod.invoke(MENU_RUNNABLES_CLASS);
+            actionMethod.setAccessible(true);
+            actionMethod.invoke(runner);
         } catch (ReflectiveOperationException callFailure) {
             return;
         }
