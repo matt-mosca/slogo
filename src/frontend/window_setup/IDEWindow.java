@@ -57,6 +57,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class IDEWindow implements Observer {
+
 	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
@@ -362,6 +363,7 @@ public class IDEWindow implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+
 		updateVariableDisplay();
 		updateFunctionsDisplay();
 		updateColorDisplay();
@@ -417,6 +419,7 @@ public class IDEWindow implements Observer {
 	private void changeFunctions() {
 		
 	}
+
 	private void changeColors() {
 		
 	}
