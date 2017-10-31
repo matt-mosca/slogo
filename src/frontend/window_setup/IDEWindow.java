@@ -418,7 +418,6 @@ public class IDEWindow implements Observer {
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));
 			HBox hbox = new HBox();
 			hbox.getChildren().addAll(newColor,colorBlock);
-			hbox.setOnMouseClicked(e->changeColors(colorNumber));
 			colorCount++;
 			colors.add(hbox, 0, colorCount);
 		}
@@ -432,7 +431,7 @@ public class IDEWindow implements Observer {
 		for (String functionName : availableFunctions.keySet()) {
 			Text newFunction = new Text(functionName+ VARIABLE_SEPARATOR + availableFunctions.get(functionName));
 			newFunction.setWrappingWidth(WRAPPING_WIDTH);
-			newFunction.setOnMouseClicked(e->changeFunctions(functionName));
+			newFunction.setOnMouseClicked(e->callFunctions(functionName));
 			functionCount++;
 			functions.add(newFunction, 0, functionCount);
 		}
@@ -448,21 +447,8 @@ public class IDEWindow implements Observer {
 		
 	}
 	
-	private void changeFunctions(String functionName) {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Change Function");
-		dialog.setHeaderText("Please Enter New Value for "+functionName);
-		dialog.setContentText("Enter New Value:");
-		Optional<String> result = dialog.showAndWait();
-		//result.ifPresent(name ->controller.updateFunction(functionName,Double.parseDouble(name)));
+	private void callFunctions(String functionName) {
+		console.setCommandEntry(functionName);
 	}
-	private void changeColors(Double colorNumber) {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Change Color");
-		dialog.setHeaderText("Please Enter New Value for Color "+colorNumber);
-		dialog.setContentText("Enter New Value:");
-		Optional<String> result = dialog.showAndWait();
-		
-		result.ifPresent(name -> System.out.println("Your name: " + name));
-	}
+
 }
