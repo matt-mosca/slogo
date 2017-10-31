@@ -11,7 +11,7 @@ public interface ColorController {
 
     void addColorListener(ChangeListener<Color> changeListener);
 
-    double setColorIndex(double colorIndex) throws SLogoException;
+    double setColorIndex(int colorIndex) throws SLogoException;
 
     double getColorIndex();
 }

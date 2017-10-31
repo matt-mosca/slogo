@@ -7,20 +7,20 @@ import backend.error_handling.SLogoException;
  */
 public class BackgroundController extends AbstractColorController {
 
-    private double currentPenColorIndex;
+    private int currentPenColorIndex;
 
     public BackgroundController(PaletteStorage paletteStorage) {
         super(paletteStorage);
     }
 
     @Override
-    public double setColorIndex(double backgroundColorIndex) throws SLogoException {
+    public double setColorIndex(int backgroundColorIndex) throws SLogoException {
         currentPenColorIndex = backgroundColorIndex;
         setColorProperty(currentPenColorIndex);
         return currentPenColorIndex;
     }
 
-    // public good tradeoff in order to define interface contract
+    // public good trade-off in order to define interface contract
     @Override
     public double getColorIndex() { return currentPenColorIndex; }
 }

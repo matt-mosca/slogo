@@ -95,10 +95,8 @@ public class CommandGetter {
 	}
 
 	public Method getParsingMethod(String commandName) throws SLogoException {
-		System.out.println("Getting parsing method");
 		String canonicalName = getCanonicalName(commandName);
 		String methodName = COMMAND_PARSING_PROPERTIES.getProperty(canonicalName);
-		System.out.println("Canonical Name: " + canonicalName + "; " + methodName);
 		try {
 			return PARSER_CLASS.getDeclaredMethod(methodName, PARSE_METHOD_ARGUMENT_CLASSES);
 		} catch (NoSuchMethodException badMethod) {
@@ -108,7 +106,6 @@ public class CommandGetter {
 	}
 	
 	public Method getSerializingMethod(Class commandClass) throws SLogoException {
-		System.out.println("Getting serialization method");
 		String commandName = getNameFromCommandClass(commandClass);
 		String canonicalName = getCanonicalName(commandName);
 		String methodName = COMMAND_SERIALIZING_PROPERTIES.getProperty(canonicalName);

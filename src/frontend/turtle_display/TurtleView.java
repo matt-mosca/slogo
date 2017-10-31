@@ -1,24 +1,19 @@
 package frontend.turtle_display;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 import apis.TurtleDisplay;
-import backend.Controller;
 import frontend.window_setup.IDEWindow;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.Observable;
 
 public class TurtleView extends Observable implements TurtleDisplay {
 
@@ -45,7 +40,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
 		currentPenColor.setValue(TurtlePen.DEFAULT_COLOR);
-		notifyObservers();
 	}
 	
 	public void displayInitialTurtle() {
@@ -65,8 +59,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		}
 	}
 	
-	// TODO - possible to make this package-friendly instead of public?
-	// Perhaps by reorganizing front end packages?
 	public void showTurtle(TurtlePen turtle) {
     		layout.getChildren().add(turtle.getImage());
     }
@@ -101,9 +93,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	Drawer lineMaker = new Drawer(current.getPenColor(), current.getStrokeWidth(), current.getIsPenDown());
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
+    	setChanged();
     	notifyObservers();
-//    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
-//    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
 
     /**
@@ -115,10 +106,9 @@ public class TurtleView extends Observable implements TurtleDisplay {
      * @param angle - the direction the turtle's image should point toward
      */
     public void rotate(int turtleIndex, double newAngle) {
-    	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
-    	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
+    	setChanged();
     	notifyObservers();
     }
     
@@ -126,40 +116,38 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
+    	setChanged();
     	notifyObservers();
     	return newAddition;
     }
     
-    /*public void changeI(Image newTurtle) {
-		tur= new ImageView(newTurtle);
-		turtleImage.setFitWidth(DEFAULT_WIDTH);
-		turtleImage.setFitHeight(DEFAULT_HEIGHT);
-	}*/
-    
     @Override
 	public void pickUpPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).pickUpPen();
+		setChanged();
 		notifyObservers();
 	}
 	
     @Override
 	public void putDownPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).putDownPen();
+		setChanged();
 		notifyObservers();
 	}
 	
 	public void changeDrawColor(int turtleIndex, Color color) {
     	currentPenColor.setValue(color);
 		displayedTurtles.get(turtleIndex).setPenColor(color);
+		setChanged();
 		notifyObservers();
 	}
 
 	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
+		setChanged();
 		notifyObservers();
 	}
-	//Change from 0 to selected index
-	//Make conditional, so that you do not have to select the turtle if there is only one
+
 	public void changeImage(int turtleIndex, Image image) {
 		displayedTurtles.get(turtleIndex).changeImage(image);
 	}

@@ -1,5 +1,11 @@
 package frontend.window_setup;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 import backend.Controller;
 import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
@@ -7,61 +13,38 @@ import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
 import frontend.factory.TabFactory;
-import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
-import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import main.Main;
 import utilities.MenuGetter;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
 
 public class IDEWindow implements Observer {
 
@@ -70,7 +53,7 @@ public class IDEWindow implements Observer {
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
-	public static final double RIGHT_WIDTH = 150;
+	public static final double RIGHT_WIDTH = 400;
 	public static final double RIGHT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double TOP_WIDTH = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	public static final double TOP_HEIGHT = 100;
@@ -79,24 +62,25 @@ public class IDEWindow implements Observer {
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
 	public static final Color STANDARD_PEN_COLOR = Color.BLACK;
-	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
-	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-	
-	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables ";
 	public static final String FUNCTIONS_HEADER = "Functions ";
 	public static final String COLORS_HEADER = "Colors ";
+	public static final String SHAPES_HEADER = "Shapes ";
 	public static final String TURTLE_HEADER = "Turtle(s) Current State ";
 	public static final String NEW_LINE = "\n";
+	public static final double SCROLL_WIDTH = RIGHT_WIDTH - OFFSET;
+	
+	private static final String VARIABLE_SEPARATOR = " = ";
 	private static final String PNG_FILE_EXTENSION = "*.png",
 		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
 	private static final String LANGUAGE_MENU_HEADER = "Language";
-
-
+	
+	
+	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
+	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	private Stage primaryStage;
 	private Scene primaryScene;
 	private HelpWindow helpWindow = new HelpWindow();
-	
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
 	private VBox leftBox = new VBox();
@@ -111,6 +95,7 @@ public class IDEWindow implements Observer {
 	private Group variableGroup = new Group();
 	private Group functionGroup = new Group();
 	private Group colorGroup = new Group();
+	private Group shapeGroup = new Group();
 	private Group turtleInfoGroup = new Group();
 	
 	private FileChooser myChooser = makeChooser(PNG_FILE_EXTENSION, JPG_FILE_EXTENSION, GIF_FILE_EXTENSION);
@@ -135,11 +120,18 @@ public class IDEWindow implements Observer {
 	private GridPane turtleMovementKeys;
 	private ScrollPane colorScrollable;
 	private GridPane colors = new GridPane();
+	private ScrollPane shapeScrollable;
+	private GridPane shapes = new GridPane();
 	private TextField strokeThickness = new TextField();
 	private String[] languageList = {"Chinese","English", "French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	private GridPane turtleInfoPane;
 	private ScrollPane turtleInfoScrollable;
 	
+	public static final String DEBUGGING_TITLE = "Debugging Window";
+	/**
+	 * @param primary
+	 * Constructor for IDEWindow
+	 */
 	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
@@ -150,6 +142,7 @@ public class IDEWindow implements Observer {
 		primaryStage = primary;
 		turtleInfoPane = new GridPane();
 		turtleInfoScrollable = new ScrollPane();
+		borderLayout.setStyle("-fx-background-color: aliceblue; -fx-text-fill: white;");
 		
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
@@ -159,21 +152,24 @@ public class IDEWindow implements Observer {
 		
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
 		
-		TabPane tabPane = new TabPane();
+		TabPane displayTabPane = new TabPane();
+		displayTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		formatScrollPane(variableScrollable, SCROLL_WIDTH, variables, variableGroup);
+		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, displayTabPane);
 		
-		formatScrollPane(variableScrollable, 150, variables, variableGroup);
-		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, tabPane);
+		formatScrollPane(functionScrollable, SCROLL_WIDTH, functions, functionGroup);
+		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, displayTabPane);
 		
-		formatScrollPane(colorScrollable, 150, colors, colorGroup);
-		tabMaker.makeTab(COLORS_HEADER,colorGroup, tabPane);
+		formatScrollPane(colorScrollable, SCROLL_WIDTH, colors, colorGroup);
+		tabMaker.makeTab(COLORS_HEADER,colorGroup, displayTabPane);
 		
-		formatScrollPane(functionScrollable, 150, functions, functionGroup);
-		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, tabPane);
+		formatScrollPane(shapeScrollable, SCROLL_WIDTH, shapes, shapeGroup);
+		tabMaker.makeTab(SHAPES_HEADER,shapeGroup, displayTabPane);
 		
-		formatScrollPane(turtleInfoScrollable, 150, turtleInfoPane, turtleInfoGroup);
-		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, tabPane);
+		formatScrollPane(turtleInfoScrollable, SCROLL_WIDTH, turtleInfoPane, turtleInfoGroup);
+		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, displayTabPane);
 		
-		rightGroup.getChildren().add(tabPane);
+		rightGroup.getChildren().add(displayTabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
 		turtleView.addObserver(this);
 		
@@ -186,7 +182,7 @@ public class IDEWindow implements Observer {
 			console.addCommand(buildException.getMessage());
 		}
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
-		makeButtons();
+		makeGUIs();
 		setBorderArrangement();
 		
 		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
@@ -198,31 +194,52 @@ public class IDEWindow implements Observer {
 
 		penColorPicker.valueProperty().bindBidirectional(turtleView.getCurrentPenColorProperty());
 		assembleTurtleInfoDisplay();
+		setShapeDisplay();
+		updateColorDisplay();
 	}
 	
+	/**
+	 * Sets up IDEWindow to display by setting the scene and calling setUpTurtleField
+	 */
 	public void setUpWindow() {
 		primaryStage.setScene(primaryScene);
 		setUpTurtleField();
 	}
 	
+	/**
+	 * Set up the starting scene with the Turtle at its starting position
+	 */
 	private void setUpTurtleField() {
 		turtleView.displayInitialTurtle();
 	}
 	
+	/**
+	 * @param keysPane
+	 * @param root
+	 * @param prefSize
+	 * Formats the keys pane that when clicked on moves the turtle
+	 */
 	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
 		keysPane.setPrefSize(prefSize, prefSize * (2/3));
 		root.getChildren().add(keysPane);
 	}
 	
+	/**
+	 * Sets up the TurtleInfoDisplay
+	 */
 	private void assembleTurtleInfoDisplay() {
 		displayTurtleInfoHeaders();
 		addInitialTurtleInfo(turtleInfoPane);
 	}
 	
+	/**
+	 * @param grid
+	 * Adds the information of the first turtle
+	 */
 	private void addInitialTurtleInfo(GridPane grid) {
 		TurtlePen first = turtleView.getDisplayedTurtles().get(0);
 		Text initialID = new Text("0");
-		Text initialPos = new Text(writeCoordinatesAsPoint(first.getXCoordinate(), first.getYCoordinate()));
+		Text initialPos = new Text(writeCoordinatesAsPoint(convertXCoordinate(first.getXCoordinate()), convertYCoordinate(first.getYCoordinate())));
 		Text initialHeading = new Text("" + first.getAngle());
 		Text initialPenState = new Text(Boolean.toString(first.getIsPenDown()));
 		Text initialPenColor = new Text("" + first.getPenColor());
@@ -235,11 +252,42 @@ public class IDEWindow implements Observer {
 		grid.add(initialStrokeWidth, 5, 1);
 	}
 	
+	/**
+	 * @param xCoord
+	 * @param yCoord
+	 * @return
+	 * Returns a string of the coordinates
+	 */
 	private String writeCoordinatesAsPoint(double xCoord, double yCoord) {
 		return "(" + xCoord + ", " + yCoord + ")";
 	}
+	
+	/**
+	 * @param xCoord
+	 * @return
+	 * Fits XCoordinates to screen size 
+	 */
+	private double convertXCoordinate(double xCoord) {
+		return xCoord - LEFT_WIDTH - TURTLEFIELD_WIDTH / 2 + TurtlePen.DEFAULT_WIDTH / 2;
+	}
+	
+	/**
+	 * @param yCoord
+	 * @return
+	 * Fits YCoordinates to screen sixe
+	 */
+	private double convertYCoordinate(double yCoord) {
+		return yCoord - TOP_HEIGHT - TURTLEFIELD_HEIGHT / 2 + TurtlePen.DEFAULT_HEIGHT / 2;
+	}
 
-	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
+	/**
+	 * @param sampleScroll
+	 * @param prefSize
+	 * @param sampleGrid
+	 * @param root
+	 * Formats ScrollPane
+	 */
+	private void formatScrollPane(ScrollPane sampleScroll, double prefSize, GridPane sampleGrid, Group root) {
 		sampleScroll = new ScrollPane();
 		sampleGrid.setPadding(new Insets(OFFSET));
 		sampleGrid.setHgap(OFFSET);
@@ -248,6 +296,14 @@ public class IDEWindow implements Observer {
 		root.getChildren().add(sampleScroll);
 	}
 
+	/**
+	 * @param hbox
+	 * @param offset
+	 * @param width
+	 * @param height
+	 * @param pos
+	 * Formats HBox
+	 */
 	private void setFormatH(HBox hbox, int offset, double width, double height, Pos pos) {
 		hbox.setPadding(new Insets(offset));
 		hbox.setSpacing(offset);
@@ -255,12 +311,22 @@ public class IDEWindow implements Observer {
 		hbox.setAlignment(pos);
 	}
 
+	/**
+	 * @param vbox
+	 * @param offset
+	 * @param leftWidth
+	 * @param leftHeight
+	 * Formats VBox
+	 */
 	private void setFormatV(VBox vbox, int offset,double leftWidth, double leftHeight) {
 		vbox.setPadding(new Insets(offset));
 		vbox.setSpacing(offset);
 		vbox.setPrefSize(leftWidth, leftHeight);
 	}
 
+	/**
+	 * Sets up BorderPane
+	 */
 	private void setBorderArrangement() {
 		borderLayout.setCenter(turtleField);
 		borderLayout.setLeft(leftBox);
@@ -270,6 +336,9 @@ public class IDEWindow implements Observer {
 		borderLayout.setPrefSize(totalWidth, totalHeight);
 	}
 	
+	/**
+	 * Changes the TurtlePen to being up
+	 */
 	private void changePenToUp() {
 		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
 		for(int i = 0; i < toldTurtleIds.size(); i++) {
@@ -277,6 +346,9 @@ public class IDEWindow implements Observer {
 		}
 	}
 	
+	/**
+	 * Changes the TurtlePen to being down
+	 */
 	private void changePenToDown() {
 		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
 		for(int i = 0; i < toldTurtleIds.size(); i++) {
@@ -284,28 +356,33 @@ public class IDEWindow implements Observer {
 		}
 	}
 
+	/**
+	 * @param imageName
+	 * @return
+	 * Creates an ImageView from the name of an Image given as a String
+	 */
 	private ImageView makeImageViewFromName(String imageName) {
 		Image image = new Image(getClass().getClassLoader().getResourceAsStream(imageName));
 		ImageView imageNode = new ImageView(image);
 		return imageNode;
 	}
 	
-	private void makeButtons() {
+	/**
+	 * Creates the GUIs to be displayed on the IDEWindow
+	 */
+	private void makeGUIs() {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar menuBar = new MenuBar();
 		try {
 			menuMaker = new MenuGetter();
-			menuBar.getMenus().addAll(menuMaker.getMenuDropdowns());
+			menuBar.getMenus().addAll(menuMaker.getMenuDropdowns(this));
 
 		} catch (SLogoException e2) {
-			// TODO Auto-generated catch block
 			console.addError(e2.getMessage());
 		}
 		topGroup.getChildren().add(menuBar);
 		menuBar.getMenus().add(languageMenu);
-		//leftGroup.getChildren().add(menuBar);
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
-		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
@@ -318,19 +395,9 @@ public class IDEWindow implements Observer {
 		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
 		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
-		// UNDO/REDO/RESET
-		Button undo = new Button("Undo");
-		undo.setOnAction(e -> undo());
-		Button redo = new Button("Redo");
-		redo.setOnAction(e -> redo());
-		Button reset = new Button("Reset");
-		reset.setOnAction(e -> reset());
-		
-		leftGroup.getChildren().addAll(undo, redo, reset);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
 		buttonMaker.makeGUIItem(e->openFile(), leftGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->saveFile(), leftGroup, "Save Workspace");
-		buttonMaker.makeGUIItem(e->loadFile(), leftGroup, "Load Workspace");
+		buttonMaker.makeGUIItem(e->enterDebugging(), leftGroup, "Enter Debugging");
 		strokeThickness = textFieldMaker.makeReturnableTextField(e->setPenThickness(Double.parseDouble(strokeThickness.getText())), leftGroup,"Pen Thickness");
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
@@ -338,6 +405,10 @@ public class IDEWindow implements Observer {
 		rightBox.getChildren().addAll(rightGroup.getChildren());
 	}
 	
+	/**
+	 * @param thickness
+	 * Sets the TurtlePen's thickness
+	 */
 	private void setPenThickness(double thickness) {
 		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
 		for(int i = 0; i < toldTurtleIds.size(); i++) {
@@ -346,10 +417,36 @@ public class IDEWindow implements Observer {
 		strokeThickness.setText(null);
 	}
 
+	/**
+	 * Resets the TurtleDisplay
+	 */
 	private void reset() {
 		controller.reset();
 	}
+	
+	/**
+	 * Opens up Debugging Window
+	 * NOTE: Did not have time to complete this extension
+	 */
+	private void enterDebugging() {
+		Stage debuggingStage = new Stage();
+		Group debuggingGroup = new Group();
+		Text debuggingText = new Text("Oops---Under Maintenance :(");
+		debuggingText.setFill(Color.RED);
+		debuggingText.setY(25);
+		debuggingGroup.getChildren().add(debuggingText);
+		Scene debuggingScene = new Scene(debuggingGroup, 150, 50, Color.WHEAT);
+		debuggingStage.setScene(debuggingScene);
+		debuggingStage.setTitle(DEBUGGING_TITLE);
+		debuggingStage.setResizable(false);
+		debuggingStage.show();
+		
+		
+	}
 
+	/**
+	 * Redoes last command
+	 */
 	private void redo() {
 		try {
             controller.redo();
@@ -358,6 +455,9 @@ public class IDEWindow implements Observer {
         }
 	}
 
+	/**
+	 * Undoes last command
+	 */
 	private void undo() {
 		try {
             turtleField.setFill(STANDARD_AREA_COLOR);
@@ -495,7 +595,7 @@ public class IDEWindow implements Observer {
 		for(int i = 0; i < currentTurtles.size(); i++) {
 			TurtlePen current = turtleView.getDisplayedTurtles().get(i);
 			Text currentID = new Text("" + i);
-			Text currentPos = new Text(writeCoordinatesAsPoint(current.getXCoordinate(), current.getYCoordinate()));
+			Text currentPos = new Text(writeCoordinatesAsPoint(convertXCoordinate(current.getXCoordinate()), convertYCoordinate(current.getYCoordinate())));
 			Text currentHeading = new Text("" + current.getAngle());
 			Text currentPenState = new Text(Boolean.toString(current.getIsPenDown()));
 			Text currentPenColor = new Text("" + current.getPenColor());
@@ -523,10 +623,10 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void updateColorDisplay() {
-		Map<Double, Color> availableColors = controller.retrieveAvailableColors();
+		Map<Integer, Color> availableColors = controller.retrieveAvailableColors();
 		int colorCount = 0;
 		colors.getChildren().clear();
-		for (Double colorNumber : availableColors.keySet()) {
+		for (Integer colorNumber : availableColors.keySet()) {
 			Text newColor = new Text(COLORS_HEADER +colorNumber+ VARIABLE_SEPARATOR);
 			newColor.setWrappingWidth(WRAPPING_WIDTH);
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));
@@ -534,6 +634,24 @@ public class IDEWindow implements Observer {
 			hbox.getChildren().addAll(newColor,colorBlock);
 			colorCount++;
 			colors.add(hbox, 0, colorCount);
+		}
+	}
+	
+	private void setShapeDisplay() {
+		Map<Integer, Image> availableShapes= controller.retrieveAvailableImages();
+		int shapeCount = 0;
+		for (Integer shapeNumber : availableShapes.keySet()) {
+			Text newShape = new Text(SHAPES_HEADER +shapeNumber+ VARIABLE_SEPARATOR);
+			newShape.setWrappingWidth(WRAPPING_WIDTH);
+			ImageView shapeImage= new ImageView(availableShapes.get(shapeNumber));
+			shapeImage.setFitHeight(turtleView.DEFAULT_HEIGHT);
+			shapeImage.setFitWidth(turtleView.DEFAULT_WIDTH);
+			HBox hbox = new HBox();
+			hbox.getChildren().add(newShape);
+			hbox.getChildren().add(shapeImage);
+			hbox.setAlignment(Pos.CENTER);
+			shapeCount++;
+			shapes.add(hbox, 0, shapeCount);
 		}
 	}
 
@@ -564,5 +682,4 @@ public class IDEWindow implements Observer {
 	private void callFunctions(String functionName) {
 		console.setCommandEntry(functionName);
 	}
-
 }

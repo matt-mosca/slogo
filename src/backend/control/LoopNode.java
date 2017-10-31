@@ -1,6 +1,5 @@
 package backend.control;
 
-import backend.Parser;
 import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 

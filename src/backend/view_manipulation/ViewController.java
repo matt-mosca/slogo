@@ -3,9 +3,10 @@ package backend.view_manipulation;
 import backend.error_handling.SLogoException;
 import backend.turtle.TurtleController;
 import frontend.turtle_display.TurtleView;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+
+import java.util.Map;
 
 /**
  * @author Ben Schwennesen
@@ -13,12 +14,17 @@ import javafx.scene.shape.Rectangle;
 public class ViewController {
 
     private PaletteStorage paletteStorage;
+    private ImageStorage imageStorage;
+
     private ColorController backgroundController;
     // (below) same object referred to with different interfaces
     private SizeController penSizeController;
     private ColorController penColorController;
 
     private TurtleController turtleController;
+
+    // default
+    private int currentTurtleImageIndex = 1;
 
     public ViewController(PaletteStorage paletteStorage, TurtleView turtleView,
                           Rectangle turtleField, TurtleController turtleController) {
@@ -29,6 +35,7 @@ public class ViewController {
         this.turtleController = turtleController;
         this.backgroundController = new BackgroundController(paletteStorage);
         addListeners(turtleView, turtleField, turtleController);
+        this.imageStorage = new ImageStorage();
     }
 
     private void addListeners(TurtleView turtleView, Rectangle turtleField, TurtleController turtleController) {
@@ -44,17 +51,28 @@ public class ViewController {
                 turtleField.setFill(newColor));
     }
 
-    double setColorAtIndex(double index, int red, int green, int blue) {
+    double setColorAtIndex(int index, int red, int green, int blue) {
         return paletteStorage.setColorAtIndex(index, red, green, blue);
     }
 
     double setPenSize(double size) { return penSizeController.setSize(size); }
 
-    double setPenColor(double index) throws SLogoException { return penColorController.setColorIndex(index); }
+    double setPenColor(int index) throws SLogoException { return penColorController.setColorIndex(index); }
 
-    double setBackgroundColor(double index) throws SLogoException {
+    double setBackgroundColor(int index) throws SLogoException {
         return backgroundController.setColorIndex(index);
     }
 
     double getPenColor() { return penColorController.getColorIndex(); }
+
+    double setTurtleImage(int index) throws SLogoException {
+        currentTurtleImageIndex = index;
+        Image newImage = imageStorage.getImage(currentTurtleImageIndex);
+        turtleController.getToldTurtleIds().forEach(turtleId -> turtleController.setTurtleImage(turtleId, newImage));
+        return currentTurtleImageIndex;
+    }
+
+    int getCurrentTurtleImageIndex() { return currentTurtleImageIndex; }
+
+    public Map<Integer, Image> getImageMap() { return imageStorage.getImageMap(); }
 }

@@ -1,6 +1,7 @@
 package backend.turtle;
 
 import frontend.turtle_display.TurtleView;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,6 @@ public class TurtleController {
 			turtleView.addTurtle();
 			final int TURTLE_INDEX = getZeroBasedId(newTurtleId);
 			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> {
-				System.out.println("Clicked index " + TURTLE_INDEX);
 				setActiveTurtles(new Integer[] { TURTLE_INDEX + 1  });
 			});
 			
@@ -130,7 +130,6 @@ public class TurtleController {
 			addTurtles(turtleId);
 		}
 		activeTurtleId = ids.length > 0 ? ids[ids.length - 1] : 0;
-		System.out.println("Set activeTurtleId to " + activeTurtleId);
 		// TODO - Inform the front end of the new list of told turtles
 		turtleView.changeRepresentationOfActive(getToldTurtleIds());	
 		return activeTurtleId;
@@ -283,6 +282,11 @@ public class TurtleController {
 		return toldTurtleIds.stream()
 				.mapToInt(id -> getZeroBasedId(id))
 				.boxed().collect(Collectors.toList());
+	}
+
+	public double setTurtleImage(int index, Image image) {
+		turtleView.changeImage(index, image);
+		return index;
 	}
 
 	// for undo/redo
