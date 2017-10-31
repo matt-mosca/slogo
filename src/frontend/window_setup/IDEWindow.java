@@ -322,7 +322,6 @@ public class IDEWindow implements Observer {
 		menuBar.getMenus().add(languageMenu);
 		//leftGroup.getChildren().add(menuBar);
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
-		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveForward(), turtleMovementKeys, makeImageViewFromName("Up_Arrow.png"), 1, 0);
 		buttonMaker.makeImageGUIItemInGrid(e->graphicalControls.moveBackward(), turtleMovementKeys, makeImageViewFromName("Down_Arrow.png"), 1, 1);
@@ -335,19 +334,9 @@ public class IDEWindow implements Observer {
 		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
 		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
-		// UNDO/REDO/RESET
-		Button undo = new Button("Undo");
-		undo.setOnAction(e -> undo());
-		Button redo = new Button("Redo");
-		redo.setOnAction(e -> redo());
-		Button reset = new Button("Reset");
-		reset.setOnAction(e -> reset());
-		
-		leftGroup.getChildren().addAll(undo, redo, reset);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
 		buttonMaker.makeGUIItem(e->openFile(), leftGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->saveFile(), leftGroup, "Save Workspace");
-		buttonMaker.makeGUIItem(e->loadFile(), leftGroup, "Load Workspace");
+		buttonMaker.makeGUIItem(e->enterDebugging(), leftGroup, "Enter Debugging");
 		strokeThickness = textFieldMaker.makeReturnableTextField(e->setPenThickness(Double.parseDouble(strokeThickness.getText())), leftGroup,"Pen Thickness");
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
@@ -365,6 +354,10 @@ public class IDEWindow implements Observer {
 
 	private void reset() {
 		controller.reset();
+	}
+	
+	private void enterDebugging() {
+		
 	}
 
 	private void redo() {
