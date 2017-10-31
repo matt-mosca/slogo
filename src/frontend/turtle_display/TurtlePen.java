@@ -1,12 +1,8 @@
 package frontend.turtle_display;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class TurtlePen {
 	public static final String DEFAULT_TURTLE = "Cartoon-Turtle.png";
