@@ -10,13 +10,20 @@ public class RightNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		double angle = arguments[0];
-		return getTurtleController().rotateCurrentTurtles(true, angle);
+		for (double angle : arguments) {
+			getTurtleController().rotateCurrentTurtles(true, angle);			
+		}
+		return arguments[arguments.length - 1];
 	}
 
 	@Override
 	public int getDefaultNumberOfArguments() {
 		return 1;
+	}
+	
+	@Override 
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
 	}
 
 }
