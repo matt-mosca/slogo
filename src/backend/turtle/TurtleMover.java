@@ -159,8 +159,7 @@ public class TurtleMover {
         }
         return false;
     }
-
-
+    
     private double wrap(double coordinate, double xBounds) {
         double wrappedCoordinate;
         double modNumerator = coordinate + xBounds;
@@ -172,17 +171,4 @@ public class TurtleMover {
         }
         return wrappedCoordinate;
     }
-
-    /*private double wrapY(double yCoords, double yBounds) {
-        double wrappedY;
-        double modNumerator = yCoords + yBounds;
-        double modDenominator = 2 * yBounds;
-        if (modNumerator < 0) {
-            wrappedY = modDenominator - (-modNumerator % modDenominator) - yBounds;
-        } else {
-            wrappedY = (modNumerator % modDenominator) - yBounds;
-        }
-        return wrappedY;
-    }*/
-
 }
