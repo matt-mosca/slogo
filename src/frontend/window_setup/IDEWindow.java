@@ -438,7 +438,7 @@ public class IDEWindow implements Observer {
 		dialog.setContentText("Enter New Value:");
 		Optional<String> result = dialog.showAndWait();
 		
-		result.ifPresent(name -> System.out.println("Your name: " + name));
+		result.ifPresent(name -> controller.updateVariable(variableName,Double.parseDouble(name)));
 		
 	}
 	
@@ -448,8 +448,7 @@ public class IDEWindow implements Observer {
 		dialog.setHeaderText("Please Enter New Value for "+functionName);
 		dialog.setContentText("Enter New Value:");
 		Optional<String> result = dialog.showAndWait();
-		
-		result.ifPresent(name -> System.out.println("Your name: " + name));
+		//result.ifPresent(name ->controller.updateFunction(functionName,Double.parseDouble(name)));
 	}
 	private void changeColors(Double colorNumber) {
 		TextInputDialog dialog = new TextInputDialog();

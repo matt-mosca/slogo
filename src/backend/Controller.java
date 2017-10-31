@@ -67,7 +67,8 @@ public class Controller {
 
 	// already defined variable
 	public void updateVariable(String name, double value) { scopedStorage.setVariable(name, value); }
-
+	
+	
 	public Map<String, List<String>> retrieveDefinedFunctions() {
 		return scopedStorage.getDefinedFunctions();
 	}
