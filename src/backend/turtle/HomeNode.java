@@ -2,6 +2,9 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class HomeNode extends TurtleNode {
 
 	public HomeNode(String commandString, TurtleController turtleController) {

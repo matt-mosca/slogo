@@ -5,6 +5,8 @@ import backend.VarArgNode;
 import java.util.Arrays;
 
 /**
+ * Computes the sum of all its operands, of which there can be an arbitrary number.
+ *
  * @author Ben Schwennesen
  */
 public class SumNode extends VarArgNode {

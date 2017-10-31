@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * @author Ben Schwennesen
+ */
 public class ConsoleTester extends Application{
 
         public static final String APP_NAME = "Test";

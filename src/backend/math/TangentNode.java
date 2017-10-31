@@ -3,6 +3,8 @@ package backend.math;
 import backend.OneArgNode;
 
 /**
+ * Computes the value of the tangent function for its (sole) operand.
+ *
  * @author Ben Schwennesen
  */
 public class TangentNode extends OneArgNode {

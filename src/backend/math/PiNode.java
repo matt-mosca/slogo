@@ -3,6 +3,8 @@ package backend.math;
 import backend.SyntaxNode;
 
 /**
+ * Returns the value of the constant pi.
+ *
  * @author Ben Schwennesen
  */
 public class PiNode implements SyntaxNode {

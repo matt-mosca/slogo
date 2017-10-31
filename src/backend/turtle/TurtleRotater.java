@@ -4,6 +4,13 @@ import frontend.turtle_display.TurtleView;
 
 import java.util.List;
 
+/**
+ * Handles rotations of the backend representations of turtles and instructs the frontend to change to match the
+ * backend representations' updates states.
+ *
+ * @author Adithya Raghunathan
+ * @author Ben Schwennesen
+ */
 public class TurtleRotater {
 
     private TurtleView turtleView;

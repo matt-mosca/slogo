@@ -7,6 +7,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 /**
+ *
+ *
  * @author Ben Schwennesen
  */
 public abstract class AbstractColorController implements ColorController {

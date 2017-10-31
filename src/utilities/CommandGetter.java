@@ -14,6 +14,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * Uses reflection to determine the parsing classes for particular commands and the node classes that should be
+ * constructed for them.
+ *
+ * @author Ben Schwennesen
+ */
 public class CommandGetter {
 
 	private final String COMMAND_INFO_FILE = "resources/CommandNodes.properties";
@@ -124,7 +130,7 @@ public class CommandGetter {
 		}
 		return commandMap.get(command.toLowerCase());
 	}
-	
+
 	private void initializeReverseCommandProperties() {
 		for (String canonicalName : COMMAND_PROPERTIES.stringPropertyNames()) {
 			String localeSpecificInfo = reverseCommandMap.get(canonicalName);

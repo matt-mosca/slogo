@@ -4,6 +4,12 @@ import frontend.turtle_display.TurtleView;
 
 import java.util.List;
 
+/**
+ * Handles the movement of all turtles across the screen, including wrapping.
+ *
+ * @author Ben Schwennesen
+ * @author Adithya Raghunathan
+ */
 public class TurtleMover {
 
     private double xBounds;

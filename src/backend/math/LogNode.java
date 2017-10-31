@@ -3,6 +3,8 @@ package backend.math;
 import backend.OneArgNode;
 
 /**
+ * Computes the natural logarithm of its (sole) operand.
+ *
  * @author Ben Schwennesen
  */
 public class LogNode extends OneArgNode {

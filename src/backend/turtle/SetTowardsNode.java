@@ -3,6 +3,9 @@ package backend.turtle;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UnevenNumberOfArgumentsException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class SetTowardsNode extends TurtleNode {
 
 	public SetTowardsNode(String commandString, TurtleController turtleController) {
