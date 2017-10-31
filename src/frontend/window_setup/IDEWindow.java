@@ -291,7 +291,7 @@ public class IDEWindow implements Observer {
 		MenuBar menuBar = new MenuBar();
 		try {
 			menuMaker = new MenuGetter();
-			menuBar.getMenus().addAll(menuMaker.getMenuDropdowns());
+			menuBar.getMenus().addAll(menuMaker.getMenuDropdowns(this));
 
 		} catch (SLogoException e2) {
 			// TODO Auto-generated catch block
