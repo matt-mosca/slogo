@@ -94,19 +94,19 @@ public class Controller {
 	}
 
 	public double setPenDown(int index) {
-		return turtleController.setPenDown(index);
+		return turtleController.setPenDown(index + 1);
 	}
 
 	public double setPenUp(int index) {
-		return turtleController.setPenUp(index);
+		return turtleController.setPenUp(index + 1);
 	}
 
 	public double isPenDown(int index) {
-		return turtleController.isPenDown(index);
+		return turtleController.isPenDown(index + 1);
 	}
 
 	public void tellTurtle(int index) {
-    	turtleController.setActiveTurtles(new Integer[] {index});
+    	turtleController.setActiveTurtles(new Integer[] {index + 1});
 	}
 
 	public List<Integer> getToldTurtleIds() {
