@@ -241,7 +241,6 @@ public class IDEWindow implements Observer {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
-		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
@@ -275,6 +274,8 @@ public class IDEWindow implements Observer {
 		});
 		
 		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
+		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
+		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());

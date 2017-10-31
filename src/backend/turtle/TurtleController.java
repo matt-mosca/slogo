@@ -60,7 +60,7 @@ public class TurtleController {
 	}
 
 	// TURTLES
-	int getNumberTurtlesCreated() {
+	public int getNumberTurtlesCreated() {
 		return createdTurtles.size();
 	}
 

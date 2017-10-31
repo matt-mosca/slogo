@@ -109,6 +109,11 @@ public class Controller {
 	public List<Integer> getToldTurtleIds() {
 		return turtleController.getToldTurtleIds();
 	}
+	
+	public void addOneTurtle() {
+		int currentNumTurtles = turtleController.getNumberTurtlesCreated();
+		turtleController.addTurtles(currentNumTurtles + 1);
+	}
 
 	public void saveWorkspaceToFile(String fileName) {
 		workspaceManager.saveWorkspaceToFile(parser, scopedStorage, fileName);
