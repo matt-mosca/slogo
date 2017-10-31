@@ -145,7 +145,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		displayedTurtles.get(turtleIndex).setPenColor(color);
 	}
 
-	public void changeStrokeWidth(int turtleIndex, double width) { 
+	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
 	}
 	//Change from 0 to selected index
