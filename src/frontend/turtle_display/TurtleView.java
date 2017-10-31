@@ -18,8 +18,9 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Observable;
 
-public class TurtleView implements TurtleDisplay{
+public class TurtleView extends Observable implements TurtleDisplay {
 
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
@@ -144,7 +145,7 @@ public class TurtleView implements TurtleDisplay{
 		displayedTurtles.get(turtleIndex).setPenColor(color);
 	}
 
-	public void changeStrokeWidth(int turtleIndex, double width) { 
+	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
 	}
 	//Change from 0 to selected index

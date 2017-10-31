@@ -59,6 +59,7 @@ import java.util.Observer;
 import java.util.Optional;
 
 public class IDEWindow implements Observer {
+
 	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
@@ -159,9 +160,11 @@ public class IDEWindow implements Observer {
 		
 		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
-
+		turtleView.addObserver(this);
+		
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
+		
 		controller = new Controller(scopedStorage, turtleView, turtleField);
 		console = new Console(controller);
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
@@ -193,7 +196,7 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void assembleTurtleInfoDisplay() {
-		Pane turtleInfoDisplay = new GridPane();
+		GridPane turtleInfoDisplay = turtleInfo.getDisplay();
 		
 	}
 
@@ -351,7 +354,11 @@ public class IDEWindow implements Observer {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			controller.saveWorkspaceToFile(fileLocation);
+			try {
+				controller.loadWorkspaceFromFile(fileLocation);	
+			} catch (SLogoException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -389,6 +396,7 @@ public class IDEWindow implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
+
 		updateVariableDisplay();
 		updateFunctionsDisplay();
 		updateColorDisplay();

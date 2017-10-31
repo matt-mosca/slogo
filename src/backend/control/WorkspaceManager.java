@@ -17,6 +17,7 @@ public class WorkspaceManager {
 	
 	public static final String ENCODING = "UTF-8";
 	public static final String EOF_REGEX = "\\Z";
+	public static final String UNDESIRED_PREFIX = "file:";
 	
 	public WorkspaceManager() {
 	}
@@ -24,6 +25,10 @@ public class WorkspaceManager {
 	
 	public void saveWorkspaceToFile(Parser parser, ScopedStorage storage, String fileName) {
 		Set<String> sessionCommands = parser.getSessionCommands();
+		System.out.println("Number of command trees: " + sessionCommands.size());
+		if (fileName.startsWith(UNDESIRED_PREFIX)) {
+			fileName = fileName.replace(UNDESIRED_PREFIX, "");
+		}
 		try {
 			PrintWriter printWriter = new PrintWriter(fileName, ENCODING);			
 			for (String sessionCommand : sessionCommands) {
@@ -32,15 +37,24 @@ public class WorkspaceManager {
 			printWriter.close();
 		} catch (UnsupportedEncodingException | FileNotFoundException e) {
 			// Should not happen
+			e.printStackTrace();
 		}
 	}
 
 	public void loadWorkspaceFromFile(Parser parser, ScopedStorage storage, String fileName) throws SLogoException {
 		try {
+			if (fileName.startsWith(UNDESIRED_PREFIX)) {
+				fileName = fileName.replace(UNDESIRED_PREFIX, "");
+			}
 			File workspaceFile = new File(fileName);
 			Scanner workspaceFileScanner = new Scanner(workspaceFile);	
 			workspaceFileScanner.useDelimiter(EOF_REGEX);
+			if (!workspaceFileScanner.hasNext()) {
+				// Warn user?
+				return;
+			}
 			String sessionText = workspaceFileScanner.next();
+			System.out.println("Session text: " + sessionText);
 			if (!parser.validateCommand(sessionText)) {
 				workspaceFileScanner.close();
 				throw new InvalidSessionLoadedException();
