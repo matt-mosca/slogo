@@ -12,6 +12,7 @@ import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
+import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -50,6 +51,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import main.Main;
 
 import java.io.File;
 import java.util.List;
@@ -164,11 +166,14 @@ public class IDEWindow implements Observer {
 		
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
-		
-		controller = new Controller(scopedStorage, turtleView, turtleField);
-		console = new Console(controller);
+		try {
+			controller = new Controller(scopedStorage, turtleView, turtleField);
+			console = new Console(controller);
+		} catch (SLogoException buildException) {
+			console.addCommand(buildException.getMessage());
+		}
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
-		makeButtons(primaryStage);
+		makeButtons();
 		setBorderArrangement();
 		
 		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
@@ -249,7 +254,7 @@ public class IDEWindow implements Observer {
 		return imageNode;
 	}
 	
-	private void makeButtons(Stage s) {
+	private void makeButtons() {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
@@ -268,46 +273,54 @@ public class IDEWindow implements Observer {
 		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
 		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
-		// UNDO/REDO TESTING
+		// UNDO/REDO/RESET
 		Button undo = new Button("Undo");
-		undo.setOnAction(e -> {
-			try {
-				turtleField.setFill(STANDARD_AREA_COLOR);
-				penColorPicker.setValue(STANDARD_PEN_COLOR);
-				changePenColor();
-				controller.undo();
-			} catch (SLogoException badUndo) {
-				console.addError(badUndo.getMessage());
-			}
-		});
+		undo.setOnAction(e -> undo());
 		Button redo = new Button("Redo");
-		redo.setOnAction(e -> {
-			try {
-				controller.redo();
-			} catch (SLogoException badUndo) {
-				console.addError(badUndo.getMessage());
-			}
-		});
+		redo.setOnAction(e -> redo());
 		Button reset = new Button("Reset");
-		reset.setOnAction(e -> controller.reset());
+		reset.setOnAction(e -> reset());
 		
 		leftGroup.getChildren().addAll(undo, redo, reset);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
-		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->saveFile(s), leftGroup, "Save Workspace");
-		buttonMaker.makeGUIItem(e->loadFile(s), leftGroup, "Load Workspace");
+		buttonMaker.makeGUIItem(e->openFile(), leftGroup, "Set Turtle Image");
+		buttonMaker.makeGUIItem(e->saveFile(), leftGroup, "Save Workspace");
+		buttonMaker.makeGUIItem(e->loadFile(), leftGroup, "Load Workspace");
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
 	}
-	
+
+	private void reset() {
+		controller.reset();
+	}
+
+	private void redo() {
+		try {
+            controller.redo();
+        } catch (SLogoException badUndo) {
+            console.addError(badUndo.getMessage());
+        }
+	}
+
+	private void undo() {
+		try {
+            turtleField.setFill(STANDARD_AREA_COLOR);
+            penColorPicker.setValue(STANDARD_PEN_COLOR);
+            changePenColor();
+            controller.undo();
+        } catch (SLogoException badUndo) {
+            console.addError(badUndo.getMessage());
+        }
+	}
+
 	private Menu setMenu(String name)
 	{
 		Menu sampleMenu = new Menu(name);
 		int i = 0;
-		for(i = 0; i<languageList.length;i++) {
+		for(i = 0; i < languageList.length;i++) {
 			String temp = languageList[i];
 			sampleMenu.getItems().add(menuItemMaker.makeMenuItem(e->setMenuLanguage(temp), temp));
 		}
@@ -341,26 +354,26 @@ public class IDEWindow implements Observer {
 		IDEWindow window = new IDEWindow(newStage);
 		window.setUpWindow();
 	}
-	private void saveFile(Stage s) {
+	private void saveFile() {
 		File dataFile = null; 
-		dataFile = myChooser.showOpenDialog(s);
+		dataFile = myChooser.showOpenDialog(primaryStage);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
 			controller.saveWorkspaceToFile(fileLocation);
 		}
 	}
-	private void loadFile(Stage s) {
+	private void loadFile() {
 		File dataFile = null; 
-		dataFile = myChooser.showOpenDialog(s);
+		dataFile = myChooser.showOpenDialog(primaryStage);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
 			controller.saveWorkspaceToFile(fileLocation);
 		}
 	}
 	
-	private void openFile(Stage s) {
+	private void openFile() {
 		File dataFile = null; 
-		dataFile = myChooser.showOpenDialog(s);
+		dataFile = myChooser.showOpenDialog(primaryStage);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
 			List<Integer> toldTurtleIds = controller.getToldTurtleIds();
@@ -369,6 +382,7 @@ public class IDEWindow implements Observer {
 			}
 		}
 	}
+
 	/**
 	 * @param extensionAccepted
 	 * @return This method makes the FileChooser object that allows users to open an
