@@ -143,7 +143,7 @@ public class IDEWindow implements Observer {
 		turtleInfoPane = new GridPane();
 		turtleInfoScrollable = new ScrollPane();
 		borderLayout.setStyle("-fx-background-color: aliceblue; -fx-text-fill: white;");
-
+		
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
 		setFormatV(rightBox,OFFSET,RIGHT_WIDTH,RIGHT_HEIGHT);
@@ -194,6 +194,8 @@ public class IDEWindow implements Observer {
 
 		penColorPicker.valueProperty().bindBidirectional(turtleView.getCurrentPenColorProperty());
 		assembleTurtleInfoDisplay();
+		setShapeDisplay();
+		updateColorDisplay();
 	}
 	
 	/**
@@ -568,7 +570,6 @@ public class IDEWindow implements Observer {
 			updateVariableDisplay();
 			updateFunctionsDisplay();
 			updateColorDisplay();
-			updateShapeDisplay();
 		}
 	}
 	
@@ -636,16 +637,19 @@ public class IDEWindow implements Observer {
 		}
 	}
 	
-	private void updateShapeDisplay() {
-		Map<Integer, Image> availableShapes= controller.retrieveAvailableShapes();
+	private void setShapeDisplay() {
+		Map<Integer, Image> availableShapes= controller.retrieveAvailableImages();
 		int shapeCount = 0;
-		shapes.getChildren().clear();
 		for (Integer shapeNumber : availableShapes.keySet()) {
 			Text newShape = new Text(SHAPES_HEADER +shapeNumber+ VARIABLE_SEPARATOR);
 			newShape.setWrappingWidth(WRAPPING_WIDTH);
-			Image shapeImage= availableShapes.get(shapeNumber);
+			ImageView shapeImage= new ImageView(availableShapes.get(shapeNumber));
+			shapeImage.setFitHeight(turtleView.DEFAULT_HEIGHT);
+			shapeImage.setFitWidth(turtleView.DEFAULT_WIDTH);
 			HBox hbox = new HBox();
-			hbox.getChildren().addAll(newShape,shapeImage);
+			hbox.getChildren().add(newShape);
+			hbox.getChildren().add(shapeImage);
+			hbox.setAlignment(Pos.CENTER);
 			shapeCount++;
 			shapes.add(hbox, 0, shapeCount);
 		}
