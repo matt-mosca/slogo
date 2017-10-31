@@ -44,6 +44,15 @@ public class TurtleView implements TurtleDisplay{
 		displayedTurtles.get(turtleIndex).getImage().setOnMouseClicked(value);
 	}
 	
+	public void changeRepresentationOfActive(List<Integer> toldTurtles) {
+		for(int i = 0; i < displayedTurtles.size(); i++) {
+			if(toldTurtles.contains(i))
+				displayedTurtles.get(i).getImage().setOpacity(1.0);
+			else
+				displayedTurtles.get(i).getImage().setOpacity(0.5);
+		}
+	}
+	
 	// TODO - possible to make this package-friendly instead of public?
 	// Perhaps by reorganizing front end packages?
 	public void showTurtle(TurtlePen turtle) {
