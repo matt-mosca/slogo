@@ -24,6 +24,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
+	public static final double TOLD_OPACITY = 1.0;
+	public static final double UNTOLD_OPACITY = 0.5;
 
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
@@ -42,7 +44,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
-		currentPenColor.setValue(original.DEFAULT_COLOR);
+		currentPenColor.setValue(TurtlePen.DEFAULT_COLOR);
 		notifyObservers();
 	}
 	
@@ -57,9 +59,9 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	public void changeRepresentationOfActive(List<Integer> toldTurtles) {
 		for(int i = 0; i < displayedTurtles.size(); i++) {
 			if(toldTurtles.contains(i))
-				displayedTurtles.get(i).getImage().setOpacity(1.0);
+				displayedTurtles.get(i).getImage().setOpacity(TOLD_OPACITY);
 			else
-				displayedTurtles.get(i).getImage().setOpacity(0.5);
+				displayedTurtles.get(i).getImage().setOpacity(UNTOLD_OPACITY);
 		}
 	}
 	
