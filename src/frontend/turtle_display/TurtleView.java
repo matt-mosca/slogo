@@ -43,6 +43,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
 		currentPenColor.setValue(original.DEFAULT_COLOR);
+		notifyObservers();
 	}
 	
 	public void displayInitialTurtle() {
@@ -115,12 +116,14 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
     	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
+    	notifyObservers();
     }
     
     public TurtlePen addTurtle() {
     	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
+    	notifyObservers();
     	return newAddition;
     }
     
@@ -133,20 +136,24 @@ public class TurtleView extends Observable implements TurtleDisplay {
     @Override
 	public void pickUpPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).pickUpPen();
+		notifyObservers();
 	}
 	
     @Override
 	public void putDownPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).putDownPen();
+		notifyObservers();
 	}
 	
 	public void changeDrawColor(int turtleIndex, Color color) {
     	currentPenColor.setValue(color);
 		displayedTurtles.get(turtleIndex).setPenColor(color);
+		notifyObservers();
 	}
 
 	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
+		notifyObservers();
 	}
 	//Change from 0 to selected index
 	//Make conditional, so that you do not have to select the turtle if there is only one
@@ -168,4 +175,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	}
 
 	public ObjectProperty<Color> getCurrentPenColorProperty() { return currentPenColor; }
+	
+	public List<TurtlePen> getDisplayedTurtles() {
+		return displayedTurtles;
+	}
 }
