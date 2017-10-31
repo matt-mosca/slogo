@@ -12,6 +12,10 @@ import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -158,6 +162,12 @@ public class IDEWindow implements Observer {
 		
 		TurtleKeyControls keyControls = new TurtleKeyControls(primaryScene, controller);
 		keyControls.connectKeysToScene();
+
+		ObjectProperty<Paint> backgroundProperty = turtleField.fillProperty();
+		backgroundProperty.addListener((observable, oldValue, newValue)
+				-> backGroundColorPicker.setValue((Color) newValue));
+
+		penColorPicker.valueProperty().bindBidirectional(turtleView.getCurrentPenColorProperty());
 	}
 	
 	public void setUpWindow() {

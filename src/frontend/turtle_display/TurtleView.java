@@ -3,7 +3,10 @@ package frontend.turtle_display;
 import apis.TurtleDisplay;
 import backend.Controller;
 import frontend.window_setup.IDEWindow;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +29,8 @@ public class TurtleView implements TurtleDisplay{
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
+
+	private ObjectProperty<Color> currentPenColor = new SimpleObjectProperty<>();
 	
 	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
@@ -36,6 +41,7 @@ public class TurtleView implements TurtleDisplay{
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
+		currentPenColor.setValue(original.DEFAULT_COLOR);
 	}
 	
 	public void displayInitialTurtle() {
@@ -124,7 +130,8 @@ public class TurtleView implements TurtleDisplay{
 		displayedTurtles.get(turtleIndex).putDownPen();
 	}
 	
-	public void changeDrawColor(int turtleIndex, Paint color) {
+	public void changeDrawColor(int turtleIndex, Color color) {
+    	currentPenColor.setValue(color);
 		displayedTurtles.get(turtleIndex).setPenColor(color);
 	}
 
@@ -149,4 +156,6 @@ public class TurtleView implements TurtleDisplay{
 		displayedTurtles.add(original);
 		displayInitialTurtle();
 	}
+
+	public ObjectProperty<Color> getCurrentPenColorProperty() { return currentPenColor; }
 }
