@@ -18,8 +18,9 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Observable;
 
-public class TurtleView implements TurtleDisplay{
+public class TurtleView extends Observable implements TurtleDisplay {
 
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;

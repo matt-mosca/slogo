@@ -159,9 +159,11 @@ public class IDEWindow implements Observer {
 		
 		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
-
+		turtleView.addObserver(this);
+		
 		ScopedStorage scopedStorage = new ScopedStorage();
 		scopedStorage.addObserver(this);
+		
 		controller = new Controller(scopedStorage, turtleView, turtleField);
 		console = new Console(controller);
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
@@ -193,7 +195,7 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void assembleTurtleInfoDisplay() {
-		Pane turtleInfoDisplay = new GridPane();
+		GridPane turtleInfoDisplay = turtleInfo.getDisplay();
 		
 	}
 
