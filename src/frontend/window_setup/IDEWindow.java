@@ -132,16 +132,10 @@ public class IDEWindow implements Observer {
 	private GridPane turtleMovementKeys;
 	private ScrollPane colorScrollable;
 	private GridPane colors = new GridPane();
-<<<<<<< HEAD
-	private String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
-	private TurtleInfoDisplay turtleInfo = new TurtleInfoDisplay();
 	private TextField strokeThickness = new TextField();
-=======
 	private String[] languageList = {"Chinese","English", "French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	private GridPane turtleInfoPane;
 	private ScrollPane turtleInfoScrollable;
->>>>>>> mjm141
-	
 	
 	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
