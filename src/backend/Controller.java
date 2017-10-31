@@ -32,7 +32,7 @@ public class Controller {
 	private PaletteStorage paletteStorage;
 	private WorkspaceManager workspaceManager;
 
-	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
+	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) throws SLogoException {
 		this.scopedStorage = scopedStorage;
 		this.paletteStorage = new PaletteStorage();
 		turtleController = new TurtleController(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2,
