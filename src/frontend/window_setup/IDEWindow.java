@@ -351,7 +351,11 @@ public class IDEWindow implements Observer {
 		dataFile = myChooser.showOpenDialog(s);
 		if (dataFile != null) {
 			String fileLocation = dataFile.toURI().toString();
-			controller.saveWorkspaceToFile(fileLocation);
+			try {
+				controller.loadWorkspaceFromFile(fileLocation);	
+			} catch (SLogoException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
