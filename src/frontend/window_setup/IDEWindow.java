@@ -141,6 +141,10 @@ public class IDEWindow implements Observer {
 	private GridPane turtleInfoPane;
 	private ScrollPane turtleInfoScrollable;
 	
+	/**
+	 * @param primary
+	 * Constructor for IDEWindow
+	 */
 	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
 		borderLayout.setPrefSize(totalWidth, totalHeight);
@@ -201,15 +205,27 @@ public class IDEWindow implements Observer {
 		assembleTurtleInfoDisplay();
 	}
 	
+	/**
+	 * Sets up IDEWindow to display by setting the scene and calling setUpTurtleField
+	 */
 	public void setUpWindow() {
 		primaryStage.setScene(primaryScene);
 		setUpTurtleField();
 	}
 	
+	/**
+	 * Set up the starting scene with the Turtle at its starting position
+	 */
 	private void setUpTurtleField() {
 		turtleView.displayInitialTurtle();
 	}
 	
+	/**
+	 * @param keysPane
+	 * @param root
+	 * @param prefSize
+	 * Formats the keys pane that when clicked on moves the turtle
+	 */
 	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
 		keysPane.setPrefSize(prefSize, prefSize * (2/3));
 		root.getChildren().add(keysPane);
