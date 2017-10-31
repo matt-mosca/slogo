@@ -31,6 +31,7 @@ public class Controller {
 	private CommandGetter commandGetter;
 	private PaletteStorage paletteStorage;
 	private WorkspaceManager workspaceManager;
+	private Debugger debugger;
 
 	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) throws SLogoException {
 		this.scopedStorage = scopedStorage;
@@ -41,6 +42,7 @@ public class Controller {
 		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
 		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
 		workspaceManager = new WorkspaceManager();
+		debugger = new Debugger();
 	}
 
 	// To support switching of language through front end

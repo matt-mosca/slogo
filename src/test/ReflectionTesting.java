@@ -5,7 +5,7 @@ import utilities.CommandGetter;
 import java.lang.reflect.Method;
 
 /**
- * @deprecated 
+ * @deprecated
  */
 public class ReflectionTesting {
 

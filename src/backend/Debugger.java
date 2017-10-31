@@ -1,24 +1,44 @@
 package backend;
 
 import backend.control.DoTimesNode;
+import backend.control.FunctionDefinitionNode;
+import backend.control.VariableNode;
 import backend.error_handling.SLogoException;
+import backend.error_handling.UndefinedCommandException;
+import backend.math.ConstantNode;
+import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 public class Debugger {
 
-    /*public void executeCommand(String command) throws SLogoException {
+    public static final String DELIMITER_REGEX = "\\s+";
+    public static final String NEWLINE_REGEX = "\n";
+    public static final char COMMENT = '#';
+    public static final String STANDARD_DELIMITER = " ";
+    public static final String NUMBER_REGEX = "-?[0-9]+\\.?[0-9]*";
+    public static final String VARIABLE_REGEX = ":[a-zA-Z_]+";
+    public static final String VARIABLE_ARGS_START_DELIMITER = "(";
+    public static final String VARIABLE_ARGS_END_DELIMITER = ")";
+    public static final String LIST_START_DELIMITER = "[";
+    public static final String LIST_END_DELIMITER = "]";
+
+    private Parser parser;
+    private CommandGetter commandGetter;
+
+    public void executeCommand(String command) throws SLogoException {
         String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
-        if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
-            syntaxTrees.put(formattedCommand, constructSyntaxTree(
-                    new PeekingIterator<String>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
+        if (!parser.getSyntaxTrees().containsKey(formattedCommand)) { // in case method is called without validation
+            return;
         }
-        SyntaxNode tree = syntaxTrees.get(formattedCommand);
+        SyntaxNode tree = parser.getSyntaxTrees().get(formattedCommand);
         tree.execute();
-    }*/
-/*
+        commandGetter = new CommandGetter();
+    }
 
 	// TODO - Move to debugger?
 	public String serializeTree(SyntaxNode root) throws SLogoException {
@@ -42,7 +62,7 @@ public class Debugger {
         if (root == null) {
             return "";
         }
-        if (!isValueNode(root.getClass())) {
+        if (!parser.isValueNode(root.getClass())) {
             throw new IllegalArgumentException();
         }
         String rootString = "";
@@ -85,5 +105,25 @@ public class Debugger {
                 + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + commandString + STANDARD_DELIMITER
                 + LIST_END_DELIMITER;
     }
-	*/
+
+    // Special cases in serialization
+    private boolean isConstantNode(Class nodeClass) {
+        return ConstantNode.class.isAssignableFrom(nodeClass);
+    }
+
+    private boolean isVariableNode(Class nodeClass) {
+        return VariableNode.class.isAssignableFrom(nodeClass);
+    }
+
+    private boolean isFunctionDefinitionNode(Class nodeClass) {
+        return FunctionDefinitionNode.class.isAssignableFrom(nodeClass);
+    }
+
+    private boolean isDoTimesNode(Class nodeClass) {
+        return DoTimesNode.class.isAssignableFrom(nodeClass);
+    }
+
+    private boolean isRootNode(Class nodeClass) {
+        return RootNode.class.isAssignableFrom(nodeClass);
+    }
 }
