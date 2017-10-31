@@ -65,7 +65,6 @@ public class Parser {
 
 	public Parser(TurtleController turtleManager, ScopedStorage storage,
 				  ViewController viewController, CommandGetter commandGetter) {
-
 		syntaxTrees = new LinkedHashMap<>();
 		commandHistory = new ArrayList<>();
 		scopedStorage = storage;
@@ -368,7 +367,6 @@ public class Parser {
 		// Consume the ']' token
 		it.next();
 		RootNode funcRoot = getCommandsListRoot(it);
-		// TODO - Save string to ScopedStorage for future loading of function
 		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot);
 	}
 
@@ -408,7 +406,7 @@ public class Parser {
 		return askWithNode;
 	}
 
-	// Only ValueNodes can have variable params
+	// Only ValueNodes can have variable params ? - EDIT : NO, 'MAKE' also 
 	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
 		if (it == null || !it.hasNext()) {
@@ -418,7 +416,6 @@ public class Parser {
 		// it advanced by one token
 		String commandName = it.peek();
 		ValueNode root = makeValueNode(it);
-		// TODO
 		if (root == null || !root.canTakeVariableNumberOfArguments()) {
 			throw new VariableArgumentsException(commandName);
 		}
@@ -508,5 +505,11 @@ public class Parser {
 	
 	public Set<String> getSessionCommands() {
 		return syntaxTrees.keySet();
+	}
+
+	void clearHistory() {
+		syntaxTrees.clear();
+		commandHistory.clear();
+		undoIndex = 0;
 	}
 }

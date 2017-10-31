@@ -59,7 +59,7 @@ import java.util.Observer;
 import java.util.Optional;
 
 public class IDEWindow implements Observer {
-	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
+	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
@@ -72,6 +72,7 @@ public class IDEWindow implements Observer {
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
+	public static final Color STANDARD_PEN_COLOR = Color.BLACK;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	
@@ -243,7 +244,6 @@ public class IDEWindow implements Observer {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
-		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
@@ -255,13 +255,16 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
 		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
-		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
-		penColorPicker.setValue(Color.BLACK);
+		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
+		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
 		// UNDO/REDO TESTING
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
 			try {
+				turtleField.setFill(STANDARD_AREA_COLOR);
+				penColorPicker.setValue(STANDARD_PEN_COLOR);
+				changePenColor();
 				controller.undo();
 			} catch (SLogoException badUndo) {
 				console.addError(badUndo.getMessage());
@@ -275,8 +278,13 @@ public class IDEWindow implements Observer {
 				console.addError(badUndo.getMessage());
 			}
 		});
+		Button reset = new Button("Reset");
+		reset.setOnAction(e -> controller.reset());
 		
-		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
+		leftGroup.getChildren().addAll(languageMenuBar, undo, redo, reset);
+		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
+		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
+		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
