@@ -1,17 +1,16 @@
 package backend.control;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Scanner;
-import java.util.Set;
-
 import backend.Parser;
 import backend.error_handling.InvalidSessionLoadedException;
 import backend.error_handling.SLogoException;
 import backend.error_handling.WorkspaceFileNotFoundException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
+import java.util.Set;
 
 public class WorkspaceManager {
 	

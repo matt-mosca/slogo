@@ -7,53 +7,37 @@ import frontend.factory.ButtonFactory;
 import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
 import frontend.factory.TabFactory;
-import frontend.factory.TextAreaFactory;
 import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
 import frontend.turtle_display.TurtleView;
-import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import main.Main;
 import utilities.MenuGetter;
 
 import java.io.File;
@@ -342,9 +326,7 @@ public class IDEWindow implements Observer {
 		strokeThickness.setText(null);
 	}
 
-	private void reset() {
-		controller.reset();
-	}
+	private void reset() { controller.reset(); }
 
 	private void redo() {
 		try {
@@ -519,10 +501,10 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void updateColorDisplay() {
-		Map<Double, Color> availableColors = controller.retrieveAvailableColors();
+		Map<Integer, Color> availableColors = controller.retrieveAvailableColors();
 		int colorCount = 0;
 		colors.getChildren().clear();
-		for (Double colorNumber : availableColors.keySet()) {
+		for (Integer colorNumber : availableColors.keySet()) {
 			Text newColor = new Text(COLORS_HEADER +colorNumber+ VARIABLE_SEPARATOR);
 			newColor.setWrappingWidth(WRAPPING_WIDTH);
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));

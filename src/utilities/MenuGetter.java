@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * @author Ben Schwennesen
@@ -36,7 +37,7 @@ public class MenuGetter {
     }
 
     public List<Menu> getMenuDropdowns(IDEWindow runner) throws SLogoException {
-        Map<String, Menu> dropdownsMap = new HashMap<>();
+        Map<String, Menu> dropdownsMap = new TreeMap<>(Collections.reverseOrder());
         for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
             generateMenuItem(dropdownsMap, itemName, runner);
         }

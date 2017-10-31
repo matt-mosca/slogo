@@ -2,8 +2,6 @@ package backend.logic;
 
 import backend.VarArgNode;
 
-import java.util.Arrays;
-
 /**
  * @author Ben Schwennesen
  */

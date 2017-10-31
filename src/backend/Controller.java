@@ -9,14 +9,12 @@ import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 import frontend.window_setup.IDEWindow;
-import javafx.scene.control.ColorPicker;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.w3c.dom.css.Rect;
 import utilities.CommandGetter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +31,8 @@ public class Controller {
 	private WorkspaceManager workspaceManager;
 	private Debugger debugger;
 
+	private final Map<Integer, Image> IMAGE_MAP;
+
 	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) throws SLogoException {
 		this.scopedStorage = scopedStorage;
 		this.paletteStorage = new PaletteStorage();
@@ -40,6 +40,7 @@ public class Controller {
 				IDEWindow.TURTLEFIELD_HEIGHT / 2);
 		this.commandGetter = new CommandGetter();
 		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
+		IMAGE_MAP = viewController.getImageMap();
 		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
 		workspaceManager = new WorkspaceManager();
 		debugger = new Debugger();
@@ -69,15 +70,16 @@ public class Controller {
 
 	// already defined variable
 	public void updateVariable(String name, double value) { scopedStorage.setVariable(name, value); }
-	
-	
+
 	public Map<String, List<String>> retrieveDefinedFunctions() {
 		return scopedStorage.getDefinedFunctions();
 	}
 
-	public Map<Double, Color> retrieveAvailableColors() {
+	public Map<Integer, Color> retrieveAvailableColors() {
 		return paletteStorage.getAvailableColors();
 	}
+
+	public Map<Integer, Image> retrieveAvailableImages() { return IMAGE_MAP; }
 
 	// THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
 	public double moveTurtlesForward(double pixels) {

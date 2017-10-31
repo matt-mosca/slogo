@@ -1,6 +1,7 @@
 package backend.turtle;
 
 import frontend.turtle_display.TurtleView;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -283,6 +284,11 @@ public class TurtleController {
 		return toldTurtleIds.stream()
 				.mapToInt(id -> getZeroBasedId(id))
 				.boxed().collect(Collectors.toList());
+	}
+
+	public double setTurtleImage(int index, Image image) {
+		turtleView.changeImage(index, image);
+		return index;
 	}
 
 	// for undo/redo

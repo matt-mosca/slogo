@@ -7,11 +7,9 @@ import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.math.ConstantNode;
 import utilities.CommandGetter;
-import utilities.PeekingIterator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 public class Debugger {

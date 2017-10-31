@@ -3,10 +3,8 @@ package backend.view_manipulation;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedColorException;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;

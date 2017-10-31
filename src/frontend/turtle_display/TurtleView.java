@@ -1,23 +1,19 @@
 package frontend.turtle_display;
 
 import apis.TurtleDisplay;
-import backend.Controller;
 import frontend.window_setup.IDEWindow;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Observable;
 
 public class TurtleView extends Observable implements TurtleDisplay {
