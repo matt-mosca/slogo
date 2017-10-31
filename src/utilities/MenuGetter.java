@@ -37,10 +37,12 @@ public class MenuGetter {
         for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
             generateMenuItem(dropdownsMap, itemName);
         }
+        System.out.println(dropdownsMap);
         return new ArrayList<>(dropdownsMap.values());
     }
 
     private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName) throws ProjectBuildException {
+    	System.out.println(itemName);
         String[] dropdownInfo = MENU_PROPERTIES.getProperty(itemName).split(INFO_DELIMITER);
         if (dropdownInfo.length != INFO_LENGTH) {
             throw new ProjectBuildException();
@@ -55,6 +57,7 @@ public class MenuGetter {
         } catch (ReflectiveOperationException badMethod) {
             throw new ProjectBuildException();
         }
+        dropdownsMap.put(dropdownName, dropdown);
     }
 
     private void runMenuAction(Method actionMethod) {
