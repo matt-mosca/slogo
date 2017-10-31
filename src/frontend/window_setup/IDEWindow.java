@@ -31,6 +31,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -160,7 +161,7 @@ public class IDEWindow implements Observer {
 		setFormatH(bottomBox, OFFSET, BOTTOM_WIDTH, BOTTOM_HEIGHT, Pos.TOP_CENTER);
 		
 		TabPane tabPane = new TabPane();
-		
+		tabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		formatScrollPane(variableScrollable, 150, variables, variableGroup);
 		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, tabPane);
 		
