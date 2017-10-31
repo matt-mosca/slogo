@@ -13,7 +13,7 @@ public class LeftNode extends TurtleNode {
 		for (double angle : arguments) {
 			getTurtleController().rotateCurrentTurtles(false, angle);			
 		}
-		return arguments[arguments.length] - 1;
+		return arguments[arguments.length - 1];
 	}
 
 	@Override

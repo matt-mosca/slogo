@@ -14,7 +14,7 @@ public class BackwardNode extends TurtleNode {
 		for (double pixel : arguments) {
 			getTurtleController().moveCurrentTurtlesForward(-pixel);
 		}
-		return arguments[arguments.length] - 1;
+		return arguments[arguments.length - 1];
 	}
 
 	@Override
