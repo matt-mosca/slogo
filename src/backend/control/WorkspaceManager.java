@@ -51,6 +51,7 @@ public class WorkspaceManager {
 			workspaceFileScanner.useDelimiter(EOF_REGEX);
 			if (!workspaceFileScanner.hasNext()) {
 				// Warn user?
+				workspaceFileScanner.close();
 				return;
 			}
 			String sessionText = workspaceFileScanner.next();
