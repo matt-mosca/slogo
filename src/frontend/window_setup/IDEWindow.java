@@ -222,7 +222,7 @@ public class IDEWindow implements Observer {
 	private void addInitialTurtleInfo(GridPane grid) {
 		TurtlePen first = turtleView.getDisplayedTurtles().get(0);
 		Text initialID = new Text("0");
-		Text initialPos = new Text(writeCoordinatesAsPoint(first.getXCoordinate(), first.getYCoordinate()));
+		Text initialPos = new Text(writeCoordinatesAsPoint(convertXCoordinate(first.getXCoordinate()), convertYCoordinate(first.getYCoordinate())));
 		Text initialHeading = new Text("" + first.getAngle());
 		Text initialPenState = new Text(Boolean.toString(first.getIsPenDown()));
 		Text initialPenColor = new Text("" + first.getPenColor());
@@ -237,6 +237,14 @@ public class IDEWindow implements Observer {
 	
 	private String writeCoordinatesAsPoint(double xCoord, double yCoord) {
 		return "(" + xCoord + ", " + yCoord + ")";
+	}
+	
+	private double convertXCoordinate(double xCoord) {
+		return xCoord - LEFT_WIDTH - TURTLEFIELD_WIDTH / 2 + TurtlePen.DEFAULT_WIDTH / 2;
+	}
+	
+	private double convertYCoordinate(double yCoord) {
+		return yCoord - TOP_HEIGHT - TURTLEFIELD_HEIGHT / 2 + TurtlePen.DEFAULT_HEIGHT / 2;
 	}
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
@@ -495,7 +503,7 @@ public class IDEWindow implements Observer {
 		for(int i = 0; i < currentTurtles.size(); i++) {
 			TurtlePen current = turtleView.getDisplayedTurtles().get(i);
 			Text currentID = new Text("" + i);
-			Text currentPos = new Text(writeCoordinatesAsPoint(current.getXCoordinate(), current.getYCoordinate()));
+			Text currentPos = new Text(writeCoordinatesAsPoint(convertXCoordinate(current.getXCoordinate()), convertYCoordinate(current.getYCoordinate())));
 			Text currentHeading = new Text("" + current.getAngle());
 			Text currentPenState = new Text(Boolean.toString(current.getIsPenDown()));
 			Text currentPenColor = new Text("" + current.getPenColor());
