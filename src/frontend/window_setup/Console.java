@@ -9,7 +9,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
@@ -18,7 +17,7 @@ import javafx.scene.text.Text;
  */
 public class Console {
 
-    private final int PREFERED_WIDTH = 800;
+    private final int PREFERED_WIDTH = 1050;
     private final int PREFERED_HEIGHT = 200;
     private ObservableList<Node> commandElements;
     private ListView<Node> commandsListView;
