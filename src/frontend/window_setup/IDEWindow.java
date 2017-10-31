@@ -311,7 +311,7 @@ public class IDEWindow implements Observer {
 		for(int i = 0; i < toldTurtleIds.size(); i++) {
 			turtleView.changeStrokeWidth(toldTurtleIds.get(i), thickness);
 		}
-		strokeThickness.setText("");
+		strokeThickness.setText(null);
 	}
 	
 	private Menu setMenu(String name) {
