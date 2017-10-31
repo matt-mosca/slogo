@@ -99,6 +99,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	Drawer lineMaker = new Drawer(current.getPenColor(), current.getStrokeWidth(), current.getIsPenDown());
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
+    	notifyObservers();
 //    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
 //    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
