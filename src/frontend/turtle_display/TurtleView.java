@@ -45,7 +45,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
 		currentPenColor.setValue(TurtlePen.DEFAULT_COLOR);
-		notifyObservers();
 	}
 	
 	public void displayInitialTurtle() {
@@ -101,6 +100,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	Drawer lineMaker = new Drawer(current.getPenColor(), current.getStrokeWidth(), current.getIsPenDown());
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
+    	setChanged();
     	notifyObservers();
 //    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
 //    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
@@ -119,6 +119,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
     	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
+    	setChanged();
     	notifyObservers();
     }
     
@@ -126,6 +127,7 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
     	showTurtle(newAddition);
+    	setChanged();
     	notifyObservers();
     	return newAddition;
     }
@@ -139,23 +141,27 @@ public class TurtleView extends Observable implements TurtleDisplay {
     @Override
 	public void pickUpPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).pickUpPen();
+		setChanged();
 		notifyObservers();
 	}
 	
     @Override
 	public void putDownPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).putDownPen();
+		setChanged();
 		notifyObservers();
 	}
 	
 	public void changeDrawColor(int turtleIndex, Color color) {
     	currentPenColor.setValue(color);
 		displayedTurtles.get(turtleIndex).setPenColor(color);
+		setChanged();
 		notifyObservers();
 	}
 
 	public void changeStrokeWidth(int turtleIndex, double width) {
 		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
+		setChanged();
 		notifyObservers();
 	}
 	//Change from 0 to selected index
