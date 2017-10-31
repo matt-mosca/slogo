@@ -20,5 +20,11 @@ public class LeftNode extends TurtleNode {
 	public int getDefaultNumberOfArguments() {
 		return 1;
 	}
+	
+	@Override 
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
+	}
+
 
 }

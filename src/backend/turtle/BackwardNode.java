@@ -22,5 +22,9 @@ public class BackwardNode extends TurtleNode {
 		return 1;
 	}
 	
+	@Override 
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
+	}
 	
 }

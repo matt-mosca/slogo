@@ -27,5 +27,11 @@ public class SetPositionNode extends TurtleNode {
 	public int getDefaultNumberOfArguments() {
 		return 2;
 	}
+	
+	@Override 
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
+	}
+
 
 }
