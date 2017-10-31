@@ -45,7 +45,7 @@ public class TurtleController {
 	}
 
 	// TELL [ 100 ] -- creates all turtles up to 100
-	void addTurtles(int turtleId) {
+	public void addTurtles(int turtleId) {
 		for (int newTurtleId = createdTurtles.size() + 1; newTurtleId <= turtleId; newTurtleId++) {
 			Turtle newTurtle = new Turtle();
 			createdTurtles.add(newTurtle);
@@ -60,7 +60,7 @@ public class TurtleController {
 	}
 
 	// TURTLES
-	int getNumberTurtlesCreated() {
+	public int getNumberTurtlesCreated() {
 		return createdTurtles.size();
 	}
 

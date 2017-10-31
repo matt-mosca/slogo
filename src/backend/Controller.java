@@ -12,6 +12,7 @@ import frontend.window_setup.IDEWindow;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.w3c.dom.css.Rect;
 import utilities.CommandGetter;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ public class Controller {
 	private CommandGetter commandGetter;
 	private PaletteStorage paletteStorage;
 	private WorkspaceManager workspaceManager;
-	private ViewController viewController;
 
 	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
 		this.scopedStorage = scopedStorage;
@@ -38,7 +38,7 @@ public class Controller {
 		turtleController = new TurtleController(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2,
 				IDEWindow.TURTLEFIELD_HEIGHT / 2);
 		this.commandGetter = new CommandGetter();
-		this.viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
+		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
 		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
 		workspaceManager = new WorkspaceManager();
 	}
@@ -64,6 +64,9 @@ public class Controller {
 	public Map<String, Double> retrieveAvailableVariables() {
 		return scopedStorage.getAllAvailableVariables();
 	}
+
+	// already defined variable
+	public void updateVariable(String name, double value) { scopedStorage.setVariable(name, value); }
 
 	public Map<String, List<String>> retrieveDefinedFunctions() {
 		return scopedStorage.getDefinedFunctions();
@@ -109,6 +112,11 @@ public class Controller {
 	public List<Integer> getToldTurtleIds() {
 		return turtleController.getToldTurtleIds();
 	}
+	
+	public void addOneTurtle() {
+		int currentNumTurtles = turtleController.getNumberTurtlesCreated();
+		turtleController.addTurtles(currentNumTurtles + 1);
+	}
 
 	public void saveWorkspaceToFile(String fileName) {
 		workspaceManager.saveWorkspaceToFile(parser, scopedStorage, fileName);
@@ -121,8 +129,7 @@ public class Controller {
 	public void undo() throws SLogoException {
 		System.out.println("TRYING TO UNDO");
 		if (parser.canUndo()) {
-			scopedStorage.clear();
-			turtleController.clear();
+			resetView();
 			parser.undo();
 		}
 	}
@@ -130,9 +137,17 @@ public class Controller {
 	public void redo() throws SLogoException {
 		System.out.println("TRYING TO REDO");
 		if (parser.canRedo()) {
-			scopedStorage.clear();
-			turtleController.clear();
+			resetView();
 			parser.redo();
 		}
+	}
+
+	public void reset() {
+		resetView();
+	}
+
+	private void resetView() {
+		scopedStorage.clear();
+		turtleController.clear();
 	}
 }

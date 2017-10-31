@@ -30,6 +30,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -55,9 +56,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 public class IDEWindow implements Observer {
-	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
+	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
@@ -70,6 +72,7 @@ public class IDEWindow implements Observer {
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
+	public static final Color STANDARD_PEN_COLOR = Color.BLACK;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	
@@ -123,6 +126,7 @@ public class IDEWindow implements Observer {
 	private ScrollPane colorScrollable;
 	private GridPane colors = new GridPane();
 	private String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
+	private TurtleInfoDisplay turtleInfo = new TurtleInfoDisplay();
 	
 	
 	public IDEWindow(Stage primary) {
@@ -187,6 +191,11 @@ public class IDEWindow implements Observer {
 		keysPane.setPrefSize(prefSize, prefSize * (2/3));
 		root.getChildren().add(keysPane);
 	}
+	
+	private void assembleTurtleInfoDisplay() {
+		Pane turtleInfoDisplay = new GridPane();
+		
+	}
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
 		sampleScroll = new ScrollPane();
@@ -241,7 +250,6 @@ public class IDEWindow implements Observer {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
-		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
@@ -253,13 +261,16 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
 		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
-		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
-		penColorPicker.setValue(Color.BLACK);
+		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
+		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
 		// UNDO/REDO TESTING
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
 			try {
+				turtleField.setFill(STANDARD_AREA_COLOR);
+				penColorPicker.setValue(STANDARD_PEN_COLOR);
+				changePenColor();
 				controller.undo();
 			} catch (SLogoException badUndo) {
 				console.addError(badUndo.getMessage());
@@ -273,8 +284,12 @@ public class IDEWindow implements Observer {
 				console.addError(badUndo.getMessage());
 			}
 		});
+		Button reset = new Button("Reset");
+		reset.setOnAction(e -> controller.reset());
 		
-		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
+		leftGroup.getChildren().addAll(languageMenuBar, undo, redo, reset);
+		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
+		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
@@ -369,7 +384,7 @@ public class IDEWindow implements Observer {
 		for (String variableName : availableVariables.keySet()) {
 			Text newVariable = new Text(variableName+ VARIABLE_SEPARATOR + availableVariables.get(variableName));
 			newVariable.setWrappingWidth(WRAPPING_WIDTH);
-			newVariable.setOnMouseClicked(e->changeVariables());
+			newVariable.setOnMouseClicked(e->changeVariables(variableName));
 			variableCount++;
 			variables.add(newVariable, 0, variableCount);
 		}
@@ -385,7 +400,7 @@ public class IDEWindow implements Observer {
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));
 			HBox hbox = new HBox();
 			hbox.getChildren().addAll(newColor,colorBlock);
-			hbox.setOnMouseClicked(e->changeColors());
+			hbox.setOnMouseClicked(e->changeColors(colorNumber));
 			colorCount++;
 			colors.add(hbox, 0, colorCount);
 		}
@@ -399,19 +414,38 @@ public class IDEWindow implements Observer {
 		for (String functionName : availableFunctions.keySet()) {
 			Text newFunction = new Text(functionName+ VARIABLE_SEPARATOR + availableFunctions.get(functionName));
 			newFunction.setWrappingWidth(WRAPPING_WIDTH);
-			newFunction.setOnMouseClicked(e->changeFunctions());
+			newFunction.setOnMouseClicked(e->changeFunctions(functionName));
 			functionCount++;
 			functions.add(newFunction, 0, functionCount);
 		}
 	}
-	private void changeVariables() {
+	private void changeVariables(String variableName) {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Change Variable");
+		dialog.setHeaderText("Please Enter New Value for "+variableName);
+		dialog.setContentText("Enter New Value:");
+		Optional<String> result = dialog.showAndWait();
+		
+		result.ifPresent(name -> System.out.println("Your name: " + name));
 		
 	}
 	
-	private void changeFunctions() {
+	private void changeFunctions(String functionName) {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Change Function");
+		dialog.setHeaderText("Please Enter New Value for "+functionName);
+		dialog.setContentText("Enter New Value:");
+		Optional<String> result = dialog.showAndWait();
 		
+		result.ifPresent(name -> System.out.println("Your name: " + name));
 	}
-	private void changeColors() {
+	private void changeColors(Double colorNumber) {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Change Color");
+		dialog.setHeaderText("Please Enter New Value for Color "+colorNumber);
+		dialog.setContentText("Enter New Value:");
+		Optional<String> result = dialog.showAndWait();
 		
+		result.ifPresent(name -> System.out.println("Your name: " + name));
 	}
 }
