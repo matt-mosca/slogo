@@ -6,10 +6,10 @@ import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * @author Ben Schwennesen
@@ -19,7 +19,7 @@ public class PaletteStorage extends Observable {
     private final String PALETTE_DEFAULTS_FILE = "resources/DefaultPalette.properties";
     private final Properties DEFAULT_PALETTE_PROPERTIES;
 
-    private Map<Double, Color> colorMap = new HashMap<>();
+    private Map<Double, Color> colorMap = new TreeMap<>();
 
     private final double MAX_COLOR_AMOUNT = 256;
 
