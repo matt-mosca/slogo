@@ -13,6 +13,7 @@ import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 import frontend.window_setup.IDEWindow;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utilities.CommandGetter;
@@ -30,6 +31,8 @@ public class Controller {
 	private WorkspaceManager workspaceManager;
 	private Debugger debugger;
 
+	private final Map<Integer, Image> IMAGE_MAP;
+
 	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) throws SLogoException {
 		this.scopedStorage = scopedStorage;
 		this.paletteStorage = new PaletteStorage();
@@ -37,6 +40,7 @@ public class Controller {
 				IDEWindow.TURTLEFIELD_HEIGHT / 2);
 		this.commandGetter = new CommandGetter();
 		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
+		IMAGE_MAP = viewController.getImageMap();
 		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
 		workspaceManager = new WorkspaceManager();
 		debugger = new Debugger();
@@ -66,15 +70,16 @@ public class Controller {
 
 	// already defined variable
 	public void updateVariable(String name, double value) { scopedStorage.setVariable(name, value); }
-	
-	
+
 	public Map<String, List<String>> retrieveDefinedFunctions() {
 		return scopedStorage.getDefinedFunctions();
 	}
 
-	public Map<Double, Color> retrieveAvailableColors() {
+	public Map<Integer, Color> retrieveAvailableColors() {
 		return paletteStorage.getAvailableColors();
 	}
+
+	public Map<Integer, Image> retrieveAvailableImages() { return IMAGE_MAP; }
 
 	// THE FOLLOWING 4 METHODS ARE TO SUPPORT BUTTONS
 	public double moveTurtlesForward(double pixels) {
@@ -127,7 +132,6 @@ public class Controller {
 	}
 
 	public void undo() throws SLogoException {
-		System.out.println("TRYING TO UNDO");
 		if (parser.canUndo()) {
 			resetView();
 			parser.undo();
@@ -135,7 +139,6 @@ public class Controller {
 	}
 
 	public void redo() throws SLogoException {
-		System.out.println("TRYING TO REDO");
 		if (parser.canRedo()) {
 			resetView();
 			parser.redo();

@@ -12,7 +12,6 @@ import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.SLogoException;
-import backend.error_handling.SyntaxCausedException;
 import backend.error_handling.UnbalancedArgumentsException;
 import backend.error_handling.UnbalancedMakeException;
 import backend.error_handling.UndefinedCommandException;
@@ -25,8 +24,6 @@ import backend.turtle.TurtleController;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewController;
 import backend.view_manipulation.ViewNode;
-import jdk.nashorn.internal.runtime.regexp.joni.Syntax;
-import sun.reflect.generics.scope.Scope;
 import utilities.CommandGetter;
 import utilities.PeekingIterator;
 
@@ -35,10 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,14 +79,9 @@ public class Parser {
         // Avoid repeated computation for just differing whitespace
         // Need to remove comments
         String commandWithoutComments = stripComments(command);
-        System.out.println("Command without comments: " + commandWithoutComments);
         String formattedCommand = commandWithoutComments.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
-        System.out.println("Formatted command: " + formattedCommand);
         syntaxTrees.put(formattedCommand,
                 constructSyntaxTree(new PeekingIterator<>(Arrays.asList(formattedCommand.split(DELIMITER_REGEX)).iterator())));
-        System.out.println("Validated command!");
-        System.out.println("Serializing Tree: ");
-        //System.out.println(serializeTree(syntaxTrees.get(formattedCommand)));
         return true;
     }
 
@@ -111,7 +100,6 @@ public class Parser {
     }
 
     public boolean canUndo() {
-        System.out.println(undoIndex + " " + commandHistory.size());
         return undoIndex > 0 && commandHistory.size() > 0; }
 
     // need to do a CLEAR before calling
@@ -125,7 +113,6 @@ public class Parser {
     }
 
     boolean canRedo() {
-        System.out.println(undoIndex + " " + commandHistory.size());
         return undoIndex < commandHistory.size() && commandHistory.size() > 0; }
 
     // need to do a CLEAR before calling
@@ -147,7 +134,6 @@ public class Parser {
         while (it.hasNext()) {
             rootNode.addChild(makeExpTree(it));
         }
-        System.out.println("Constructed Syntax Tree");
         return rootNode;
     }
 
@@ -158,13 +144,11 @@ public class Parser {
             throw new UnbalancedArgumentsException();
         }
         String nextToken = it.peek();
-        System.out.println("Next token: " + nextToken);
         if (nextToken.length() == 0 || nextToken.matches(DELIMITER_REGEX)) {
             it.next();
             makeExpTree(it);
         }
         if (nextToken.equals(VARIABLE_ARGS_START_DELIMITER)) {
-            System.out.println("About to create command with multiple args");
             it.next();
             // MAKE is a special case, the only non-ValueNode to support multiple args
             if (!isValueNode(commandGetter.getCommandNodeClass(it.peek()))) {
@@ -174,7 +158,6 @@ public class Parser {
         }
         if (isNumeric(nextToken)) {
             it.next();
-            System.out.println("Numeric, making ConstantNode");
             return new ConstantNode(Double.parseDouble(nextToken));
         }
         // Need to check for user-declared methods here
@@ -188,7 +171,6 @@ public class Parser {
         // Dispatch appropriate method
         try {
             Method nextParsingMethod = commandGetter.getParsingMethod(nextToken);
-            System.out.println("Next parsing method: " + nextParsingMethod.getName());
             return (SyntaxNode) nextParsingMethod.invoke(this, it);
         } catch (IllegalAccessException | InvocationTargetException badCommand) {
             throw determineExceptionCause(nextToken, badCommand);
@@ -205,16 +187,13 @@ public class Parser {
     }
 
     private ValueNode makeValueNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making a ValueNode");
         if (it == null || !it.hasNext()) {
             throw new IllegalArgumentException();
         }
         String commandName = it.next();
         // Use reflection to invoke right command constructor
-        System.out.println("Getting appropriate command constructor");
         try {
             Class commandClass = commandGetter.getCommandNodeClass(commandName);
-            System.out.println("Command class: " + commandClass.getName());
             Constructor constructor;
             Object[] constructorArgs;
             if (isTurtleNode(commandClass)) {
@@ -227,14 +206,11 @@ public class Parser {
                 constructor = commandClass.getConstructor(String.class, ViewController.class);
                 constructorArgs = new Object[]{commandName, viewController};
             } else {
-                System.out.println("Making normal valuenode");
                 constructor = commandClass.getConstructor(String.class);
                 constructorArgs = new Object[]{commandName};
             }
-            System.out.print("Found constructor");
             ValueNode valueNode = (ValueNode) constructor.newInstance(constructorArgs);
             int numChildren = valueNode.getDefaultNumberOfArguments();
-            System.out.println("No. of children: " + numChildren);
             SyntaxNode nextChild;
             for (int child = 0; child < numChildren; child++) {
                 nextChild = makeExpTree(it);
@@ -248,7 +224,6 @@ public class Parser {
     }
 
     private VariableDefinitionNode makeVariableDefinitionNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making VariableDefinitionNode");
         // Consume the MAKE / SET token
         String token = it.next();
         String varName = it.next();
@@ -257,7 +232,6 @@ public class Parser {
     }
 
     private VariableDefinitionNode makeVariableDefinitionNodeForMultipleParameters(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making VariableDefinitionNode for multiple params");
         // Consume the MAKE / SET token
         String token = it.next();
         // Extract the variable names
@@ -286,22 +260,18 @@ public class Parser {
     }
 
     private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making FunctionNode");
         // Consume the function name
         String funcName = it.next();
         // Need to know number of arguments taken by function
         int numberOfFunctionParameters = scopedStorage.getNumberOfFunctionParameters(funcName);
-        System.out.println("Number of function parameters: " + numberOfFunctionParameters);
         List<SyntaxNode> functionParameters = new ArrayList<>();
         for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex++) {
             functionParameters.add(makeExpTree(it));
         }
-        functionParameters.forEach(e -> System.out.print(e.serialize() + " "));
         return new FunctionNode(funcName, scopedStorage, funcName, functionParameters);
     }
 
     private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making RepeatNode");
         // Consume the REPEAT token
         String token = it.next();
         SyntaxNode numberOfTimesToRepeat = makeExpTree(it);
@@ -310,7 +280,6 @@ public class Parser {
     }
 
     private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making DoTimesNode");
         // Consume the DOTIMES token
         String token = it.next();
         // Consume the '[' token
@@ -332,7 +301,6 @@ public class Parser {
     }
 
     private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making a ForLoopNode");
         // Consume the FOR token
         String token = it.next();
         // Consume the '[' token
@@ -354,7 +322,6 @@ public class Parser {
     }
 
     private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making an IfNode");
         // Consume the IF token
         String token = it.next();
         SyntaxNode conditionExpression = makeExpTree(it);
@@ -363,7 +330,6 @@ public class Parser {
     }
 
     private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making an IfElseNode");
         // Consume the IfELSE token
         String token = it.next();
         SyntaxNode conditionExpression = makeExpTree(it);
@@ -374,7 +340,6 @@ public class Parser {
 
     // TODO - SPLIT INTO SMALLER HELPERS
     private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making a FunctionDefinitionNode");
         List<String> funcStrings = new ArrayList<>();
         // Consume the MAKEUSERINSTRUCTION token
         String token = it.next();
@@ -407,7 +372,6 @@ public class Parser {
     }
 
     private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making TellNode");
         // Consume the TELL token
         String token = it.next();
         RootNode idsRoot = getCommandsListRoot(it);
@@ -420,7 +384,6 @@ public class Parser {
     }
 
     private AskNode makeAskNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making AskNode");
         // Consume the ASK button
         String token = it.next();
         RootNode idsRoot = getCommandsListRoot(it);
@@ -433,7 +396,6 @@ public class Parser {
     }
 
     private AskWithNode makeAskWithNode(PeekingIterator<String> it) throws SLogoException {
-        System.out.print("Making AskWithNode");
         // Consume the ASKWITH button
         String token = it.next();
         RootNode queriesRoot = getCommandsListRoot(it);
@@ -444,7 +406,6 @@ public class Parser {
 
     // Only ValueNodes can have variable params ? - EDIT : NO, 'MAKE' also
     private SyntaxNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
-        System.out.println("Making expTree for variable params");
         if (it == null || !it.hasNext()) {
             throw new IllegalArgumentException();
         }

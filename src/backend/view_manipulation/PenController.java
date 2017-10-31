@@ -10,7 +10,7 @@ import javafx.beans.value.ChangeListener;
  */
 public class PenController extends AbstractColorController implements SizeController {
 
-    private double currentPenColorIndex;
+    private int currentPenColorIndex;
 
     private DoubleProperty currentPenSize;
 
@@ -28,7 +28,7 @@ public class PenController extends AbstractColorController implements SizeContro
     }
 
     @Override
-    public double setColorIndex(double penColorIndex) throws SLogoException {
+    public double setColorIndex(int penColorIndex) throws SLogoException {
         currentPenColorIndex = penColorIndex;
         setColorProperty(currentPenColorIndex);
         return currentPenColorIndex;

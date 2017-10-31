@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * @author Ben Schwennesen
@@ -36,7 +37,7 @@ public class MenuGetter {
     }
 
     public List<Menu> getMenuDropdowns(IDEWindow runner) throws SLogoException {
-        Map<String, Menu> dropdownsMap = new HashMap<>();
+        Map<String, Menu> dropdownsMap = new TreeMap<>(Collections.reverseOrder());
         for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
             generateMenuItem(dropdownsMap, itemName, runner);
         }
@@ -44,7 +45,6 @@ public class MenuGetter {
     }
 
     private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName, IDEWindow runner) throws ProjectBuildException {
-    	System.out.println(itemName);
         String[] dropdownInfo = MENU_PROPERTIES.getProperty(itemName).split(INFO_DELIMITER);
         if (dropdownInfo.length != INFO_LENGTH) {
             throw new ProjectBuildException();
@@ -53,7 +53,6 @@ public class MenuGetter {
         Menu dropdown = dropdownsMap.getOrDefault(dropdownName, new Menu(dropdownName));
         try {
             Method actionMethod = runner.getClass().getDeclaredMethod(dropdownInfo[1]);
-            System.out.println(actionMethod.getName());
             MenuItem menuItem = new MenuItem(itemName);
             menuItem.setOnAction(e -> runMenuAction(actionMethod, runner));
             dropdown.getItems().add(menuItem);

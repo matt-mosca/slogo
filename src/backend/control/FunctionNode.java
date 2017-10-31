@@ -17,19 +17,15 @@ public class FunctionNode extends ControlNode {
     public FunctionNode(String commandName, ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
         super(commandName, store);
         this.parameters = parameters;
-        parameters.forEach(e -> System.out.print(e.serialize() + " "));
         FUNCTION_NAME = functionName;
     }
 
     @Override
     public double execute() throws SLogoException {
-        System.out.print("WTF ");
-        parameters.forEach(e -> System.out.print(e.serialize() + " "));
         ScopedStorage store = getStore();
         store.enterScope(FUNCTION_NAME);
         List<String> parameterNames = store.getCurrentFunctionParameterNames();
         if (parameterNames.size() != parameters.size()) {
-            System.out.println("BAD ARG NUMBER:: " + FUNCTION_NAME + " expected: " + parameterNames.size() + ", actual: " + parameters.size());
             throw new BadNumberOfArgumentsException(FUNCTION_NAME, parameterNames.size());
         }
         for (int parameter = 0; parameter < parameters.size(); parameter++) {

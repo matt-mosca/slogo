@@ -19,7 +19,7 @@ public abstract class AbstractColorController implements ColorController {
         this.paletteStorage = paletteStorage;
     }
 
-    protected void setColorProperty(double index) throws SLogoException {
+    protected void setColorProperty(int index) throws SLogoException {
         colorProperty.setValue(paletteStorage.getColor(index));
     }
 

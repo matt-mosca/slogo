@@ -108,7 +108,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
     public void rotate(int turtleIndex, double newAngle) {
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
-    	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
     	setChanged();
     	notifyObservers();
     }

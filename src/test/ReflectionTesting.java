@@ -1,7 +1,5 @@
 package test;
 
-import utilities.CommandGetter;
-
 import java.lang.reflect.Method;
 
 /**
