@@ -20,11 +20,9 @@ public class AskNode extends TellNode {
 		// Need to save snapshot of original list of ids
 		Set<Integer> currentlyToldTurtleIds = turtleController.getToldTurtles();
 		setIDs(arguments);
-		// Execute root of commands list for every id in argument
+		// Execute root of commands list 
 		double result = 0.0;
-		for (int index = 0; index < arguments.length; index ++) {
-			result = commandsRoot.execute();			
-		}
+		result = commandsRoot.execute();
 		// Restore original list of ids
 		// Prefer casting of underlying collection to creating new list?
 		turtleController.setActiveTurtles(currentlyToldTurtleIds.toArray(new Integer[0]));
