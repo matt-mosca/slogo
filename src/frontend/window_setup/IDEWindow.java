@@ -137,7 +137,8 @@ public class IDEWindow implements Observer {
 		primaryStage = primary;
 		turtleInfoPane = new GridPane();
 		turtleInfoScrollable = new ScrollPane();
-		
+		borderLayout.setStyle("-fx-background-color: aliceblue; -fx-text-fill: white;");
+
 		setFormatV(leftBox,OFFSET,LEFT_WIDTH,LEFT_HEIGHT);
 		
 		setFormatV(rightBox,OFFSET,RIGHT_WIDTH,RIGHT_HEIGHT);
