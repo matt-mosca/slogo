@@ -54,6 +54,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import main.Main;
+import utilities.MenuGetter;
 
 import java.io.File;
 import java.util.List;
@@ -119,6 +120,7 @@ public class IDEWindow implements Observer {
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
 	private TabFactory tabMaker = new TabFactory();
+	private MenuGetter menuMaker;
 	
 	private TurtleView turtleView;
 	private ColorPicker backGroundColorPicker = new ColorPicker();
@@ -286,9 +288,18 @@ public class IDEWindow implements Observer {
 	
 	private void makeButtons() {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
-		MenuBar languageMenuBar = new MenuBar();
-		languageMenuBar.getMenus().add(languageMenu);
-		leftGroup.getChildren().add(languageMenuBar);
+		MenuBar menuBar = new MenuBar();
+		try {
+			menuMaker = new MenuGetter();
+			menuBar.getMenus().addAll(menuMaker.getMenuDropdowns());
+
+		} catch (SLogoException e2) {
+			// TODO Auto-generated catch block
+			console.addError(e2.getMessage());
+		}
+		topGroup.getChildren().add(menuBar);
+		menuBar.getMenus().add(languageMenu);
+		//leftGroup.getChildren().add(menuBar);
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
@@ -313,14 +324,22 @@ public class IDEWindow implements Observer {
 		
 		leftGroup.getChildren().addAll(undo, redo, reset);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
-		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
-		buttonMaker.makeGUIItem(e->saveFile(s), leftGroup, "Save Workspace");
-		buttonMaker.makeGUIItem(e->loadFile(s), leftGroup, "Load Workspace");
+		buttonMaker.makeGUIItem(e->openFile(), leftGroup, "Set Turtle Image");
+		buttonMaker.makeGUIItem(e->saveFile(), leftGroup, "Save Workspace");
+		buttonMaker.makeGUIItem(e->loadFile(), leftGroup, "Load Workspace");
 		strokeThickness = textFieldMaker.makeReturnableTextField(e->setPenThickness(Double.parseDouble(strokeThickness.getText())), leftGroup,"Pen Thickness");
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
+	}
+	
+	private void setPenThickness(double thickness) {
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			turtleView.changeStrokeWidth(toldTurtleIds.get(i), thickness);
+		}
+		strokeThickness.setText(null);
 	}
 
 	private void reset() {
