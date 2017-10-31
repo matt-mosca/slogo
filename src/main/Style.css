@@ -1,0 +1,35 @@
+.button {
+    -fx-background-color: #afaaab;
+    -fx-text-fill: #000000;
+    -fx-font-family: "Arial";
+}
+
+.pane{
+    -fx-background-color: #7c263c;
+}
+
+.root*{
+    -fx-background-color: #58ce80;
+    -fx-font-family: "Courier";
+}
+
+.hbox{
+	-fx-background-color: #fdf6e3;
+}
+
+.button:hover{
+	-fx-background-color: radial-gradient(focus-distance 0% , center 50% 50% , radius 100% , #bcb7b8, #afaaab);
+}
+
+.chart {
+    -fx-text-fill: #000000;
+    -fx-font-family: "Courier";
+}
+
+.axis {
+   -fx-text-fill: #58ce80; 
+}
+
+.chart-title {
+  -fx-text-fill: #000000;
+}
