@@ -30,5 +30,10 @@ public abstract class ControlNode implements SyntaxNode {
     protected void setSerializedString(String newString) {
     		serializedString = newString;
     }
+    
+    @Override
+    public boolean canTakeVariableNumberOfArguments() {
+    		return false;
+    }
 
 }

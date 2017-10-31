@@ -35,4 +35,9 @@ public class VariableDefinitionNode extends ControlNode {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
+	}
 }
