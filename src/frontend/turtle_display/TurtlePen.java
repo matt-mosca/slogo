@@ -1,5 +1,8 @@
 package frontend.turtle_display;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -9,13 +12,14 @@ public class TurtlePen {
 	public static final String DEFAULT_TURTLE = "Cartoon-Turtle.png";
 	public static final double DEFAULT_WIDTH = 20;
 	public static final double DEFAULT_HEIGHT = 25;
+	public static final Color DEFAULT_COLOR = Color.BLACK;
 	private double DEFAULT_STROKE_WIDTH = 1.0;
 	
 	private ImageView turtleImage;
 	private double xCoordinateOnRegion;
 	private double yCoordinateOnRegion;
 	private double angle;
-	private Paint penColor;
+	private Color penColor;
 	private boolean isPenDown;
 	private double strokeWidth;
 	
@@ -29,7 +33,7 @@ public class TurtlePen {
 		yCoordinateOnRegion = yCoord;
 		turtleImage.setX(xCoord);
 		turtleImage.setY(yCoord);
-		penColor = Color.BLACK;
+		penColor = DEFAULT_COLOR;
 		isPenDown = true;
 		strokeWidth = DEFAULT_STROKE_WIDTH;	
 	}
@@ -76,17 +80,13 @@ public class TurtlePen {
 		isPenDown = false;
 	}
 	
-	void setPenColor(Paint color) {
-		penColor = color;
-	}
+	void setPenColor(Color color) { penColor = color; }
 	
 	boolean getIsPenDown() {
 		return isPenDown;
 	}
 	
-	Paint getPenColor() {
-		return penColor;
-	}
+	Color getPenColor() { return penColor; }
 	
 	void setStrokeWidth(double width) {
 		strokeWidth = width;

@@ -9,6 +9,7 @@ import backend.view_manipulation.PaletteStorage;
 import backend.view_manipulation.ViewController;
 import frontend.turtle_display.TurtleView;
 import frontend.window_setup.IDEWindow;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utilities.CommandGetter;
@@ -29,6 +30,7 @@ public class Controller {
 	private CommandGetter commandGetter;
 	private PaletteStorage paletteStorage;
 	private WorkspaceManager workspaceManager;
+	private ViewController viewController;
 
 	public Controller(ScopedStorage scopedStorage, TurtleView turtleView, Rectangle turtleField) {
 		this.scopedStorage = scopedStorage;
@@ -36,7 +38,7 @@ public class Controller {
 		turtleController = new TurtleController(turtleView, IDEWindow.TURTLEFIELD_WIDTH / 2,
 				IDEWindow.TURTLEFIELD_HEIGHT / 2);
 		this.commandGetter = new CommandGetter();
-		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
+		this.viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
 		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
 		workspaceManager = new WorkspaceManager();
 	}
@@ -114,5 +116,23 @@ public class Controller {
 
 	public void loadWorkspaceFromFile(String fileName) throws SLogoException {
 		workspaceManager.loadWorkspaceFromFile(parser, scopedStorage, fileName);
+	}
+
+	public void undo() throws SLogoException {
+		System.out.println("TRYING TO UNDO");
+		if (parser.canUndo()) {
+			scopedStorage.clear();
+			turtleController.clear();
+			parser.undo();
+		}
+	}
+
+	public void redo() throws SLogoException {
+		System.out.println("TRYING TO REDO");
+		if (parser.canRedo()) {
+			scopedStorage.clear();
+			turtleController.clear();
+			parser.redo();
+		}
 	}
 }

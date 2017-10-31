@@ -180,4 +180,13 @@ public class ScopedStorage extends Observable {
 		return functionVariables.containsKey(currentScope) &&
 				functionVariables.get(currentScope).containsKey(variableName);
 	}
+
+	// for undo / redo
+	public void clear() {
+		functionVariables.clear();
+		functionParameterNames.clear();
+		functionVariables.put(GLOBAL, new HashMap<>());
+		functionRoots.clear();
+		scopeStack.clear();
+	}
 }

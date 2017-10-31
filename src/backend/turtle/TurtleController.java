@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.IntToDoubleFunction;
+import java.util.stream.Collectors;
 
 public class TurtleController {
 
@@ -34,7 +35,7 @@ public class TurtleController {
 		this.yBounds = yBounds;
 		createdTurtles = new ArrayList<>();
 		Turtle firstTurtle = new Turtle();
-		activeTurtleId = 1;
+		activeTurtleId = FIRST_TURTLE_ID;
 		queryTurtleId = 0;
 		createdTurtles.add(firstTurtle);
 		toldTurtleIds = new LinkedHashSet<Integer>(Arrays.asList(new Integer[] { activeTurtleId }));
@@ -276,6 +277,20 @@ public class TurtleController {
 	}
 
 	public List<Integer> getToldTurtleIds() {
-		return new ArrayList<>(toldTurtleIds);
+		return toldTurtleIds.stream()
+				.mapToInt(id -> getZeroBasedId(id))
+				.boxed().collect(Collectors.toList());
+	}
+
+	// for undo/redo
+	public void clear() {
+		createdTurtles.clear();
+		activeTurtleId = FIRST_TURTLE_ID;
+		queryTurtleId = 0;
+		createdTurtles.add(new Turtle());
+		toldTurtleIds.clear();
+		toldTurtleIds.add(activeTurtleId);
+		turtleView.clear();
+		initializeFirstTurtle();
 	}
 }

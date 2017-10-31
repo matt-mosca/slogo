@@ -21,7 +21,6 @@ public class PenController extends AbstractColorController implements SizeContro
         currentPenSize = new SimpleDoubleProperty(DEFAULT_PEN_SIZE);
     }
 
-
     @Override
     public double setSize(double size) {
         currentPenSize.setValue(size);
