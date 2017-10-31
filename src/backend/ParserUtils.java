@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import backend.error_handling.IllegalSyntaxException;
+import backend.math.ConstantNode;
 import backend.turtle.TurtleNode;
 import backend.view_manipulation.ViewNode;
 import utilities.PeekingIterator;
 
+/**
+ * Utility class that stores constants and provides helper methods for parsing
+ * 
+ * @author Adithya Raghunathan
+ */
 public class ParserUtils {
 
 	public static final String DELIMITER_REGEX = "\\s+";
@@ -22,7 +28,7 @@ public class ParserUtils {
 	public static final String LIST_END_DELIMITER = "]";
 
 	public static final String TURTLE_PACKAGE = "backend.turtle";
-		
+
 	boolean isNumeric(String command) {
 		return command != null && command.matches(NUMBER_REGEX);
 	}
@@ -40,6 +46,15 @@ public class ParserUtils {
 		return ValueNode.class.isAssignableFrom(nodeClass);
 	}
 
+	// Special cases in serialization
+	boolean isConstantNode(Class nodeClass) {
+		return ConstantNode.class.isAssignableFrom(nodeClass);
+	}
+
+	boolean isRootNode(Class nodeClass) {
+		return RootNode.class.isAssignableFrom(nodeClass);
+	}
+
 	String stripComments(String command) {
 		String[] lines = command.split(NEWLINE_REGEX);
 		List<String> nonCommentedLines = new ArrayList<>();
@@ -51,7 +66,7 @@ public class ParserUtils {
 		}
 		return String.join(STANDARD_DELIMITER, nonCommentedLines);
 	}
-	
+
 	List<String> getVariableNamesFromList(PeekingIterator<String> it) throws IllegalSyntaxException {
 		if (!it.hasNext()) {
 			throw new IllegalArgumentException();
@@ -75,5 +90,5 @@ public class ParserUtils {
 		it.next();
 		return variableNames;
 	}
-	
+
 }

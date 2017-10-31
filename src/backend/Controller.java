@@ -24,6 +24,7 @@ import utilities.CommandGetter;
 public class Controller {
 
 	private Parser parser;
+	private ParserUtils parserUtils;
 	private TurtleController turtleController;
 	private ScopedStorage scopedStorage;
 	private CommandGetter commandGetter;
@@ -41,9 +42,10 @@ public class Controller {
 		this.commandGetter = new CommandGetter();
 		ViewController viewController = new ViewController(paletteStorage, turtleView, turtleField, turtleController);
 		IMAGE_MAP = viewController.getImageMap();
-		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter);
+		this.parserUtils = new ParserUtils();
+		this.parser = new Parser(turtleController, scopedStorage, viewController, commandGetter, parserUtils);
 		workspaceManager = new WorkspaceManager();
-		debugger = new Debugger();
+		debugger = new Debugger(parser, parserUtils);
 	}
 
 	// To support switching of language through front end
@@ -124,11 +126,11 @@ public class Controller {
 	}
 
 	public void saveWorkspaceToFile(String fileName) {
-		workspaceManager.saveWorkspaceToFile(parser, scopedStorage, fileName);
+		workspaceManager.saveWorkspaceToFile(parser, fileName);
 	}
 
 	public void loadWorkspaceFromFile(String fileName) throws SLogoException {
-		workspaceManager.loadWorkspaceFromFile(parser, scopedStorage, fileName);
+		workspaceManager.loadWorkspaceFromFile(parser, fileName);
 	}
 
 	public void undo() throws SLogoException {

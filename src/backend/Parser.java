@@ -35,6 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Entity that validates, parses and executes raw String commands Trees are
+ * built pre-order and executed post-order through mutually recursive functions
+ * 
+ * @author Adithya Raghunathan
+ */
 public class Parser {
 
 	private CommandGetter commandGetter;
@@ -46,9 +52,13 @@ public class Parser {
 	private ParserUtils parserUtils;
 
 	private int undoIndex;
-	
+
+	/**
+	 * Initialize a parser with references to a TurtleController, ScopedStorage,
+	 * ViewController, CommandGetter and ParserUtils
+	 */
 	public Parser(TurtleController turtleManager, ScopedStorage storage, ViewController viewController,
-			CommandGetter commandGetter) {
+			CommandGetter commandGetter, ParserUtils parserUtils) {
 		syntaxTrees = new LinkedHashMap<>();
 		commandHistory = new ArrayList<>();
 		scopedStorage = storage;
@@ -56,9 +66,18 @@ public class Parser {
 		this.turtleManager = turtleManager;
 		this.viewController = viewController;
 		undoIndex = 0;
-		parserUtils = new ParserUtils();
+		this.parserUtils = parserUtils;
 	}
 
+	/**
+	 * Construct and save the syntax tree for a command, returning true if
+	 * successfully constructed false otherwise
+	 * 
+	 * @param command
+	 *            the raw command string to be validated
+	 * @return true if valid and syntax tree was made, else false
+	 * @throws SLogoException
+	 */
 	public boolean validateCommand(String command) throws SLogoException {
 		if (command == null) {
 			return false;
@@ -66,18 +85,30 @@ public class Parser {
 		// Avoid repeated computation for just differing whitespace
 		// Need to remove comments
 		String commandWithoutComments = parserUtils.stripComments(command);
-		String formattedCommand = commandWithoutComments.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
+		String formattedCommand = commandWithoutComments
+				.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
 		syntaxTrees.put(formattedCommand, constructSyntaxTree(
 				new PeekingIterator<>(Arrays.asList(formattedCommand.split(ParserUtils.DELIMITER_REGEX)).iterator())));
 		return true;
 	}
 
+	/**
+	 * Execute a command string, usually one that has been previously validated and
+	 * parsed into a tree. If tree is not found, tree is built and command verified
+	 * prior to execution. Exception thrown if command found to be invalid
+	 * 
+	 * @param command
+	 *            the raw command string to be executed
+	 * @throws SLogoException
+	 *             if the command is invalid
+	 */
 	public void executeCommand(String command) throws SLogoException {
 		String commandWithoutComments = parserUtils.stripComments(command);
-		String formattedCommand = commandWithoutComments.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
+		String formattedCommand = commandWithoutComments
+				.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
-			syntaxTrees.put(formattedCommand, constructSyntaxTree(
-					new PeekingIterator<String>(Arrays.asList(formattedCommand.split(ParserUtils.DELIMITER_REGEX)).iterator())));
+			syntaxTrees.put(formattedCommand, constructSyntaxTree(new PeekingIterator<String>(
+					Arrays.asList(formattedCommand.split(ParserUtils.DELIMITER_REGEX)).iterator())));
 			undoIndex = syntaxTrees.size();
 		}
 		SyntaxNode tree = syntaxTrees.get(formattedCommand);
@@ -86,10 +117,18 @@ public class Parser {
 		undoIndex = commandHistory.size();
 	}
 
+	/**
+	 * 
+	 * @return true if undo can currently be executed, false otherwise
+	 */
 	public boolean canUndo() {
 		return undoIndex > 0 && commandHistory.size() > 0;
 	}
-	
+
+	/**
+	 * 
+	 * @return the set of command strings (formatted) entered for this session
+	 */
 	public Set<String> getSessionCommands() {
 		return syntaxTrees.keySet();
 	}
@@ -99,7 +138,6 @@ public class Parser {
 		commandHistory.clear();
 		undoIndex = 0;
 	}
-
 
 	// need to do a CLEAR before calling
 	void undo() throws SLogoException {
@@ -125,6 +163,10 @@ public class Parser {
 		}
 	}
 
+	Map<String, SyntaxNode> getSyntaxTrees() {
+		return syntaxTrees;
+	}
+
 	// Top-Level parsing command that can add disjoint commands to root
 	private SyntaxNode constructSyntaxTree(PeekingIterator<String> it) throws SLogoException {
 		if (it == null) {
@@ -136,8 +178,7 @@ public class Parser {
 		}
 		return rootNode;
 	}
-	
-	
+
 	// Parsing command which chooses appropriate parsing command for
 	// construction of next node
 	SyntaxNode makeExpTree(PeekingIterator<String> it) throws SLogoException {
@@ -177,7 +218,7 @@ public class Parser {
 			throw determineExceptionCause(nextToken, badCommand);
 		}
 	}
-	
+
 	private ValueNode makeValueNode(PeekingIterator<String> it) throws SLogoException {
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
@@ -193,7 +234,7 @@ public class Parser {
 		}
 		return valueNode;
 	}
-	
+
 	private VariableDefinitionNode makeVariableDefinitionNodeForMultipleParameters(PeekingIterator<String> it)
 			throws SLogoException {
 		// Consume the MAKE / SET token
@@ -210,8 +251,9 @@ public class Parser {
 		return new VariableDefinitionNode(token, scopedStorage, varNames.toArray(new String[0]),
 				varExps.toArray(new SyntaxNode[0]));
 	}
-	
-	private void addVariablesAndExpressionsToLists(PeekingIterator<String> it, List<String> varNames, List<SyntaxNode> varExps) throws SLogoException {
+
+	private void addVariablesAndExpressionsToLists(PeekingIterator<String> it, List<String> varNames,
+			List<SyntaxNode> varExps) throws SLogoException {
 		while (it.hasNext() && !it.peek().equals(ParserUtils.VARIABLE_ARGS_END_DELIMITER)) {
 			String nextVarName = it.next();
 			varNames.add(nextVarName);
@@ -227,8 +269,7 @@ public class Parser {
 			varExps.add(nextVarExp);
 		}
 	}
-	
-	
+
 	// Only ValueNodes can have variable params ? - EDIT : NO, 'MAKE' also
 	private SyntaxNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		if (it == null || !it.hasNext()) {
@@ -275,14 +316,14 @@ public class Parser {
 		return commandsListRoot;
 	}
 
-	private SLogoException determineExceptionCause(String nextToken, ReflectiveOperationException badCommand)  {
-        Throwable cause = badCommand.getCause();
-        if (cause instanceof SLogoException) {
-            return  (SLogoException) cause;
-        } else {
-            return new UndefinedCommandException(nextToken);
-        }
-    }
+	private SLogoException determineExceptionCause(String nextToken, ReflectiveOperationException badCommand) {
+		Throwable cause = badCommand.getCause();
+		if (cause instanceof SLogoException) {
+			return (SLogoException) cause;
+		} else {
+			return new UndefinedCommandException(nextToken);
+		}
+	}
 
 	private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the function name
@@ -296,7 +337,7 @@ public class Parser {
 		functionParameters.forEach(e -> System.out.print(e.serialize() + " "));
 		return new FunctionNode(funcName, scopedStorage, funcName, functionParameters);
 	}
-	
+
 	private ValueNode getValueNodeFromCommandName(String commandName) throws SLogoException {
 		try {
 			Class commandClass = commandGetter.getCommandNodeClass(commandName);
@@ -305,17 +346,15 @@ public class Parser {
 			if (parserUtils.isTurtleNode(commandClass)) {
 				constructor = commandClass.getConstructor(String.class, TurtleController.class);
 				constructorArgs = new Object[] { commandName, turtleManager };
-			}
-			else if (parserUtils.isViewNode(commandClass)) {
+			} else if (parserUtils.isViewNode(commandClass)) {
 				constructor = commandClass.getConstructor(String.class, ViewController.class);
 				constructorArgs = new Object[] { commandName, viewController };
 			} else {
 				constructor = commandClass.getConstructor(String.class);
 				constructorArgs = new Object[] { commandName };
 			}
-			return (ValueNode) constructor.newInstance(constructorArgs);			
-		}
-		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
+			return (ValueNode) constructor.newInstance(constructorArgs);
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
 				| InstantiationException e) {
 			throw determineExceptionCause(commandName, e);
 		}
@@ -328,7 +367,7 @@ public class Parser {
 		SyntaxNode varExp = makeExpTree(it);
 		return new VariableDefinitionNode(token, scopedStorage, new String[] { varName }, new SyntaxNode[] { varExp });
 	}
-	
+
 	private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the REPEAT token
 		String token = it.next();
@@ -409,7 +448,7 @@ public class Parser {
 		RootNode funcRoot = getCommandsListRoot(it);
 		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot);
 	}
-	
+
 	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the TELL token
 		String token = it.next();
@@ -442,5 +481,5 @@ public class Parser {
 		AskWithNode askWithNode = new AskWithNode(token, turtleManager, queriesRoot, commandsListRoot);
 		return askWithNode;
 	}
-		
+
 }
