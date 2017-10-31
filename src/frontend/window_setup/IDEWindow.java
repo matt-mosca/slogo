@@ -124,6 +124,7 @@ public class IDEWindow implements Observer {
 	private ScrollPane colorScrollable;
 	private GridPane colors = new GridPane();
 	private String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
+	private TurtleInfoDisplay turtleInfo = new TurtleInfoDisplay();
 	
 	
 	public IDEWindow(Stage primary) {
@@ -187,6 +188,11 @@ public class IDEWindow implements Observer {
 	private void formatMovementKeys(GridPane keysPane, Group root, double prefSize) {
 		keysPane.setPrefSize(prefSize, prefSize * (2/3));
 		root.getChildren().add(keysPane);
+	}
+	
+	private void assembleTurtleInfoDisplay() {
+		Pane turtleInfoDisplay = new GridPane();
+		
 	}
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
