@@ -244,6 +244,7 @@ public class IDEWindow implements Observer {
 		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
 		MenuBar languageMenuBar = new MenuBar();
 		languageMenuBar.getMenus().add(languageMenu);
+		leftGroup.getChildren().add(languageMenuBar);
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
 		TurtleGraphicalControls graphicalControls = new TurtleGraphicalControls(controller);
@@ -281,9 +282,11 @@ public class IDEWindow implements Observer {
 		Button reset = new Button("Reset");
 		reset.setOnAction(e -> controller.reset());
 		
-		leftGroup.getChildren().addAll(languageMenuBar, undo, redo, reset);
+		leftGroup.getChildren().addAll(undo, redo, reset);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
 		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
+		buttonMaker.makeGUIItem(e->saveFile(s), leftGroup, "Save Workspace");
+		buttonMaker.makeGUIItem(e->loadFile(s), leftGroup, "Load Workspace");
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
@@ -321,14 +324,29 @@ public class IDEWindow implements Observer {
 		}
 	}
 	
-	private void createWindow()
-	{
+	private void createWindow() {
 		Stage newStage = new Stage();
 		newStage.setTitle("New Slogo");
 		newStage.setResizable(false);
 		newStage.show();
 		IDEWindow window = new IDEWindow(newStage);
 		window.setUpWindow();
+	}
+	private void saveFile(Stage s) {
+		File dataFile = null; 
+		dataFile = myChooser.showOpenDialog(s);
+		if (dataFile != null) {
+			String fileLocation = dataFile.toURI().toString();
+			controller.saveWorkspaceToFile(fileLocation);
+		}
+	}
+	private void loadFile(Stage s) {
+		File dataFile = null; 
+		dataFile = myChooser.showOpenDialog(s);
+		if (dataFile != null) {
+			String fileLocation = dataFile.toURI().toString();
+			controller.saveWorkspaceToFile(fileLocation);
+		}
 	}
 	
 	private void openFile(Stage s) {
@@ -351,7 +369,7 @@ public class IDEWindow implements Observer {
 		FileChooser result = new FileChooser();
 		result.setTitle("open");
 		result.setInitialDirectory(new File(System.getProperty("user.dir")));
-		result.getExtensionFilters().setAll(new ExtensionFilter("Image Files", extensionsAccepted));
+		//result.getExtensionFilters().setAll(new ExtensionFilter("Image Files", extensionsAccepted));
 		return result;
 	}
 	
