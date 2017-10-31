@@ -9,7 +9,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class HelpWindow {
-	public static final int TEXT_SIZE = 10;
+	public static final int TEXT_SIZE = 12;
 	public static final int WRAPPING_WIDTH = 450;
 	public static final int SCENE_WIDTH = 500;
 	public static final int SCENE_HEIGHT = 200;

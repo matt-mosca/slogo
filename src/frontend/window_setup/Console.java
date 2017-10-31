@@ -17,7 +17,7 @@ import javafx.scene.text.Text;
  */
 public class Console {
 
-    private final int PREFERED_WIDTH = 800;
+    private final int PREFERED_WIDTH = 1050;
     private final int PREFERED_HEIGHT = 200;
     private ObservableList<Node> commandElements;
     private ListView<Node> commandsListView;

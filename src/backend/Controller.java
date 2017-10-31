@@ -1,5 +1,9 @@
 package backend;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import backend.control.ScopedStorage;
 import backend.control.WorkspaceManager;
 import backend.error_handling.ProjectBuildException;
@@ -13,10 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utilities.CommandGetter;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Ben Schwennesen
@@ -99,19 +99,19 @@ public class Controller {
 	}
 
 	public double setPenDown(int index) {
-		return turtleController.setPenDown(index);
+		return turtleController.setPenDown(index + 1);
 	}
 
 	public double setPenUp(int index) {
-		return turtleController.setPenUp(index);
+		return turtleController.setPenUp(index + 1);
 	}
 
 	public double isPenDown(int index) {
-		return turtleController.isPenDown(index);
+		return turtleController.isPenDown(index + 1);
 	}
 
 	public void tellTurtle(int index) {
-    	turtleController.setActiveTurtles(new Integer[] {index});
+    	turtleController.setActiveTurtles(new Integer[] {index + 1});
 	}
 
 	public List<Integer> getToldTurtleIds() {
