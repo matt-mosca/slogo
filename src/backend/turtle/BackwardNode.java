@@ -10,8 +10,11 @@ public class BackwardNode extends TurtleNode {
 
 	@Override
 	public double executeSelf(double... arguments) throws SLogoException {
-		double pixels = arguments[0];
-		return getTurtleController().moveCurrentTurtlesForward(-pixels);
+		// Support multiple args
+		for (double pixel : arguments) {
+			getTurtleController().moveCurrentTurtlesForward(-pixel);
+		}
+		return arguments[arguments.length] - 1;
 	}
 
 	@Override
@@ -19,5 +22,9 @@ public class BackwardNode extends TurtleNode {
 		return 1;
 	}
 	
+	@Override 
+	public boolean canTakeVariableNumberOfArguments() {
+		return true;
+	}
 	
 }
