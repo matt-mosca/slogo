@@ -50,15 +50,15 @@ public class TurtlePen {
 		angle = newAngle;
 	}
 	
-	double getXCoordinate() {
+	public double getXCoordinate() {
 		return xCoordinateOnRegion;
 	}
 	
-	double getYCoordinate() {
+	public double getYCoordinate() {
 		return yCoordinateOnRegion;
 	}
 	
-	double getAngle() { 
+	public double getAngle() { 
 		return angle;
 	}
 	
@@ -82,17 +82,17 @@ public class TurtlePen {
 	
 	void setPenColor(Color color) { penColor = color; }
 	
-	boolean getIsPenDown() {
+	public boolean getIsPenDown() {
 		return isPenDown;
 	}
 	
-	Color getPenColor() { return penColor; }
+	public Color getPenColor() { return penColor; }
 	
 	void setStrokeWidth(double width) {
 		strokeWidth = width;
 	}
 	
-	double getStrokeWidth() {
+	public double getStrokeWidth() {
 		return strokeWidth;
 	}
 }

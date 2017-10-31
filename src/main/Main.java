@@ -42,6 +42,7 @@ public class Main extends Application {
 	}
 	private void setStageName() {
 		stageName = textField.getText();
+		textField.setText(null);
 	}
 
 	private void createIDEWindow() {
