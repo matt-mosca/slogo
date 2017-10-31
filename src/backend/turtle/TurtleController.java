@@ -132,8 +132,7 @@ public class TurtleController {
 		activeTurtleId = ids.length > 0 ? ids[ids.length - 1] : 0;
 		System.out.println("Set activeTurtleId to " + activeTurtleId);
 		// TODO - Inform the front end of the new list of told turtles
-		
-		
+		turtleView.changeRepresentationOfActive(getToldTurtleIds());	
 		return activeTurtleId;
 	}
 
