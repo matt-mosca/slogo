@@ -8,6 +8,7 @@ import frontend.factory.ColorPickerFactory;
 import frontend.factory.MenuItemFactory;
 import frontend.factory.TabFactory;
 import frontend.factory.TextAreaFactory;
+import frontend.factory.TextFieldFactory;
 import frontend.turtle_display.TurtleGraphicalControls;
 import frontend.turtle_display.TurtleKeyControls;
 import frontend.turtle_display.TurtlePen;
@@ -30,6 +31,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -109,6 +111,7 @@ public class IDEWindow implements Observer {
 	private FileChooser myChooser = makeChooser(PNG_FILE_EXTENSION, JPG_FILE_EXTENSION, GIF_FILE_EXTENSION);
 
 	private ButtonFactory buttonMaker = new ButtonFactory();
+	private TextFieldFactory textFieldMaker = new TextFieldFactory();
 	private ColorPickerFactory colorPickerMaker = new ColorPickerFactory();
 	private MenuItemFactory menuItemMaker = new MenuItemFactory();
 	private Console console;
@@ -128,6 +131,7 @@ public class IDEWindow implements Observer {
 	private GridPane colors = new GridPane();
 	private String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
 	private TurtleInfoDisplay turtleInfo = new TurtleInfoDisplay();
+	private TextField strokeThickness = new TextField();
 	
 	
 	public IDEWindow(Stage primary) {
@@ -296,15 +300,21 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->saveFile(s), leftGroup, "Save Workspace");
 		buttonMaker.makeGUIItem(e->loadFile(s), leftGroup, "Load Workspace");
-		//leftGroup.getChildren().add(new Rectangle(50,50));
+		strokeThickness = textFieldMaker.makeReturnableTextField(e->setPenThickness(Double.parseDouble(strokeThickness.getText())), leftGroup,"Pen Thickness");
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
 		leftBox.getChildren().addAll(leftGroup.getChildren());
 		rightBox.getChildren().addAll(rightGroup.getChildren());
 	}
+	private void setPenThickness(double thickness) {
+		List<Integer> toldTurtleIds = controller.getToldTurtleIds();
+		for(int i = 0; i < toldTurtleIds.size(); i++) {
+			turtleView.changeStrokeWidth(toldTurtleIds.get(i), thickness);
+		}
+		strokeThickness.setText("");
+	}
 	
-	private Menu setMenu(String name)
-	{
+	private Menu setMenu(String name) {
 		Menu sampleMenu = new Menu(name);
 		int i = 0;
 		for(i = 0; i<languageList.length;i++) {
