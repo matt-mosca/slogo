@@ -57,7 +57,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class IDEWindow implements Observer {
-	private static final Paint STANDARD_AREA_COLOR = Color.AQUA;
+	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
 	public static final double TURTLEFIELD_WIDTH = 400;
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
@@ -70,6 +70,7 @@ public class IDEWindow implements Observer {
 	public static final double BOTTOM_HEIGHT = 200;
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
+	public static final Color STANDARD_PEN_COLOR = Color.BLACK;
 	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	
@@ -253,13 +254,16 @@ public class IDEWindow implements Observer {
 		buttonMaker.makeGUIItem(e->changePenToUp(), topGroup, "Pen Up");
 		buttonMaker.makeGUIItem(e->changePenToDown(), topGroup, "Pen Down");
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
-		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
-		penColorPicker.setValue(Color.BLACK);
+		backGroundColorPicker.setValue(STANDARD_AREA_COLOR);
+		penColorPicker.setValue(STANDARD_PEN_COLOR);
 
 		// UNDO/REDO TESTING
 		Button undo = new Button("Undo");
 		undo.setOnAction(e -> {
 			try {
+				turtleField.setFill(STANDARD_AREA_COLOR);
+				penColorPicker.setValue(STANDARD_PEN_COLOR);
+				changePenColor();
 				controller.undo();
 			} catch (SLogoException badUndo) {
 				console.addError(badUndo.getMessage());
@@ -273,8 +277,10 @@ public class IDEWindow implements Observer {
 				console.addError(badUndo.getMessage());
 			}
 		});
+		Button reset = new Button("Reset");
+		reset.setOnAction(e -> controller.reset());
 		
-		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
+		leftGroup.getChildren().addAll(languageMenuBar, undo, redo, reset);
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());

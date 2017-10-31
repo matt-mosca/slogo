@@ -65,7 +65,6 @@ public class Parser {
 
 	public Parser(TurtleController turtleManager, ScopedStorage storage,
 				  ViewController viewController, CommandGetter commandGetter) {
-
 		syntaxTrees = new LinkedHashMap<>();
 		commandHistory = new ArrayList<>();
 		scopedStorage = storage;
@@ -506,5 +505,11 @@ public class Parser {
 	
 	public Set<String> getSessionCommands() {
 		return syntaxTrees.keySet();
+	}
+
+	void clearHistory() {
+		syntaxTrees.clear();
+		commandHistory.clear();
+		undoIndex = 0;
 	}
 }

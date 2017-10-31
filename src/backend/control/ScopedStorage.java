@@ -50,7 +50,7 @@ public class ScopedStorage extends Observable {
 	 * @param value
 	 * @return
 	 */
-	double setVariable(String name, double value) {
+	public double setVariable(String name, double value) {
 		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
 		functionVariableMap.put(name, value);
 		functionVariables.put(getScopeOfDefinition(name), functionVariableMap);
