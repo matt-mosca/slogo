@@ -4,13 +4,16 @@ import utilities.CommandGetter;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated 
+ */
 public class ReflectionTesting {
 
     private static final Class[] CONSTRUCTOR_PARAMETER_CLASSES = new Class[]{Method.class};
 
     public static void main(String[] args) {
         ReflectionTesting t = new ReflectionTesting();
-        CommandGetter getter = new CommandGetter();
+        //CommandGetter getter = new CommandGetter();
         double result = Double.MIN_VALUE;
         /*
         try {
