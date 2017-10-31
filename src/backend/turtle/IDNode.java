@@ -2,6 +2,9 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class IDNode extends TurtleNode {
 
 	public IDNode(String commandString, TurtleController turtleController) {

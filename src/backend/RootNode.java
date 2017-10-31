@@ -2,6 +2,9 @@ package backend;
 
 import java.util.List;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class RootNode extends VarArgNode {
 	
 	protected RootNode() {

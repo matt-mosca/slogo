@@ -6,6 +6,9 @@ import backend.error_handling.SLogoException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class AskWithNode extends AskNode {
 
 	SyntaxNode queryRoot;

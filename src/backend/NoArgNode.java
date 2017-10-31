@@ -1,5 +1,8 @@
 package backend;
 
+/**
+ * @author Ben Schwennesen
+ */
 public abstract class NoArgNode extends ValueNode {
 	
     protected NoArgNode(String commandString) {

@@ -3,6 +3,8 @@ package backend.logic;
 import backend.TwoArgNode;
 
 /**
+ * Determines whether its first operand is less than its second operand, returning one if so and zero otherwise.
+ *
  * @author Ben Schwennesen
  */
 public class LessNode extends TwoArgNode {

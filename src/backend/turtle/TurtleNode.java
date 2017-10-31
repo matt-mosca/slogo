@@ -2,6 +2,9 @@ package backend.turtle;
 
 import backend.ValueNode;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public abstract class TurtleNode extends ValueNode {
 
 	private TurtleController turtleController;

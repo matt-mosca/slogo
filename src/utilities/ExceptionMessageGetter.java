@@ -49,36 +49,4 @@ public final class ExceptionMessageGetter {
         return PROPERTIES.containsKey(propertyName) ? PROPERTIES.getProperty(propertyName) : "";
     }
 
-    /*
-     * Get a property that is know to be an integer.
-     *
-     * @param key - the key used to index the desired configuration value
-     * @return value - the integer configuration value we want to get
-
-    private static int getIntegerProperty(String key) {
-        String value = PROPERTIES.getProperty(key);
-        // if the key is not found, Properties will return null and we should return a default value
-        if (value == null) {
-            return 0;
-        }
-        return Integer.parseInt(value);
-    }
-     */
-
-    /*
-     * Get a property that is know to be a double.
-     *
-     * @param key - the key used to index the desired configuration value
-     * @return value - the double configuration value we want to get
-
-    private static Double getDoubleProperty(String key) {
-        String value = PROPERTIES.getProperty(key);
-        // if the key is not found, Properties will return null and we should return a default value
-        if (value == null) {
-            return 0.0;
-        }
-        return Double.parseDouble(value);
-    }
-         */
-
 }

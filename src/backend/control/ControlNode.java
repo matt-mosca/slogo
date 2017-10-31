@@ -3,6 +3,8 @@ package backend.control;
 import backend.SyntaxNode;
 
 /**
+ * Supplies access to variables, functions, and scoping for control structures and user-defined command nodes.
+ *
  * @author Ben Schwennesen
  */
 public abstract class ControlNode implements SyntaxNode {

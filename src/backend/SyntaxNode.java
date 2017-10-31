@@ -5,8 +5,7 @@ import backend.error_handling.SLogoException;
 /**
  * Interface implemented by all SLogo syntax / command nodes
  * 
- * @author radithya
- *
+ * @author Adithya Raghunathan
  */
 
 public interface SyntaxNode {
@@ -19,14 +18,14 @@ public interface SyntaxNode {
 	 *             if there was an error at any point of tree execution
 	 */
 
-	public double execute() throws SLogoException;
+	double execute() throws SLogoException;
 
 	/**
 	 * String representation of command subtree based on state of program execution
 	 * 
 	 * @return
 	 */
-	public String serialize();
+	String serialize();
 
 	/**
 	 * Whether this syntax / command node supports unlimited (variable no. of)
@@ -35,6 +34,6 @@ public interface SyntaxNode {
 	 * @return true if command node supports variable no. of arguments, false
 	 *         otherwise
 	 */
-	public boolean canTakeVariableNumberOfArguments();
+	boolean canTakeVariableNumberOfArguments();
 
 }

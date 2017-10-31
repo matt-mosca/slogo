@@ -3,6 +3,9 @@ package utilities;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class PeekingIterator<E> {
 
 	private Iterator<E> it;

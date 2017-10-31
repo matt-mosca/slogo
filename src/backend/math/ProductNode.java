@@ -5,8 +5,11 @@ import backend.VarArgNode;
 import java.util.Arrays;
 
 /**
+ * Computer the product of all its operands, of which there can be an arbitrary number.
+ *
  * @author Ben Schwennesen
  */
+
 public class ProductNode extends VarArgNode {
 
     public ProductNode(String commandString) {
