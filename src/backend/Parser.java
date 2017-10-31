@@ -181,7 +181,7 @@ public class Parser {
 
 	// Parsing command which chooses appropriate parsing command for
 	// construction of next node
-	SyntaxNode makeExpTree(PeekingIterator<String> it) throws SLogoException {
+	private SyntaxNode makeExpTree(PeekingIterator<String> it) throws SLogoException {
 		if (!it.hasNext()) { // Done parsing
 			throw new UnbalancedArgumentsException();
 		}
@@ -296,7 +296,7 @@ public class Parser {
 	}
 
 	// Called when expecting a list
-	RootNode getCommandsListRoot(PeekingIterator<String> it) throws SLogoException {
+	private RootNode getCommandsListRoot(PeekingIterator<String> it) throws SLogoException {
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
 		}
