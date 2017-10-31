@@ -74,12 +74,13 @@ public class IDEWindow implements Observer {
 	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	
 	private static final String VARIABLE_SEPARATOR = " = ";
-	public static final String VARIABLES_HEADER = "Variables: ";
-	public static final String FUNCTIONS_HEADER = "Functions: ";
-	public static final String COLORS_HEADER = "Colors: ";
+	public static final String VARIABLES_HEADER = "Variables ";
+	public static final String FUNCTIONS_HEADER = "Functions ";
+	public static final String COLORS_HEADER = "Colors ";
 	public static final String NEW_LINE = "\n";
 	private static final String PNG_FILE_EXTENSION = "*.png",
 		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
+	private static final String LANGUAGE_MENU_HEADER = "Language";
 
 
 	private Stage primaryStage;
@@ -121,7 +122,8 @@ public class IDEWindow implements Observer {
 	private GridPane turtleMovementKeys;
 	private ScrollPane colorScrollable;
 	private GridPane colors = new GridPane();
-	String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
+	private String[] languageList = {"Chinese","English","French", "German", "Italian", "Portuguese", "Russian", "Spanish"};
+	
 	
 	public IDEWindow(Stage primary) {
 		borderLayout = new BorderPane();
@@ -142,21 +144,15 @@ public class IDEWindow implements Observer {
 		
 		TabPane tabPane = new TabPane();
 		
-		Text variableTitle = new Text(VARIABLES_HEADER);
-		variableGroup.getChildren().add(variableTitle);
 		formatScrollPane(variableScrollable, 150, variables, variableGroup);
-		//rightGroup.getChildren().addAll(variableGroup.getChildren());
-		tabMaker.makeTab("Variables",variableGroup, tabPane);
+		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, tabPane);
 		
-		Text colorTitle = new Text(COLORS_HEADER);
-		colorGroup.getChildren().add(colorTitle);
 		formatScrollPane(colorScrollable, 150, colors, colorGroup);
-		tabMaker.makeTab("Colors",colorGroup, tabPane);
+		tabMaker.makeTab(COLORS_HEADER,colorGroup, tabPane);
 		
-		Text functionTitle = new Text(FUNCTIONS_HEADER);
-		functionGroup.getChildren().add(functionTitle);
 		formatScrollPane(functionScrollable, 150, functions, functionGroup);
-		tabMaker.makeTab("Functions",functionGroup, tabPane);
+		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, tabPane);
+		
 		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
 
@@ -242,6 +238,9 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void makeButtons(Stage s) {
+		Menu languageMenu = setMenu(LANGUAGE_MENU_HEADER);
+		MenuBar languageMenuBar = new MenuBar();
+		languageMenuBar.getMenus().add(languageMenu);
 		buttonMaker.makeGUIItem(e->openFile(s), topGroup, "Set Turtle Image");
 		buttonMaker.makeGUIItem(e->helpWindow.help(), leftGroup, "Help");
 		buttonMaker.makeGUIItem(e->createWindow(), topGroup, "Create New Window");
@@ -256,10 +255,6 @@ public class IDEWindow implements Observer {
 		penColorPicker = colorPickerMaker.makeReturnableColorPicker(e->changePenColor(), topGroup, "Pen Color");
 		backGroundColorPicker.setValue((Color) STANDARD_AREA_COLOR);
 		penColorPicker.setValue(Color.BLACK);
-
-		Menu languageMenu = setMenu("Language");
-		MenuBar languageMenuBar = new MenuBar();
-		languageMenuBar.getMenus().add(languageMenu);
 
 		// UNDO/REDO TESTING
 		Button undo = new Button("Undo");
@@ -385,7 +380,7 @@ public class IDEWindow implements Observer {
 		int colorCount = 0;
 		colors.getChildren().clear();
 		for (Double colorNumber : availableColors.keySet()) {
-			Text newColor = new Text("Color "+colorNumber+ VARIABLE_SEPARATOR);
+			Text newColor = new Text(COLORS_HEADER +colorNumber+ VARIABLE_SEPARATOR);
 			newColor.setWrappingWidth(WRAPPING_WIDTH);
 			Rectangle colorBlock = new Rectangle(20,20,availableColors.get(colorNumber));
 			HBox hbox = new HBox();
