@@ -123,6 +123,7 @@ public class IDEWindow implements Observer {
 	private GridPane turtleInfoPane;
 	private ScrollPane turtleInfoScrollable;
 	
+	public static final String DEBUGGING_TITLE = "Debugging Window";
 	/**
 	 * @param primary
 	 * Constructor for IDEWindow
@@ -348,6 +349,15 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void enterDebugging() {
+		Stage debuggingStage = new Stage();
+		Group debuggingGroup = new Group();
+		debuggingGroup.getChildren().add(new Text("Oops"));
+		Scene debuggingScene = new Scene(debuggingGroup, totalWidth, totalHeight, STANDARD_AREA_COLOR);
+		debuggingStage.setScene(debuggingScene);
+		debuggingStage.setTitle(DEBUGGING_TITLE);
+		debuggingStage.setResizable(false);
+		debuggingStage.show();
+		
 		
 	}
 
