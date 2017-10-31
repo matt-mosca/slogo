@@ -12,7 +12,7 @@ public class ColorDefinitionNode extends ViewNode {
     public double executeSelf(double... arguments) throws SLogoException {
         double index = arguments[0];
         int red = (int) arguments[1], green = (int) arguments[2], blue = (int) arguments[3];
-        return getViewController().setColorAtIndex(index, red, green, blue);
+        return getViewController().setColorAtIndex((int) index, red, green, blue);
     }
 
     @Override

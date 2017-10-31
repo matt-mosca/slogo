@@ -19,7 +19,7 @@ public class PaletteStorage extends Observable {
     private final String PALETTE_DEFAULTS_FILE = "resources/DefaultPalette.properties";
     private final Properties DEFAULT_PALETTE_PROPERTIES;
 
-    private Map<Double, Color> colorMap = new TreeMap<>();
+    private Map<Integer, Color> colorMap = new TreeMap<>();
 
     private final double MAX_COLOR_AMOUNT = 256;
 
@@ -36,16 +36,16 @@ public class PaletteStorage extends Observable {
 
     private void setDefaultColors() {
         for (String key : DEFAULT_PALETTE_PROPERTIES.stringPropertyNames()) {
-            colorMap.put(Double.parseDouble(key), Color.valueOf(DEFAULT_PALETTE_PROPERTIES.getProperty(key)));
+            colorMap.put(Integer.parseInt(key), Color.valueOf(DEFAULT_PALETTE_PROPERTIES.getProperty(key)));
         }
     }
 
-    double setColorAtIndex(double index, int red, int green, int blue) {
+    double setColorAtIndex(int index, int red, int green, int blue) {
         colorMap.put(index, Color.color(red/MAX_COLOR_AMOUNT, green/MAX_COLOR_AMOUNT, blue/MAX_COLOR_AMOUNT));
         return index;
     }
 
-    Color getColor(double index) throws SLogoException {
+    Color getColor(int index) throws SLogoException {
         if (!colorMap.containsKey(index)) {
             throw new UndefinedColorException(index);
         }
@@ -53,5 +53,5 @@ public class PaletteStorage extends Observable {
     }
 
 
-    public Map<Double, Color> getAvailableColors() { return colorMap; }
+    public Map<Integer, Color> getAvailableColors() { return colorMap; }
 }

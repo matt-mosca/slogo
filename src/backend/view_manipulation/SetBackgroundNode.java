@@ -13,7 +13,7 @@ public class SetBackgroundNode extends ViewNode
 
     @Override
     public double executeSelf(double... arguments) throws SLogoException {
-        return getViewController().setBackgroundColor(arguments[0]);
+        return getViewController().setBackgroundColor((int) arguments[0]);
     }
 
     @Override
