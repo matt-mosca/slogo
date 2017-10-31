@@ -12,6 +12,8 @@ import backend.control.VariableDefinitionNode;
 import backend.control.VariableNode;
 import backend.error_handling.IllegalSyntaxException;
 import backend.error_handling.SLogoException;
+import backend.error_handling.SyntaxCausedException;
+import backend.error_handling.UnbalancedMakeException;
 import backend.error_handling.UndefinedCommandException;
 import backend.error_handling.VariableArgumentsException;
 import backend.math.ConstantNode;
@@ -161,7 +163,12 @@ public class Parser {
 			makeExpTree(it);
 		}
 		if (nextToken.equals(VARIABLE_ARGS_START_DELIMITER)) {
+			System.out.println("About to create command with multiple args");
 			it.next();
+			// MAKE is a special case, the only non-ValueNode to support multiple args	
+			if (!isValueNode(commandGetter.getCommandNodeClass(it.peek()))) {
+				return makeVariableDefinitionNodeForMultipleParameters(it);
+			}
 			return makeExpTreeForVariableParameters(it);
 		}
 		if (isNumeric(nextToken)) {
@@ -238,18 +245,40 @@ public class Parser {
 		System.out.println("Making VariableDefinitionNode");
 		// Consume the MAKE / SET token
 		String token = it.next();
-		// Extract the variable name
 		String varName = it.next();
-		// Assert proper regex
-		if (!varName.matches(VARIABLE_REGEX)) {
-			throw new IllegalSyntaxException(varName);
-		}
-		// Resolve the expression into a tree
-		SyntaxNode expr = makeExpTree(it);
-		// TODO - make multiple vars ( make :a 10 :b 9 ... ) work
-		return new VariableDefinitionNode(token, scopedStorage, new String[] { varName }, new SyntaxNode[] { expr });
+		SyntaxNode varExp = makeExpTree(it);
+		return new VariableDefinitionNode(token, scopedStorage, new String[] { varName }, new SyntaxNode[] { varExp });
 	}
 
+	private VariableDefinitionNode makeVariableDefinitionNodeForMultipleParameters(PeekingIterator<String> it) throws SLogoException {
+		System.out.println("Making VariableDefinitionNode for multiple params");
+		// Consume the MAKE / SET token
+		String token = it.next();
+		// Extract the variable names
+		List<String> varNames = new ArrayList<>();
+		List<SyntaxNode> varExps = new ArrayList<>();
+		while (it.hasNext() && !it.peek().equals(VARIABLE_ARGS_END_DELIMITER)) {
+			String nextVarName = it.next();
+			varNames.add(nextVarName);
+			// Assert proper regex
+			if (!nextVarName.matches(VARIABLE_REGEX)) {
+				throw new IllegalSyntaxException(nextVarName);
+			}
+			// Catch unmatched params
+			if (!it.hasNext()) {
+				throw new UnbalancedMakeException();
+			}
+			SyntaxNode nextVarExp = makeExpTree(it);
+			varExps.add(nextVarExp);
+		}
+		if (!it.hasNext()) {
+			throw new IllegalSyntaxException(VARIABLE_ARGS_END_DELIMITER);
+		}
+		// Consume the ')' token
+		it.next();
+		return new VariableDefinitionNode(token, scopedStorage, varNames.toArray(new String[0]), varExps.toArray(new SyntaxNode[0]));
+	}
+	
 	private FunctionNode makeFunctionNode(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making FunctionNode");
 		// Consume the function name
@@ -408,7 +437,7 @@ public class Parser {
 	}
 
 	// Only ValueNodes can have variable params ? - EDIT : NO, 'MAKE' also 
-	private ValueNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
+	private SyntaxNode makeExpTreeForVariableParameters(PeekingIterator<String> it) throws SLogoException {
 		System.out.println("Making expTree for variable params");
 		if (it == null || !it.hasNext()) {
 			throw new IllegalArgumentException();
