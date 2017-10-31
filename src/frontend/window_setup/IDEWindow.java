@@ -1,5 +1,11 @@
 package frontend.window_setup;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 import backend.Controller;
 import backend.control.ScopedStorage;
 import backend.error_handling.SLogoException;
@@ -17,7 +23,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -41,13 +46,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utilities.MenuGetter;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
-
 public class IDEWindow implements Observer {
 
 	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
@@ -55,7 +53,7 @@ public class IDEWindow implements Observer {
 	public static final double TURTLEFIELD_HEIGHT = 400;
 	public static final double LEFT_WIDTH = 150;
 	public static final double LEFT_HEIGHT = TURTLEFIELD_HEIGHT;
-	public static final double RIGHT_WIDTH = 150;
+	public static final double RIGHT_WIDTH = 400;
 	public static final double RIGHT_HEIGHT = TURTLEFIELD_HEIGHT;
 	public static final double TOP_WIDTH = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
 	public static final double TOP_HEIGHT = 100;
@@ -64,24 +62,24 @@ public class IDEWindow implements Observer {
 	public static final double WRAPPING_WIDTH = 100;
 	public static final int OFFSET = 8;
 	public static final Color STANDARD_PEN_COLOR = Color.BLACK;
-	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
-	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
-	
-	private static final String VARIABLE_SEPARATOR = " = ";
 	public static final String VARIABLES_HEADER = "Variables ";
 	public static final String FUNCTIONS_HEADER = "Functions ";
 	public static final String COLORS_HEADER = "Colors ";
 	public static final String TURTLE_HEADER = "Turtle(s) Current State ";
 	public static final String NEW_LINE = "\n";
+	public static final double SCROLL_WIDTH = RIGHT_WIDTH - OFFSET;
+	
+	private static final String VARIABLE_SEPARATOR = " = ";
 	private static final String PNG_FILE_EXTENSION = "*.png",
 		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
 	private static final String LANGUAGE_MENU_HEADER = "Language";
-
-
+	
+	
+	private double totalWidth = LEFT_WIDTH + TURTLEFIELD_WIDTH + RIGHT_WIDTH;
+	private double totalHeight = TOP_HEIGHT + TURTLEFIELD_HEIGHT + BOTTOM_HEIGHT;
 	private Stage primaryStage;
 	private Scene primaryScene;
 	private HelpWindow helpWindow = new HelpWindow();
-	
 	private BorderPane borderLayout;
 	private Rectangle turtleField;
 	private VBox leftBox = new VBox();
@@ -150,16 +148,16 @@ public class IDEWindow implements Observer {
 		
 		TabPane displayTabPane = new TabPane();
 		displayTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
-		formatScrollPane(variableScrollable, 150, variables, variableGroup);
+		formatScrollPane(variableScrollable, SCROLL_WIDTH, variables, variableGroup);
 		tabMaker.makeTab(VARIABLES_HEADER,variableGroup, displayTabPane);
 		
-		formatScrollPane(colorScrollable, 150, colors, colorGroup);
+		formatScrollPane(colorScrollable, SCROLL_WIDTH, colors, colorGroup);
 		tabMaker.makeTab(COLORS_HEADER,colorGroup, displayTabPane);
 		
-		formatScrollPane(functionScrollable, 150, functions, functionGroup);
+		formatScrollPane(functionScrollable, SCROLL_WIDTH, functions, functionGroup);
 		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, displayTabPane);
 		
-		formatScrollPane(turtleInfoScrollable, 150, turtleInfoPane, turtleInfoGroup);
+		formatScrollPane(turtleInfoScrollable, SCROLL_WIDTH, turtleInfoPane, turtleInfoGroup);
 		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, displayTabPane);
 		
 		rightGroup.getChildren().add(displayTabPane);
@@ -248,7 +246,7 @@ public class IDEWindow implements Observer {
 		return yCoord - TOP_HEIGHT - TURTLEFIELD_HEIGHT / 2 + TurtlePen.DEFAULT_HEIGHT / 2;
 	}
 
-	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
+	private void formatScrollPane(ScrollPane sampleScroll, double prefSize, GridPane sampleGrid, Group root) {
 		sampleScroll = new ScrollPane();
 		sampleGrid.setPadding(new Insets(OFFSET));
 		sampleGrid.setHgap(OFFSET);
