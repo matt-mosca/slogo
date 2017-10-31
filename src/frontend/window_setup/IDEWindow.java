@@ -279,13 +279,9 @@ public class IDEWindow implements Observer {
 		Button reset = new Button("Reset");
 		reset.setOnAction(e -> controller.reset());
 		
-<<<<<<< HEAD
 		leftGroup.getChildren().addAll(languageMenuBar, undo, redo, reset);
-=======
-		leftGroup.getChildren().addAll(languageMenuBar, undo, redo);
 		buttonMaker.makeGUIItem(e->controller.addOneTurtle(), leftGroup, "Add Turtle");
 		buttonMaker.makeGUIItem(e->openFile(s), leftGroup, "Set Turtle Image");
->>>>>>> mjm141
 		//leftGroup.getChildren().add(new Rectangle(50,50));
 		topBox.getChildren().addAll(topGroup.getChildren());
 		bottomBox.getChildren().addAll(bottomGroup.getChildren());
