@@ -45,7 +45,7 @@ public class TurtleController {
 	}
 
 	// TELL [ 100 ] -- creates all turtles up to 100
-	void addTurtles(int turtleId) {
+	public void addTurtles(int turtleId) {
 		for (int newTurtleId = createdTurtles.size() + 1; newTurtleId <= turtleId; newTurtleId++) {
 			Turtle newTurtle = new Turtle();
 			createdTurtles.add(newTurtle);
@@ -55,6 +55,7 @@ public class TurtleController {
 				System.out.println("Clicked index " + TURTLE_INDEX);
 				setActiveTurtles(new Integer[] { TURTLE_INDEX + 1  });
 			});
+			
 		}
 	}
 
@@ -130,6 +131,8 @@ public class TurtleController {
 		}
 		activeTurtleId = ids.length > 0 ? ids[ids.length - 1] : 0;
 		System.out.println("Set activeTurtleId to " + activeTurtleId);
+		// TODO - Inform the front end of the new list of told turtles
+		turtleView.changeRepresentationOfActive(getToldTurtleIds());	
 		return activeTurtleId;
 	}
 

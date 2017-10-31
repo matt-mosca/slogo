@@ -40,8 +40,6 @@ public abstract class ValueNode implements SyntaxNode {
 	
 	public abstract int getDefaultNumberOfArguments();
 	
-	public abstract boolean canTakeVariableNumberOfArguments();
-	
 	public void addChild(SyntaxNode child) {
 		children.add(child);
 	}
