@@ -3,6 +3,8 @@ package backend.view_manipulation;
 import backend.error_handling.SLogoException;
 import backend.turtle.TurtleController;
 import frontend.turtle_display.TurtleView;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -26,12 +28,18 @@ public class ViewController {
         this.penSizeController = penController;
         this.turtleController = turtleController;
         this.backgroundController = new BackgroundController(paletteStorage);
+        addListeners(turtleView, turtleField, turtleController);
+    }
+
+    private void addListeners(TurtleView turtleView, Rectangle turtleField, TurtleController turtleController) {
         penSizeController.addSizeListener((fillProperty, oldSize, newSize) ->
                 turtleController.getToldTurtleIds().forEach(toldTurtleId ->
                         turtleView.changeStrokeWidth(toldTurtleId, newSize.doubleValue())));
-        penController.addColorListener((fillProperty, oldColor, newColor) ->
+
+        penColorController.addColorListener((fillProperty, oldColor, newColor) ->
                 turtleController.getToldTurtleIds().forEach(toldTurtleId ->
                         turtleView.changeDrawColor(toldTurtleId, newColor)));
+
         backgroundController.addColorListener((fillProperty, oldColor, newColor) ->
                 turtleField.setFill(newColor));
     }
