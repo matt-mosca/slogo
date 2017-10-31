@@ -28,7 +28,6 @@ public class ImageStorage {
         String[] filesNames = imageDirectory.list();
         // for logical ordering
         Arrays.sort(filesNames);
-        for (String s : filesNames) System.out.print(s);
         int index = 1;
         for (String fileName : filesNames) {
             if (fileName.endsWith(IMAGE_EXTENSION)) {

@@ -17,7 +17,6 @@ public class TurtleRotater {
     double rotateTurtle(int index, boolean clockwise, double angleInDegrees) {
         Turtle turtle = turtles.get(index);
         turtle.rotate(clockwise, angleInDegrees);
-        System.out.println("New angle: " + turtle.getAngleInDegrees());
         // Update front end
         turtleView.rotate(index, turtle.getAngleInDegrees());
         return angleInDegrees;
@@ -34,7 +33,6 @@ public class TurtleRotater {
     double setTowards(int index, double x, double y) {
         Turtle turtle = turtles.get(index);
         double angleRotated = turtle.setTowards(x, y);
-        System.out.println("Angle in degrees: " + turtle.getAngleInDegrees());
         turtleView.rotate(index, turtle.getAngleInDegrees());
         return angleRotated;
     }

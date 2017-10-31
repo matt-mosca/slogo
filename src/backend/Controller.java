@@ -132,7 +132,6 @@ public class Controller {
 	}
 
 	public void undo() throws SLogoException {
-		System.out.println("TRYING TO UNDO");
 		if (parser.canUndo()) {
 			resetView();
 			parser.undo();
@@ -140,7 +139,6 @@ public class Controller {
 	}
 
 	public void redo() throws SLogoException {
-		System.out.println("TRYING TO REDO");
 		if (parser.canRedo()) {
 			resetView();
 			parser.redo();

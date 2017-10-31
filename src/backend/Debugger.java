@@ -49,7 +49,6 @@ public class Debugger {
 		// Dispatch appropriate method
 		try {
 			Method nextSerializingMethod = commandGetter.getSerializingMethod(root.getClass());
-			System.out.println("Next serializing method: " + nextSerializingMethod.getName());
 			return (String) nextSerializingMethod.invoke(this, root);
 		} catch (IllegalAccessException | InvocationTargetException badCommand) {
 			badCommand.printStackTrace();

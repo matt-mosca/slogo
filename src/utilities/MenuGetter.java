@@ -45,7 +45,6 @@ public class MenuGetter {
     }
 
     private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName, IDEWindow runner) throws ProjectBuildException {
-    	System.out.println(itemName);
         String[] dropdownInfo = MENU_PROPERTIES.getProperty(itemName).split(INFO_DELIMITER);
         if (dropdownInfo.length != INFO_LENGTH) {
             throw new ProjectBuildException();
@@ -54,7 +53,6 @@ public class MenuGetter {
         Menu dropdown = dropdownsMap.getOrDefault(dropdownName, new Menu(dropdownName));
         try {
             Method actionMethod = runner.getClass().getDeclaredMethod(dropdownInfo[1]);
-            System.out.println(actionMethod.getName());
             MenuItem menuItem = new MenuItem(itemName);
             menuItem.setOnAction(e -> runMenuAction(actionMethod, runner));
             dropdown.getItems().add(menuItem);

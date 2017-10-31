@@ -24,7 +24,6 @@ public class WorkspaceManager {
 	
 	public void saveWorkspaceToFile(Parser parser, ScopedStorage storage, String fileName) {
 		Set<String> sessionCommands = parser.getSessionCommands();
-		System.out.println("Number of command trees: " + sessionCommands.size());
 		if (fileName.startsWith(UNDESIRED_PREFIX)) {
 			fileName = fileName.replace(UNDESIRED_PREFIX, "");
 		}
@@ -53,7 +52,6 @@ public class WorkspaceManager {
 				return;
 			}
 			String sessionText = workspaceFileScanner.next();
-			System.out.println("Session text: " + sessionText);
 			if (!parser.validateCommand(sessionText)) {
 				workspaceFileScanner.close();
 				throw new InvalidSessionLoadedException();

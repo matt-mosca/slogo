@@ -53,7 +53,6 @@ public class TurtleController {
 			turtleView.addTurtle();
 			final int TURTLE_INDEX = getZeroBasedId(newTurtleId);
 			turtleView.selectTurtleOnClick(TURTLE_INDEX, e -> {
-				System.out.println("Clicked index " + TURTLE_INDEX);
 				setActiveTurtles(new Integer[] { TURTLE_INDEX + 1  });
 			});
 			
@@ -131,7 +130,6 @@ public class TurtleController {
 			addTurtles(turtleId);
 		}
 		activeTurtleId = ids.length > 0 ? ids[ids.length - 1] : 0;
-		System.out.println("Set activeTurtleId to " + activeTurtleId);
 		// TODO - Inform the front end of the new list of told turtles
 		turtleView.changeRepresentationOfActive(getToldTurtleIds());	
 		return activeTurtleId;

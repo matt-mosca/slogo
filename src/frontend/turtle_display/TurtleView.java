@@ -98,8 +98,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	lineMaker.drawLine(currentLineXCoordinate, currentLineYCoordinate, BackendValProcessor.translateXCoord(
     			fieldCenterX, newXCoord), BackendValProcessor.translateYCoord(fieldCenterY, newYCoord),layout);
     	notifyObservers();
-//    	System.out.println("New x of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getXCoordinate());
-//    	System.out.println("New y of turtle " + turtleIndex + " : " + displayedTurtles.get(turtleIndex).getYCoordinate());
     }
 
     /**
@@ -114,7 +112,6 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	//Be sure to check for errors in turtleIndex input here to avoid ArrayIndexOutOfBounds exceptions
     	double processedAngle = BackendValProcessor.processAngle(newAngle);
     	displayedTurtles.get(turtleIndex).rotateTurtle(processedAngle);
-    	System.out.println("New angle of turtle " + " index " + displayedTurtles.get(turtleIndex).getAngle());
     	notifyObservers();
     }
     

@@ -4,6 +4,9 @@ import apis.TurtleDisplay;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 
+/**
+ * @deprecated
+ */
 public class TurtleListener {
 
 	public static final double STARTING_ANGLE = Math.PI / 2;
@@ -98,7 +101,6 @@ public class TurtleListener {
 	private void registerXPropListener() {
 		xProp.addListener((observableValue, oldValue, newValue) -> {
 			//turtleDisplay.move(turtleIndex, (double) newValue, getY());
-			System.out.println("Setting x of turtle representation to be " + newValue); // TEMP
 		});
 	}
 
@@ -106,7 +108,6 @@ public class TurtleListener {
 	private void registerYPropListener() {
 		yProp.addListener((observableValue, oldValue, newValue) -> {
 			//turtleDisplay.move(turtleIndex, getX(), (double) newValue);
-			System.out.println("Setting y of turtle representation to be " + newValue); // TEMP
 		});
 	}
 
@@ -114,7 +115,6 @@ public class TurtleListener {
 	private void registerAnglePropListener() {
 		angleProp.addListener((observableValue, oldValue, newValue) -> {
 			//turtleDisplay.rotate(turtleIndex, (double) newValue);
-			System.out.println("Setting angle of turtle representation to be " + newValue); // TEMP
 		});
 	}
 
