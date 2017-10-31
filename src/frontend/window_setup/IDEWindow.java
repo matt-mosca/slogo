@@ -86,6 +86,7 @@ public class IDEWindow implements Observer {
 	public static final String VARIABLES_HEADER = "Variables ";
 	public static final String FUNCTIONS_HEADER = "Functions ";
 	public static final String COLORS_HEADER = "Colors ";
+	public static final String TURTLE_HEADER = "Turtle(s) Current State ";
 	public static final String NEW_LINE = "\n";
 	private static final String PNG_FILE_EXTENSION = "*.png",
 		JPG_FILE_EXTENSION = "*.jpg", GIF_FILE_EXTENSION = ".gif";
@@ -170,6 +171,7 @@ public class IDEWindow implements Observer {
 		tabMaker.makeTab(FUNCTIONS_HEADER,functionGroup, tabPane);
 		
 		formatScrollPane(turtleInfoScrollable, 150, turtleInfoPane, turtleInfoGroup);
+		tabMaker.makeTab(TURTLE_HEADER, turtleInfoGroup, tabPane);
 		
 		rightGroup.getChildren().add(tabPane);
 		turtleView = new TurtleView(borderLayout, turtleField);
@@ -239,6 +241,8 @@ public class IDEWindow implements Observer {
 
 	private void formatScrollPane(ScrollPane sampleScroll, int prefSize, GridPane sampleGrid, Group root) {
 		sampleScroll = new ScrollPane();
+		sampleGrid.setPadding(new Insets(OFFSET));
+		sampleGrid.setHgap(OFFSET);
 		sampleScroll.setPrefSize(prefSize,prefSize);
 		sampleScroll.setContent(sampleGrid);
 		root.getChildren().add(sampleScroll);
