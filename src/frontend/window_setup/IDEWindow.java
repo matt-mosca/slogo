@@ -179,7 +179,7 @@ public class IDEWindow implements Observer {
 			controller = new Controller(scopedStorage, turtleView, turtleField);
 			console = new Console(controller);
 		} catch (SLogoException buildException) {
-			console.addCommand(buildException.getMessage());
+			console.addError(buildException.getMessage());
 		}
 		formatMovementKeys(turtleMovementKeys, rightGroup, RIGHT_WIDTH);
 		makeGUIs();
