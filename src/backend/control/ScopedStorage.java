@@ -23,11 +23,10 @@ public class ScopedStorage extends Observable {
 	private Map<String, List<String>> functionParameterNames = new HashMap<>();
 	private Map<String, SyntaxNode> functionRoots = new HashMap<>();
 
+	// use Deque because java.util.Stack has no interface and extends vector
 	private Deque<String> scopeStack = new ArrayDeque<>();
 
-	private String currentScope;
 	private static final String GLOBAL = "global";
-
 	private final int STORAGE_SUCCESS = 1;
 
 	// track anonymous scopes (loops, conditionals)
@@ -35,7 +34,7 @@ public class ScopedStorage extends Observable {
 
 	public ScopedStorage() {
 		functionVariables.put(GLOBAL, new HashMap<>());
-		currentScope = GLOBAL;
+		scopeStack.push(GLOBAL);
 	}
 
 	double addFunction(String functionName, SyntaxNode functionRoot) {
@@ -43,18 +42,15 @@ public class ScopedStorage extends Observable {
 		return STORAGE_SUCCESS;
 	}
 
-	/**
-	 *
-	 *
-	 * @param name
-	 * @param value
-	 * @return
-	 */
 	public double setVariable(String name, double value) {
-		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(currentScope, new HashMap<>());
-		functionVariableMap.put(name, value);
-		functionVariables.put(getScopeOfDefinition(name), functionVariableMap);
-		// point at which frontend should update available variables
+		String scopeToDefineIn = getScopeOfDefinition(name);
+		return setVariableInScope(scopeToDefineIn, name, value);
+	}
+
+	double setVariableInScope(String scope, String variableName, double value) {
+		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(scope, new HashMap<>());
+		functionVariableMap.put(variableName, value);
+		functionVariables.put(scope, functionVariableMap);
 		setChanged();
 		notifyObservers();
 		return value;
@@ -72,7 +68,8 @@ public class ScopedStorage extends Observable {
 				return scope;
 			}
 		}
-		return currentScope;
+		// if not yet defined, variable should be defined in current scope where it's being set or used
+		return scopeStack.peekLast();
 	}
 
 	public void addFunctionParameterNames(String functionName, List<String> parameterNames) {
@@ -83,8 +80,7 @@ public class ScopedStorage extends Observable {
 	}
 
 	void enterScope(String newScope) {
-		scopeStack.addLast(currentScope);
-		currentScope = newScope;
+		scopeStack.addLast(newScope);
 	}
 
 	// for loops, conditionals
@@ -92,10 +88,7 @@ public class ScopedStorage extends Observable {
 		enterScope(String.valueOf(anonymousId++));
 	}
 
-	void exitScope() {
-		String lastScope = (scopeStack.isEmpty() ? GLOBAL : scopeStack.pollLast());
-		currentScope = lastScope;
-	}
+	void exitScope() { scopeStack.pollLast(); }
 	/* GETTERS */
 
 	// Whether variable is accessible from current scope, inclusive of outer ones
@@ -135,24 +128,20 @@ public class ScopedStorage extends Observable {
 		return functionParameterNames;
 	}
 
-	List<String> getCurrentFunctionParameterNames() {
-		return functionParameterNames.get(currentScope);
+	List<String> getFunctionParameterNames(String functionName) {
+		return functionParameterNames.get(functionName);
 	}
 
-	SyntaxNode getCurrentFunctionRoot() throws UndefinedFunctionException {
-		if (!existsFunction(currentScope)) {
-			throw new UndefinedFunctionException(currentScope);
+	SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
+		if (!existsFunction(functionName)) {
+			throw new UndefinedFunctionException(functionName);
 		} else {
-			return functionRoots.get(currentScope);
+			return functionRoots.get(functionName);
 		}
 	}
 
-	// Need to check all scopes from innermost to outermost ... not just
-	// innermost
+	// Need to check all scopes from innermost to outermost ... not just innermost
 	double getVariableValue(String variableName) throws UndefinedVariableException {
-		if (variableExistsInCurrentScope(variableName)) {
-			return functionVariables.get(currentScope).get(variableName);
-		}
 		if (!existsVariable(variableName)) {
 			throw new UndefinedVariableException(variableName);
 		}
@@ -160,25 +149,11 @@ public class ScopedStorage extends Observable {
 		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
 		while (innerToOuterScope.hasNext()) {
 			String scope = innerToOuterScope.next();
-			if (functionVariables.get(scope).containsKey(variableName)) {
+			if (functionVariables.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
 				return functionVariables.get(scope).get(variableName);
 			}
 		}
 		return 0;
-	}
-	
-	// For SAVING TO / LOADING FROM WORKSPACE
-	Map<String, Map<String, Double>> getFunctionInfo() {
-		return functionVariables;
-	}
-	
-	List<String> getFunctionParameters(String functionName) {
-		return functionParameterNames.get(functionName);
-	}
-	
-	private boolean variableExistsInCurrentScope(String variableName) {
-		return functionVariables.containsKey(currentScope) &&
-				functionVariables.get(currentScope).containsKey(variableName);
 	}
 
 	// for undo / redo
