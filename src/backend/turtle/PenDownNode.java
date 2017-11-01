@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class PenDownNode extends TurtleNode {
 
-	public PenDownNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public PenDownNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

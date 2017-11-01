@@ -9,10 +9,6 @@ import backend.TwoArgNode;
  */
 public class DifferenceNode extends TwoArgNode {
 
-    public DifferenceNode(String commandString) {
-		super(commandString);
-	}
-
 	@Override
     public double executeSelf(double... operands) { return operands[0] - operands[1]; }
     

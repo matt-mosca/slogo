@@ -15,12 +15,10 @@ import java.util.List;
  */
 public abstract class ValueNode implements SyntaxNode {
 
-	List<SyntaxNode> children;
-	private String serializedString;
+	private List<SyntaxNode> children;
 
-	protected ValueNode(String commandString) {
+	protected ValueNode() {
 		children = new ArrayList<>();
-		this.serializedString = commandString;
 	}
 
 	/**
@@ -44,19 +42,8 @@ public abstract class ValueNode implements SyntaxNode {
 		double[] arguments = new double[children.size()];
 		for (int index = 0; index < arguments.length; index++) {
 			arguments[index] = children.get(index).execute();
-			serializedString += Double.toString(arguments[index]);
 		}
 		return arguments;
-	}
-
-	/**
-	 * Return string representation of subtree that depends on program execution
-	 * status - when children are resolved, their double values are appended to
-	 * serialization
-	 */
-	@Override
-	public String serialize() {
-		return serializedString;
 	}
 
 	/**

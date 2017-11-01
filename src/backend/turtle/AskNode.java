@@ -12,8 +12,8 @@ public class AskNode extends TellNode {
 
 	SyntaxNode commandsRoot;
 	
-	public AskNode(String commandString, TurtleController turtleController, SyntaxNode commandsRoot) {
-		super(commandString, turtleController);
+	public AskNode(TurtleController turtleController, SyntaxNode commandsRoot) {
+		super(turtleController);
 		this.commandsRoot = commandsRoot;
 	}
 

@@ -21,11 +21,6 @@ public class PiNode implements SyntaxNode {
     }
 
 	@Override
-	public String serialize() {
-		return commandString;
-	}
-	
-	@Override
 	public boolean canTakeVariableNumberOfArguments() {
 		return false;
 	}

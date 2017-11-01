@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class SetPenSizeNode extends ViewNode {
 
-    public SetPenSizeNode(String commandString, ViewController viewController) {
-        super(commandString, viewController);
+    public SetPenSizeNode(ViewController viewController) {
+        super(viewController);
     }
 
     @Override

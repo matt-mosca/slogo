@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class SetTurtleImageNode extends ViewNode {
 
-    public SetTurtleImageNode(String commandString, ViewController viewController) {
-        super(commandString, viewController);
+    public SetTurtleImageNode(ViewController viewController) {
+        super(viewController);
     }
 
     @Override

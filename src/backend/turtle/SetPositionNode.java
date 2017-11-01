@@ -8,8 +8,8 @@ import backend.error_handling.UnevenNumberOfArgumentsException;
  */
 public class SetPositionNode extends TurtleNode {
 
-	public SetPositionNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public SetPositionNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

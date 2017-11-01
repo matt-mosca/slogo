@@ -7,10 +7,6 @@ import java.util.List;
  */
 public class RootNode extends VarArgNode {
 	
-	protected RootNode() {
-		super(""); // Root Node does not hold a command of its own
-	}
-
 	@Override
 	public double executeSelf(double... arguments) {
 		// TODO Auto-generated method stub

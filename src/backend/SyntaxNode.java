@@ -21,13 +21,6 @@ public interface SyntaxNode {
 	double execute() throws SLogoException;
 
 	/**
-	 * String representation of command subtree based on state of program execution
-	 * 
-	 * @return
-	 */
-	String serialize();
-
-	/**
 	 * Whether this syntax / command node supports unlimited (variable no. of)
 	 * parameters
 	 * 

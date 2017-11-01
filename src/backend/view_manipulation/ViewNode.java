@@ -7,13 +7,18 @@ import backend.ValueNode;
  */
 public abstract class ViewNode extends ValueNode {
 
-    private ViewController viewController;
+	private ViewController viewController;
 
-    public ViewNode(String commandString, ViewController viewController) { super(commandString); this.viewController = viewController; }
+	public ViewNode(ViewController viewController) {
+		this.viewController = viewController;
+	}
 
-    @Override
-    public boolean canTakeVariableNumberOfArguments() { return false; }
+	@Override
+	public boolean canTakeVariableNumberOfArguments() {
+		return false;
+	}
 
-    protected ViewController getViewController() { return viewController; }
+	protected ViewController getViewController() {
+		return viewController;
+	}
 }
-

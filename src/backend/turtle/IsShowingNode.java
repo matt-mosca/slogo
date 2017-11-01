@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class IsShowingNode extends TurtleNode {
 
-	public IsShowingNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public IsShowingNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

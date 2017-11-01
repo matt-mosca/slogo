@@ -208,7 +208,7 @@ public class Parser {
 		}
 		if (scopedStorage.existsVariable(nextToken) || nextToken.matches(ParserUtils.VARIABLE_REGEX)) {
 			it.next();
-			return new VariableNode(nextToken, scopedStorage, nextToken);
+			return new VariableNode(scopedStorage, nextToken);
 		}
 		// Dispatch appropriate method
 		try {
@@ -238,7 +238,7 @@ public class Parser {
 	private VariableDefinitionNode makeVariableDefinitionNodeForMultipleParameters(PeekingIterator<String> it)
 			throws SLogoException {
 		// Consume the MAKE / SET token
-		String token = it.next();
+		it.next();
 		// Extract the variable names
 		List<String> varNames = new ArrayList<>();
 		List<SyntaxNode> varExps = new ArrayList<>();
@@ -248,7 +248,7 @@ public class Parser {
 		}
 		// Consume the ')' token
 		it.next();
-		return new VariableDefinitionNode(token, scopedStorage, varNames.toArray(new String[0]),
+		return new VariableDefinitionNode(scopedStorage, varNames.toArray(new String[0]),
 				varExps.toArray(new SyntaxNode[0]));
 	}
 
@@ -334,8 +334,7 @@ public class Parser {
 		for (int parameterIndex = 0; parameterIndex < numberOfFunctionParameters; parameterIndex++) {
 			functionParameters.add(makeExpTree(it));
 		}
-		functionParameters.forEach(e -> System.out.print(e.serialize() + " "));
-		return new FunctionNode(funcName, scopedStorage, funcName, functionParameters);
+		return new FunctionNode(scopedStorage, funcName, functionParameters);
 	}
 
 	private ValueNode getValueNodeFromCommandName(String commandName) throws SLogoException {
@@ -344,14 +343,14 @@ public class Parser {
 			Constructor constructor;
 			Object[] constructorArgs;
 			if (parserUtils.isTurtleNode(commandClass)) {
-				constructor = commandClass.getConstructor(String.class, TurtleController.class);
-				constructorArgs = new Object[] { commandName, turtleManager };
+				constructor = commandClass.getConstructor(TurtleController.class);
+				constructorArgs = new Object[] { turtleManager };
 			} else if (parserUtils.isViewNode(commandClass)) {
-				constructor = commandClass.getConstructor(String.class, ViewController.class);
-				constructorArgs = new Object[] { commandName, viewController };
+				constructor = commandClass.getConstructor(ViewController.class);
+				constructorArgs = new Object[] { viewController };
 			} else {
-				constructor = commandClass.getConstructor(String.class);
-				constructorArgs = new Object[] { commandName };
+				constructor = commandClass.getConstructor(null);
+				constructorArgs = null;
 			}
 			return (ValueNode) constructor.newInstance(constructorArgs);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException
@@ -362,23 +361,23 @@ public class Parser {
 
 	private VariableDefinitionNode makeVariableDefinitionNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the MAKE / SET token
-		String token = it.next();
+		it.next();
 		String varName = it.next();
 		SyntaxNode varExp = makeExpTree(it);
-		return new VariableDefinitionNode(token, scopedStorage, new String[] { varName }, new SyntaxNode[] { varExp });
+		return new VariableDefinitionNode(scopedStorage, new String[] { varName }, new SyntaxNode[] { varExp });
 	}
 
 	private RepeatNode makeRepeatNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the REPEAT token
-		String token = it.next();
+		it.next();
 		SyntaxNode numberOfTimesToRepeat = makeExpTree(it);
 		RootNode commandsListRoot = getCommandsListRoot(it);
-		return new RepeatNode(token, scopedStorage, numberOfTimesToRepeat, commandsListRoot);
+		return new RepeatNode(scopedStorage, numberOfTimesToRepeat, commandsListRoot);
 	}
 
 	private DoTimesNode makeDoTimesNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the DOTIMES token
-		String token = it.next();
+		it.next();
 		// Consume the '[' token
 		String listStartToken = it.next();
 		if (!listStartToken.equals(ParserUtils.LIST_START_DELIMITER)) {
@@ -394,12 +393,12 @@ public class Parser {
 		RootNode commandsListRoot = getCommandsListRoot(it);
 		// Error will be resolved when limit arg type is changed to SyntaxNode in
 		// DoTimesNode constructor
-		return new DoTimesNode(token, scopedStorage, varName, limitExp, commandsListRoot);
+		return new DoTimesNode(scopedStorage, varName, limitExp, commandsListRoot);
 	}
 
 	private LoopNode makeForLoopNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the FOR token
-		String token = it.next();
+		it.next();
 		// Consume the '[' token
 		String listStartToken = it.next();
 		if (!listStartToken.equals(ParserUtils.LIST_START_DELIMITER)) {
@@ -415,30 +414,30 @@ public class Parser {
 		// Consume ']' token
 		it.next();
 		RootNode commandsListRoot = getCommandsListRoot(it);
-		return new LoopNode(token, scopedStorage, varName, startExp, endExp, incrExp, commandsListRoot);
+		return new LoopNode(scopedStorage, varName, startExp, endExp, incrExp, commandsListRoot);
 	}
 
 	private IfNode makeIfNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the IF token
-		String token = it.next();
+		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
 		RootNode commandsListRoot = getCommandsListRoot(it);
-		return new IfNode(token, scopedStorage, conditionExpression, commandsListRoot);
+		return new IfNode(scopedStorage, conditionExpression, commandsListRoot);
 	}
 
 	private IfElseNode makeIfElseNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the IfELSE token
-		String token = it.next();
+		it.next();
 		SyntaxNode conditionExpression = makeExpTree(it);
 		RootNode trueCommandsListRoot = getCommandsListRoot(it);
 		RootNode falseCommandsListRoot = getCommandsListRoot(it);
-		return new IfElseNode(token, scopedStorage, conditionExpression, trueCommandsListRoot, falseCommandsListRoot);
+		return new IfElseNode(scopedStorage, conditionExpression, trueCommandsListRoot, falseCommandsListRoot);
 	}
 
 	// TODO - SPLIT INTO SMALLER HELPERS
 	private FunctionDefinitionNode makeFunctionDefinitionNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the MAKEUSERINSTRUCTION token
-		String token = it.next();
+		it.next();
 		String funcName = it.next();
 		// To support recursive functions, may need to store the funcName here
 		scopedStorage.registerFunctionName(funcName);
@@ -446,15 +445,14 @@ public class Parser {
 		// need to do this here for recursion to work
 		scopedStorage.addFunctionParameterNames(funcName, variableNames);
 		RootNode funcRoot = getCommandsListRoot(it);
-		return new FunctionDefinitionNode(token, scopedStorage, funcName, funcRoot);
+		return new FunctionDefinitionNode(scopedStorage, funcName, funcRoot);
 	}
 
 	private TellNode makeTellNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the TELL token
-		String token = it.next();
+		it.next();
 		RootNode idsRoot = getCommandsListRoot(it);
-		TellNode tellNode = new TellNode(token, turtleManager);
-		// TODO - use helper for this??
+		TellNode tellNode = new TellNode(turtleManager);
 		for (SyntaxNode child : idsRoot.getChildren()) {
 			tellNode.addChild(child);
 		}
@@ -463,10 +461,10 @@ public class Parser {
 
 	private AskNode makeAskNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the ASK button
-		String token = it.next();
+		it.next();
 		RootNode idsRoot = getCommandsListRoot(it);
 		RootNode commandsListRoot = getCommandsListRoot(it);
-		AskNode askNode = new AskNode(token, turtleManager, commandsListRoot);
+		AskNode askNode = new AskNode(turtleManager, commandsListRoot);
 		for (SyntaxNode child : idsRoot.getChildren()) {
 			askNode.addChild(child);
 		}
@@ -475,10 +473,10 @@ public class Parser {
 
 	private AskWithNode makeAskWithNode(PeekingIterator<String> it) throws SLogoException {
 		// Consume the ASKWITH button
-		String token = it.next();
+		it.next();
 		RootNode queriesRoot = getCommandsListRoot(it);
 		RootNode commandsListRoot = getCommandsListRoot(it);
-		AskWithNode askWithNode = new AskWithNode(token, turtleManager, queriesRoot, commandsListRoot);
+		AskWithNode askWithNode = new AskWithNode(turtleManager, queriesRoot, commandsListRoot);
 		return askWithNode;
 	}
 

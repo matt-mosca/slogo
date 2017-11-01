@@ -9,10 +9,6 @@ import backend.VarArgNode;
  */
 public class OrNode extends VarArgNode {
 
-    public OrNode(String commandString) {
-		super(commandString);
-	}
-
 	@Override
     public double executeSelf(double... operands) {
         for (double operand : operands) {

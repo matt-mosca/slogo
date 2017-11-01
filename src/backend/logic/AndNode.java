@@ -9,10 +9,6 @@ import backend.VarArgNode;
  */
 public class AndNode extends VarArgNode {
 
-    public AndNode(String commandString) {
-		super(commandString);
-	}
-
 	@Override
     public double executeSelf(double... operands) {
 		for (double operand : operands) {

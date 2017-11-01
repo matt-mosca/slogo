@@ -9,10 +9,6 @@ import backend.TwoArgNode;
  */
 public class RemainderNode extends TwoArgNode {
 
-    public RemainderNode(String commandString) {
-		super(commandString);
-	}
-
 	@Override
     public double executeSelf(double... operands) { return operands[0] % operands[1]; }
     

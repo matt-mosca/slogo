@@ -4,8 +4,8 @@ import backend.error_handling.SLogoException;
 
 public class ColorDefinitionNode extends ViewNode {
 
-    public ColorDefinitionNode(String commandString, ViewController viewController) {
-        super(commandString, viewController);
+    public ColorDefinitionNode(ViewController viewController) {
+        super(viewController);
     }
 
     @Override

@@ -8,8 +8,8 @@ import backend.error_handling.UnevenNumberOfArgumentsException;
  */
 public class SetTowardsNode extends TurtleNode {
 
-	public SetTowardsNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public SetTowardsNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class ForwardNode extends TurtleNode {
 
-	public ForwardNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public ForwardNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 

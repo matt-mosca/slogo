@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class TurtlesNode extends TurtleNode {
 
-	public TurtlesNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public TurtlesNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
