@@ -20,8 +20,8 @@ public class ConsoleTester extends Application{
             primaryStage.setResizable(false);
             primaryStage.show();
             Console window = new Console(null);
-            primaryStage.setScene(new Scene(window.getListView()));
-
+            // primaryStage.setScene(new Scene(window.getListView()));
+            // ^ made getListView package private
         }
 
         public static void main(String[] args) {
