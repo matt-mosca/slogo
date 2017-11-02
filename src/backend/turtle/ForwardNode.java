@@ -2,10 +2,13 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class ForwardNode extends TurtleNode {
 
-	public ForwardNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public ForwardNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 

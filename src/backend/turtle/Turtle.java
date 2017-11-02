@@ -1,5 +1,8 @@
 package backend.turtle;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class Turtle {
 
 	public static final double STARTING_ANGLE = Math.PI / 2;

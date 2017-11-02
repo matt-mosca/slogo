@@ -3,6 +3,8 @@ package backend.math;
 import backend.SyntaxNode;
 
 /**
+ * Returns the value of the constant pi.
+ *
  * @author Ben Schwennesen
  */
 public class PiNode implements SyntaxNode {
@@ -18,11 +20,6 @@ public class PiNode implements SyntaxNode {
         return Math.PI;
     }
 
-	@Override
-	public String serialize() {
-		return commandString;
-	}
-	
 	@Override
 	public boolean canTakeVariableNumberOfArguments() {
 		return false;

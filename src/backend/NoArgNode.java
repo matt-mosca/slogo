@@ -1,11 +1,10 @@
 package backend;
 
+/**
+ * @author Ben Schwennesen
+ */
 public abstract class NoArgNode extends ValueNode {
 	
-    protected NoArgNode(String commandString) {
-		super(commandString);
-	}
-
 	@Override
     public boolean canTakeVariableNumberOfArguments() {return false;}
     

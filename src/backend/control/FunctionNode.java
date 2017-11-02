@@ -14,8 +14,8 @@ public class FunctionNode extends ControlNode {
     private List<SyntaxNode> parameters;
     private final String FUNCTION_NAME;
 
-    public FunctionNode(String commandName, ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
-        super(commandName, store);
+    public FunctionNode(ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
+        super(store);
         this.parameters = parameters;
         FUNCTION_NAME = functionName;
     }
@@ -24,22 +24,19 @@ public class FunctionNode extends ControlNode {
     public double execute() throws SLogoException {
         ScopedStorage store = getStore();
         store.enterScope(FUNCTION_NAME);
-        List<String> parameterNames = store.getCurrentFunctionParameterNames();
+        List<String> parameterNames = store.getFunctionParameterNames(FUNCTION_NAME);
         if (parameterNames.size() != parameters.size()) {
             throw new BadNumberOfArgumentsException(FUNCTION_NAME, parameterNames.size());
         }
         for (int parameter = 0; parameter < parameters.size(); parameter++) {
-            store.setVariable(parameterNames.get(parameter), parameters.get(parameter).execute());
+            String parameterName = parameterNames.get(parameter);
+            double valueOfParameter = parameters.get(parameter).execute();
+            // do not overwrite existing variable with the same name as the parameters
+            store.setVariableInScope(FUNCTION_NAME, parameterName, valueOfParameter);
         }
-        double result = store.getCurrentFunctionRoot().execute();
+        double result = store.getFunctionRoot(FUNCTION_NAME).execute();
         store.exitScope();
         return result;
     }
-
-	@Override
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

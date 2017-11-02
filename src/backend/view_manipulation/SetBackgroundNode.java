@@ -7,8 +7,8 @@ import backend.error_handling.SLogoException;
  */
 public class SetBackgroundNode extends ViewNode
 {
-    public SetBackgroundNode(String commandString, ViewController viewController) {
-        super(commandString, viewController);
+    public SetBackgroundNode(ViewController viewController) {
+        super(viewController);
     }
 
     @Override

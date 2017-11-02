@@ -18,8 +18,8 @@ public class RepeatNode extends LoopNode {
     private static final SyntaxNode START_EXPRESSION = new ConstantNode(1);
     private static final SyntaxNode INCREMENT_EXPRESSION = new ConstantNode(1);
 
-    public RepeatNode(String commandName, ScopedStorage store, SyntaxNode limitExpression, SyntaxNode subtree) throws SLogoException {
-        super(commandName, store, REPEAT_VARIABLE_NAME, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
+    public RepeatNode(ScopedStorage store, SyntaxNode limitExpression, SyntaxNode subtree) throws SLogoException {
+        super(store, REPEAT_VARIABLE_NAME, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
     }
 
 }

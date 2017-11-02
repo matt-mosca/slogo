@@ -2,10 +2,13 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class XCoordinateNode extends TurtleNode {
 
-	public XCoordinateNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public XCoordinateNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

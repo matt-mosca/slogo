@@ -2,10 +2,13 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class IsPenDownNode extends TurtleNode {
 
-	public IsPenDownNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public IsPenDownNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override

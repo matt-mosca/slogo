@@ -26,8 +26,14 @@ public class Debugger {
     public static final String LIST_END_DELIMITER = "]";
 
     private Parser parser;
+    private ParserUtils parserUtils;
     private CommandGetter commandGetter;
 
+    public Debugger(Parser parser, ParserUtils parserUtils) {
+    		this.parser = parser;
+    		this.parserUtils = parserUtils;
+    }
+    
     public void executeCommand(String command) throws SLogoException {
         String formattedCommand = command.replaceAll(DELIMITER_REGEX, STANDARD_DELIMITER).trim();
         if (!parser.getSyntaxTrees().containsKey(formattedCommand)) { // in case method is called without validation
@@ -43,7 +49,7 @@ public class Debugger {
 		if (root == null) {
 			return "";
 		}
-		if (isConstantNode(root.getClass())) {
+		if (parserUtils.isConstantNode(root.getClass())) {
 			return Double.toString(((ConstantNode) root).getValue());
 		}
 		// Dispatch appropriate method
@@ -59,14 +65,14 @@ public class Debugger {
         if (root == null) {
             return "";
         }
-        if (!parser.isValueNode(root.getClass())) {
+        if (!parserUtils.isValueNode(root.getClass())) {
             throw new IllegalArgumentException();
         }
         String rootString = "";
         ValueNode valueNode = (ValueNode) root;
         boolean isTakingUnlimitedParams = false;
         List<SyntaxNode> children = valueNode.getChildren();
-        if (!isRootNode(valueNode.getClass())) {
+        if (!parserUtils.isRootNode(valueNode.getClass())) {
             // Check for unlimited params - if so, need to add a '(' and ')'
             if (valueNode.canTakeVariableNumberOfArguments()
                     && children.size() != valueNode.getDefaultNumberOfArguments()) {
@@ -103,24 +109,4 @@ public class Debugger {
                 + LIST_END_DELIMITER;
     }
 
-    // Special cases in serialization
-    private boolean isConstantNode(Class nodeClass) {
-        return ConstantNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isVariableNode(Class nodeClass) {
-        return VariableNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isFunctionDefinitionNode(Class nodeClass) {
-        return FunctionDefinitionNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isDoTimesNode(Class nodeClass) {
-        return DoTimesNode.class.isAssignableFrom(nodeClass);
-    }
-
-    private boolean isRootNode(Class nodeClass) {
-        return RootNode.class.isAssignableFrom(nodeClass);
-    }
 }

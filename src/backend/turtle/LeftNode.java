@@ -2,10 +2,13 @@ package backend.turtle;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * @author Adithya Raghunathan
+ */
 public class LeftNode extends TurtleNode {
 
-	public LeftNode(String commandString, TurtleController turtleController) {
-		super(commandString, turtleController);
+	public LeftNode(TurtleController turtleController) {
+		super(turtleController);
 	}
 
 	@Override
@@ -13,7 +16,7 @@ public class LeftNode extends TurtleNode {
 		for (double angle : arguments) {
 			getTurtleController().rotateCurrentTurtles(false, angle);			
 		}
-		return arguments[arguments.length] - 1;
+		return arguments[arguments.length - 1];
 	}
 
 	@Override

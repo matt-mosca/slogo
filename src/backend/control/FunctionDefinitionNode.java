@@ -11,8 +11,8 @@ public class FunctionDefinitionNode extends ControlNode {
 
     private final String FUNCTION_NAME;
 
-    public FunctionDefinitionNode(String commandName, ScopedStorage store, String functionName, SyntaxNode functionRoot) {
-        super(commandName, store);
+    public FunctionDefinitionNode(ScopedStorage store, String functionName, SyntaxNode functionRoot) {
+        super(store);
         this.functionRoot = functionRoot;
         //this.parameterNames = parameterNames;
         FUNCTION_NAME = functionName;
@@ -22,11 +22,6 @@ public class FunctionDefinitionNode extends ControlNode {
     public double execute() {
         return getStore().addFunction(FUNCTION_NAME, functionRoot);
     }
-
-	@Override
-	public String serialize() {
-		return null;
-	}
 	
 	public SyntaxNode getFunctionRoot() {
 		return functionRoot;
