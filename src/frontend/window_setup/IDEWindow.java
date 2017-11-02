@@ -68,7 +68,7 @@ public class IDEWindow implements Observer {
 	public static final String SHAPES_HEADER = "Shapes ";
 	public static final String TURTLE_HEADER = "Turtle(s) Current State ";
 	public static final String NEW_LINE = "\n";
-	public static final double SCROLL_WIDTH = RIGHT_WIDTH - OFFSET;
+	public static final double SCROLL_WIDTH = RIGHT_WIDTH - 14;
 	
 	private static final String VARIABLE_SEPARATOR = " = ";
 	private static final String PNG_FILE_EXTENSION = "*.png",
