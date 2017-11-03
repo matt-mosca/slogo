@@ -20,16 +20,16 @@ import javafx.scene.shape.Rectangle;
  * @author Matthew Mosca
  * Deals with the display and movement of all the turtles in the program and their pens. This class 
  * communicates with the back end through the controller about information related to the properties of
- * the turtles. An instance of this class holds a list of the turtles currently displayed.
+ * the turtles. An instance of this class holds a list of the turtles currently displayed. The class is
+ * observed by IDEWindow so that changes to the properties of each turtle in the display will notify
+ * IDEWindow so that the new property values can be displayed.
  * @version 11.03.17
  */
 
 public class TurtleView extends Observable implements TurtleDisplay {
 
-	public static final double DEFAULT_WIDTH = 20;
-	public static final double DEFAULT_HEIGHT = 25;
-	public static final double TOLD_OPACITY = 1.0;
-	public static final double UNTOLD_OPACITY = 0.5;
+	public static final double ACTIVE_OPACITY = 1.0;
+	public static final double INACTIVE_OPACITY = 0.5;
 
 	private List<TurtlePen> displayedTurtles;
 	private Rectangle turtleField;
@@ -47,8 +47,8 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	 */
 	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
-		layout = border;
 		turtleField = field;
+		layout = border;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
 		currentPenColor = new SimpleObjectProperty<>();
@@ -81,14 +81,14 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	 * Iterates through the list of turtles and sets those that are active to be fully one level of opacity,
 	 *  while at the same time setting those that are inactive to a different level of opacity, so that 
 	 *  the two are visually distinct. This method is called whenever the active turtles change.
-	 * @param toldTurtles - the currently active turtles, which will execute whatever command is entered
+	 * @param activeTurtles - the currently active turtles, which will execute whatever command is entered
 	 */
-	public void changeRepresentationOfActive(List<Integer> toldTurtles) {
+	public void changeRepresentationOfActive(List<Integer> activeTurtles) {
 		for(int i = 0; i < displayedTurtles.size(); i++) {
-			if(toldTurtles.contains(i))
-				displayedTurtles.get(i).getImage().setOpacity(TOLD_OPACITY);
+			if(activeTurtles.contains(i))
+				displayedTurtles.get(i).getImage().setOpacity(ACTIVE_OPACITY);
 			else
-				displayedTurtles.get(i).getImage().setOpacity(UNTOLD_OPACITY);
+				displayedTurtles.get(i).getImage().setOpacity(INACTIVE_OPACITY);
 		}
 	}
 	
