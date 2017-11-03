@@ -46,6 +46,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import utilities.MenuGetter;
 
+/**
+ * IDEWindow.java
+ * @author Matthew Mosca and Tyler Yam
+ * Sets up the primary window and arranges elements on it.
+ * @version 11.03.17
+ */
+
 public class IDEWindow implements Observer {
 
 	public static final Color STANDARD_AREA_COLOR = Color.AQUA;
@@ -644,8 +651,8 @@ public class IDEWindow implements Observer {
 			Text newShape = new Text(SHAPES_HEADER +shapeNumber+ VARIABLE_SEPARATOR);
 			newShape.setWrappingWidth(WRAPPING_WIDTH);
 			ImageView shapeImage= new ImageView(availableShapes.get(shapeNumber));
-			shapeImage.setFitHeight(turtleView.DEFAULT_HEIGHT);
-			shapeImage.setFitWidth(turtleView.DEFAULT_WIDTH);
+			shapeImage.setFitHeight(TurtleView.DEFAULT_HEIGHT);
+			shapeImage.setFitWidth(TurtleView.DEFAULT_WIDTH);
 			HBox hbox = new HBox();
 			hbox.getChildren().add(newShape);
 			hbox.getChildren().add(shapeImage);

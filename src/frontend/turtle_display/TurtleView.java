@@ -15,6 +15,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * TurtleView.java
+ * @author Matthew Mosca
+ * Deals with the display and movement of all the turtles in the program and their pens. This class 
+ * communicates with the back end through the controller about information related to the properties of
+ * the turtles. An instance of this class holds a list of the turtles currently displayed.
+ * @version 11.03.17
+ */
+
 public class TurtleView extends Observable implements TurtleDisplay {
 
 	public static final double DEFAULT_WIDTH = 20;
@@ -27,29 +36,53 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	private Pane layout;
 	private double fieldCenterX;
 	private double fieldCenterY;
-
-	private ObjectProperty<Color> currentPenColor = new SimpleObjectProperty<>();
+	private ObjectProperty<Color> currentPenColor;
 	
+	/**
+	 * Constructor for class TurtleView. Initializes instance variables and sets some to default values,
+	 * and adds the first TurtlePen object (representing the turtle) to the list of turtles to be 
+	 * displayed.
+	 * @param border - the Pane on which the different parts of the program's display are arranged
+	 * @param field - the Rectangle turtle field around which the displayed turtles move
+	 */
 	public TurtleView(Pane border, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
 		layout = border;
 		turtleField = field;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
+		currentPenColor = new SimpleObjectProperty<>();
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
 		displayedTurtles.add(original);
 		currentPenColor.setValue(TurtlePen.DEFAULT_COLOR);
 	}
 	
+	/**
+	 * Calls a method to add the first turtle to the scene.
+	 */
 	public void displayInitialTurtle() {
-		showTurtle(displayedTurtles.get(0));
+		displayTurtle(displayedTurtles.get(0));
 	}
 	
-	public void selectTurtleOnClick(int turtleIndex, EventHandler<? super MouseEvent> value) {
-		displayedTurtles.get(turtleIndex).getImage().setOnMouseClicked(value);
+	/**
+	 * A method that executes some event when the ImageView representation of a given turtle is clicked.
+	 * The exact action/event that is executed is supplied in the controller, where this method is called.
+	 * In this program, it serves to change the graphical representation of turtles that are made active
+	 * through a mouse click.
+	 * @param turtleIndex - the index of the turtle
+	 * @param action - the event that is put into effect when this method is called
+	 */
+	public void selectTurtleOnClick(int turtleIndex, EventHandler<? super MouseEvent> action) {
+		displayedTurtles.get(turtleIndex).getImage().setOnMouseClicked(action);
 	}
 	
+	/**
+	 * Iterates through the list of turtles and sets those that are active to be fully one level of opacity,
+	 *  while at the same time setting those that are inactive to a different level of opacity, so that 
+	 *  the two are visually distinct. This method is called whenever the active turtles change.
+	 * @param toldTurtles - the currently active turtles, which will execute whatever command is entered
+	 */
 	public void changeRepresentationOfActive(List<Integer> toldTurtles) {
 		for(int i = 0; i < displayedTurtles.size(); i++) {
 			if(toldTurtles.contains(i))
@@ -59,22 +92,38 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		}
 	}
 	
-	public void showTurtle(TurtlePen turtle) {
+	/**
+	 * Adds a turtle to the scene so that it is displayed.
+	 * @param turtle - the turtle to be added
+	 */
+	private void displayTurtle(TurtlePen turtle) {
     		layout.getChildren().add(turtle.getImage());
     }
 	
+	/**
+	 * Calls a method to display the turtle at position turtleIndex in the list of turtles.
+	 * @param turtleIndex - the index of the turtle to be displayed
+	 */
 	@Override
-	public void showTurtle(int index) {
-		showTurtle(displayedTurtles.get(index));
+	public void showTurtle(int turtleIndex) {
+		displayTurtle(displayedTurtles.get(turtleIndex));
 	}
 	
-	public void hideTurtle(TurtlePen turtle) {
+	/**
+	 * Removes a turtle from the scene.
+	 * @param turtle - the turtle to be removed
+	 */
+	private void removeFromDisplay(TurtlePen turtle) {
 		layout.getChildren().remove(turtle.getImage());
 	}
 	
+	/**
+	 * Calls a method to hide from view the turtle at position turtleIndex in the list of turtles.
+	 * @param turtleIndex - the index of the turtle to be hidden
+	 */
 	@Override
-	public void hideTurtle(int index) {
-		hideTurtle(displayedTurtles.get(index));
+	public void hideTurtle(int turtleIndex) {
+		removeFromDisplay(displayedTurtles.get(turtleIndex));
 	}
 	
 	/**
@@ -112,15 +161,25 @@ public class TurtleView extends Observable implements TurtleDisplay {
     	notifyObservers();
     }
     
+    /**
+     * Adds a new turtle to the list of displayed turtles and calls a method to display the turtle on 
+     * the scene.
+     * @return the the turtle that is added
+     */
     public TurtlePen addTurtle() {
     	TurtlePen newAddition = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2, fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
     	displayedTurtles.add(newAddition);
-    	showTurtle(newAddition);
+    	displayTurtle(newAddition);
     	setChanged();
     	notifyObservers();
     	return newAddition;
     }
     
+    /**
+     * Picks up the pen of the turtle at position turtleIndex in the list of displayed turtles so that
+     * this turtle does not make a line when it moves.
+     * @param turtleIndex - the index of the turtle that should be acted upon by this method
+     */
     @Override
 	public void pickUpPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).pickUpPen();
@@ -128,6 +187,11 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		notifyObservers();
 	}
 	
+    /**
+     * Puts down the pen of the turtle at position turtleIndex in the list of displayed turtles so that
+     * this turtle makes a line when it moves.
+     * @param turtleIndex - the index of the turtle that should be acted upon by this method
+     */
     @Override
 	public void putDownPen(int turtleIndex) {
 		displayedTurtles.get(turtleIndex).putDownPen();
@@ -135,24 +199,44 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		notifyObservers();
 	}
 	
-	public void changeDrawColor(int turtleIndex, Color color) {
-    	currentPenColor.setValue(color);
-		displayedTurtles.get(turtleIndex).setPenColor(color);
+    /**
+     * Changes the color of the line made by the turtle at position turtleIndex in the list of displayed
+     * turtles.
+     * @param turtleIndex - the index of the turtle acted upon by this method
+     * @param newColor - the new color of the line for this turtle
+     */
+	public void changeDrawColor(int turtleIndex, Color newColor) {
+    	currentPenColor.setValue(newColor);
+		displayedTurtles.get(turtleIndex).setPenColor(newColor);
 		setChanged();
 		notifyObservers();
 	}
 
-	public void changeStrokeWidth(int turtleIndex, double width) {
-		displayedTurtles.get(turtleIndex).setStrokeWidth(width);
+	/**
+	 * Changes the width of the line made by the movement of the turtle at position turtleIndex in the
+	 * list of displayed turtles.
+	 * @param turtleIndex - the index of the turtle acted upon by this method
+	 * @param newWidth - the new width of the line made by this turtle
+	 */
+	public void changeStrokeWidth(int turtleIndex, double newWidth) {
+		displayedTurtles.get(turtleIndex).setStrokeWidth(newWidth);
 		setChanged();
 		notifyObservers();
 	}
 
-	public void changeImage(int turtleIndex, Image image) {
-		displayedTurtles.get(turtleIndex).changeImage(image);
+	/**
+	 * Changes the image used to represent the turtle at position turtleIndex in the list of displayed
+	 * turtles
+	 * @param turtleIndex - the index of the turtle acted upon by this method
+	 * @param newImage - the new image to be used to represent the indicated turtle
+	 */
+	public void changeImage(int turtleIndex, Image newImage) {
+		displayedTurtles.get(turtleIndex).changeImage(newImage);
 	}
 
-	// for undo/redo
+	/**
+	 * Method used in backend with undo/redo function to revert the turtle display to its original state.
+	 */
 	public void clear() {
 		TurtlePen original = new TurtlePen(fieldCenterX - TurtlePen.DEFAULT_WIDTH / 2,
 				fieldCenterY - TurtlePen.DEFAULT_HEIGHT / 2);
@@ -165,8 +249,18 @@ public class TurtleView extends Observable implements TurtleDisplay {
 		displayInitialTurtle();
 	}
 
-	public ObjectProperty<Color> getCurrentPenColorProperty() { return currentPenColor; }
+	/**
+	 * Getter to return ObjectProperty representing current pen color.
+	 * @return the current pen color
+	 */
+	public ObjectProperty<Color> getCurrentPenColorProperty() { 
+		return currentPenColor; 
+	}
 	
+	/**
+	 * Getter to return the list of displayed turtles.
+	 * @return the list of displayed turtles.
+	 */
 	public List<TurtlePen> getDisplayedTurtles() {
 		return displayedTurtles;
 	}
