@@ -42,13 +42,13 @@ public class TurtleView extends Observable implements TurtleDisplay {
 	 * Constructor for class TurtleView. Initializes instance variables and sets some to default values,
 	 * and adds the first TurtlePen object (representing the turtle) to the list of turtles to be 
 	 * displayed.
-	 * @param border - the Pane on which the different parts of the program's display are arranged
+	 * @param displayPane - the Pane on which the different parts of the program's display are arranged
 	 * @param field - the Rectangle turtle field around which the displayed turtles move
 	 */
-	public TurtleView(Pane border, Rectangle field) {
+	public TurtleView(Pane displayPane, Rectangle field) {
 		displayedTurtles = new ArrayList<TurtlePen>();
 		turtleField = field;
-		layout = border;
+		layout = displayPane;
 		fieldCenterX = IDEWindow.LEFT_WIDTH + turtleField.getWidth() / 2;
 		fieldCenterY = IDEWindow.TOP_HEIGHT + turtleField.getHeight() / 2;
 		currentPenColor = new SimpleObjectProperty<>();
