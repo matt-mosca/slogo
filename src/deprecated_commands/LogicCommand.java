@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Ben Schwennesen
+ * @deprecated
  */
 public class LogicCommand extends AbstractCommandOld {
 

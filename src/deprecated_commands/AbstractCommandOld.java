@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Ben Schwennesen
+ * @deprecated
  */
 public abstract class AbstractCommandOld implements Command {
 

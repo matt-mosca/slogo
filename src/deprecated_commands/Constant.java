@@ -2,6 +2,9 @@ package deprecated_commands;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated
+ */
 public class Constant extends AbstractCommand {
 
 	public static final String SET_VALUE = "setValue";
