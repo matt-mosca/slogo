@@ -3,7 +3,7 @@ package backend.math;
 import backend.TwoArgNode;
 
 /**
- * Computes the result of raising its first operand to the power of its second operand.
+ * Syntax node for computing the result of raising its first operand to the power of its second operand.
  *
  * @author Ben Schwennesen
  */

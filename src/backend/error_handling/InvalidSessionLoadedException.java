@@ -1,5 +1,8 @@
 package backend.error_handling;
 
-public class InvalidSessionLoadedException extends SLogoException {
-	
-}
+/**
+ * Exception thrown when a SLogo script containing an error is loaded.
+ *
+ * @author Ben Schwennesen
+ */
+public class InvalidSessionLoadedException extends SLogoException {}

@@ -4,31 +4,41 @@ import backend.SyntaxNode;
 import backend.error_handling.SLogoException;
 
 /**
+ * Base syntax node for looping control structures. Used directly by 'for' commands; extended for other loop commands.
+ *
  * @author Ben Schwennesen
  */
 public class LoopNode extends ControlNode {
 
     private String iterationVariable;
-    private SyntaxNode startExpression, endExpression, incrementExpression, subtree;
+    private SyntaxNode startExpression, limitExpression, incrementExpression, subtree;
 
+    /**
+     * Construct a syntax node for the do-times command.
+     *
+     * @param store - the object used to store the current workspace's functions and variables
+     * @param iterationVariable - the variable used to access the current iteration number
+     * @param limitExpression - the syntax node representing the iteration limit
+     * @param subtree - the syntax node to execute at each iteration
+     */
     public LoopNode(ScopedStorage store, String iterationVariable,
-                    SyntaxNode startExpression, SyntaxNode endExpression,
+                    SyntaxNode startExpression, SyntaxNode limitExpression,
                     SyntaxNode incrementExpression, SyntaxNode subtree) {
         super(store);
         this.iterationVariable = iterationVariable;
         this.startExpression = startExpression;
-        this.endExpression = endExpression;
+        this.limitExpression = limitExpression;
         this.incrementExpression = incrementExpression;
         this.subtree = subtree;
     }
 
+    @Override
     public double execute() throws SLogoException {
         getStore().enterAnonymousScope();
         double result = 0.0;
         double start = startExpression.execute(),
-                end = endExpression.execute(),
+                end = limitExpression.execute(),
                 increment = incrementExpression.execute();
-        //addBoundsToSerialization(iterationVariable, start, end, increment);
         for (double i = start; i <= end; i += increment) {
             getStore().setVariable(iterationVariable, i);
             result = subtree.execute();
@@ -37,33 +47,4 @@ public class LoopNode extends ControlNode {
         getStore().exitScope();
         return result;
     }
-    
-    /*
-    private void addBoundsToSerialization(String iterationVariable, double start, double end, double increment) {
-		String commandName = getCommandName();
-		String serializedBounds = commandName + Parser.STANDARD_DELIMITER + Parser.LIST_START_DELIMITER + Parser.STANDARD_DELIMITER
-				+ iterationVariable + Parser.STANDARD_DELIMITER + Double.toString(start)
-				+ Parser.STANDARD_DELIMITER + Double.toString(end) + Parser.STANDARD_DELIMITER
-				+ Double.toString(increment) + Parser.STANDARD_DELIMITER + Parser.LIST_END_DELIMITER;
-    }
-    */
-    
-    // Worth exposing this for the sake of serialization??
-    // If so, consider returning a deep-copy instead?
-    public SyntaxNode getCommandSubtree() {
-    		return subtree;
-    }
-    
-    public String getIterationVariable() {
-    		return iterationVariable;
-    }
-    
-    public SyntaxNode getEndExpression() {
-    		return endExpression;
-    }
-    
-    public SyntaxNode getLoopedCommand() {
-		return subtree;
-    }
-
 }

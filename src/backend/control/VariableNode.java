@@ -3,26 +3,33 @@ package backend.control;
 import backend.NoArgNode;
 import backend.error_handling.UndefinedVariableException;
 
-// TODO - consider sub-classing SyntaxNode directly?
+/**
+ * Syntax node used to access the value of a stored variable.
+ *
+ * @author Ben Schwennesen
+ */
 public class VariableNode extends NoArgNode {
-	ScopedStorage store;
-	String varName;
 
-	public VariableNode(ScopedStorage scopedStorage, String varName) {
-		this.store = scopedStorage;
-		this.varName = varName;
+	private ScopedStorage store;
+	private String varName;
+
+	/**
+	 * Construct a variable access node.
+	 *
+	 * @param store - the object used to store the current workspace's functions and variables
+	 * @param variableName - the name of the variable to access
+	 */
+	public VariableNode(ScopedStorage store, String variableName) {
+		this.store = store;
+		this.varName = variableName;
 	}
 
+	@Override
 	public double executeSelf(double... arguments) {
-		// Since parser checks in tree construction whether the variable exists
-		// the only time the catch block is entered is when the variable is declared
-		// but a value has not been assigned
-		// such as in MAKE, SET, etc.
-		// in such a case, its instantaneous value does not matter
-		// since it is about to be overwritten
 		try {
 			return store.getVariableValue(varName);
 		} catch (UndefinedVariableException e) {
+			// per project specifications, by default variables are set to zero
 			return 0;
 		}
 	}

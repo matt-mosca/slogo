@@ -1,16 +1,18 @@
 package backend.error_handling;
 
 /**
- *
- *
- * Name of this class is used in super class to determine the message of the error.
+ * Exception thrown when the user attempts to use an function they have not defined.
  *
  * @author Ben Schwennesen
  */
 public class UndefinedFunctionException extends SyntaxCausedException {
 
-    public UndefinedFunctionException(String badFunctionReferennceToken) {
-        super(badFunctionReferennceToken);
+    /**
+     * Construct an exception to throw when the user tries to call a function they haven't defined.
+     *
+     * @param badFunctionReferenceToken - the token where the user tries to call the function
+     */
+    public UndefinedFunctionException(String badFunctionReferenceToken) {
+        super(badFunctionReferenceToken);
     }
-
 }

@@ -1,5 +1,8 @@
 package backend.error_handling;
 
-public class WorkspaceFileNotFoundException extends SLogoException {
-
-}
+/**
+ * Exception thrown in the case that a user attempts to load a script that does not exist.
+ *
+ * @author Ben Schwennesen
+ */
+public class WorkspaceFileNotFoundException extends SLogoException { }

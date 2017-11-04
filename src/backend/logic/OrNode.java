@@ -3,7 +3,8 @@ package backend.logic;
 import backend.VarArgNode;
 
 /**
- * Computes the logical OR of its operands, returning one if at least one is not zero and zero otherwise.
+ * Syntax node for computing the logical OR of its operands, returning one if at least one is not zero and zero
+ * otherwise.
  *
  * @author Ben Schwennesen
  */

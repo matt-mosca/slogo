@@ -1,8 +1,6 @@
 package backend;
 
 import backend.control.DoTimesNode;
-import backend.control.FunctionDefinitionNode;
-import backend.control.VariableNode;
 import backend.error_handling.SLogoException;
 import backend.error_handling.UndefinedCommandException;
 import backend.math.ConstantNode;
@@ -12,6 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+/**
+ * Incomplete backend object for debugging behavior.
+ *
+ * @author Ben Schwennesen
+ */
 public class Debugger {
 
     public static final String DELIMITER_REGEX = "\\s+";
@@ -90,7 +93,7 @@ public class Debugger {
         return rootString;
     }
 
-    public String serializeDoTimesNode(SyntaxNode root) throws SLogoException {
+    /*public String serializeDoTimesNode(SyntaxNode root) throws SLogoException {
         if (root == null) {
             return "";
         }
@@ -101,12 +104,12 @@ public class Debugger {
         DoTimesNode doTimesNode = (DoTimesNode) root;
         String rootString = commandGetter.getNameFromCommandClass(root.getClass());
         String iterationVariableString = doTimesNode.getIterationVariable();
-        String endExpressionString = serializeTree(doTimesNode.getEndExpression());
+        String endExpressionString = serializeTree(doTimesNode.getLimitExpression());
         String commandString = serializeTree(doTimesNode.getCommandSubtree());
         return rootString + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + iterationVariableString
                 + STANDARD_DELIMITER + endExpressionString + STANDARD_DELIMITER + LIST_END_DELIMITER
                 + STANDARD_DELIMITER + LIST_START_DELIMITER + STANDARD_DELIMITER + commandString + STANDARD_DELIMITER
                 + LIST_END_DELIMITER;
-    }
+    }*/
 
 }

@@ -687,6 +687,6 @@ public class IDEWindow implements Observer {
 	}
 	
 	private void callFunctions(String functionName) {
-		console.setCommandEntry(functionName);
+		console.setCommandEntryToFunctionCall(functionName);
 	}
 }

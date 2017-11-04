@@ -5,10 +5,8 @@ import backend.error_handling.SLogoException;
 import backend.math.ConstantNode;
 
 /**
- * REPEAT expr [ command(s) ] -- runs command(s) given in the list the value of expr number of times returns the value
- *                                of the final command executed (or 0 if no commands are executed)
- *                                note, the value of the current iteration, starting at 1, is automatically assigned to
- *                                the variable :repcount so that it can be accessed by the command(s)
+ * Syntax node for executing repeat commands.
+ *
  * @author Ben Schwennesen
  */
 
@@ -18,6 +16,13 @@ public class RepeatNode extends LoopNode {
     private static final SyntaxNode START_EXPRESSION = new ConstantNode(1);
     private static final SyntaxNode INCREMENT_EXPRESSION = new ConstantNode(1);
 
+    /**
+     * Construct a syntax node for the do-times command.
+     *
+     * @param store - the object used to store the current workspace's functions and variables
+     * @param limitExpression - the syntax node representing the iteration limit
+     * @param subtree - the syntax node to execute at each iteration
+     */
     public RepeatNode(ScopedStorage store, SyntaxNode limitExpression, SyntaxNode subtree) throws SLogoException {
         super(store, REPEAT_VARIABLE_NAME, START_EXPRESSION, limitExpression, INCREMENT_EXPRESSION, subtree);
     }

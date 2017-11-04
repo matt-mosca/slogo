@@ -6,6 +6,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 
 /**
+ * Controls the color and size of turtle pens.
+ *
  * @author Ben Schwennesen
  */
 public class PenController extends AbstractColorController implements SizeController {
@@ -16,7 +18,11 @@ public class PenController extends AbstractColorController implements SizeContro
 
     private final double DEFAULT_PEN_SIZE = 1.0;
 
-    public PenController(PaletteStorage paletteStorage) {
+    /**
+     * Construct the pen controller for a workspace.
+     * @param paletteStorage - the color storage object
+     */
+    PenController(PaletteStorage paletteStorage) {
         super(paletteStorage);
         currentPenSize = new SimpleDoubleProperty(DEFAULT_PEN_SIZE);
     }

@@ -3,7 +3,7 @@ package backend.math;
 import backend.TwoArgNode;
 
 /**
- * Computer the quotient of its first operand divided by its second operand.
+ * Syntax node for computing the quotient of its first operand divided by its second operand.
  *
  * @author Ben Schwennesen
  */

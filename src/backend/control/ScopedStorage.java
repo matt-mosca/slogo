@@ -88,7 +88,11 @@ public class ScopedStorage extends Observable {
 		enterScope(String.valueOf(anonymousId++));
 	}
 
-	void exitScope() { scopeStack.pollLast(); }
+	void exitScope() {
+		scopeStack.pollLast();
+		setChanged();
+		notifyObservers();
+	}
 	/* GETTERS */
 
 	// Whether variable is accessible from current scope, inclusive of outer ones

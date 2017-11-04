@@ -3,7 +3,8 @@ package backend.logic;
 import backend.TwoArgNode;
 
 /**
- * Determines whether its first operand is less than its second operand, returning one if so and zero otherwise.
+ * Syntax node for determining whether its first operand is less than its second operand, returning one if so and zero
+ * otherwise.
  *
  * @author Ben Schwennesen
  */

@@ -10,16 +10,21 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Stores the turtle images defined at indices.
+ *
  * @author Ben Schwennesen
  */
-public class ImageStorage {
+class ImageStorage {
 
     private final String IMAGES_PATH = "images/";
     private final String IMAGE_EXTENSION = ".png";
 
     private final Map<Integer, Image> IMAGE_MAP = new TreeMap<>();
 
-    public ImageStorage() {
+    /**
+     * Construct the turtle image storage.
+     */
+    ImageStorage() {
         fillImageMap();
     }
 
@@ -36,8 +41,18 @@ public class ImageStorage {
         }
     }
 
+    /**
+     * @return a map from indices to images, for passing along to the frontend in order to display image choices
+     */
     Map<Integer, Image> getImageMap() { return IMAGE_MAP; }
 
+    /**
+     * Get the image associated with an index.
+     *
+     * @param index - the index to access
+     * @return the color associated with the index
+     * @throws SLogoException - in the case that the index has no valid image mapping
+     */
     Image getImage(int index) throws SLogoException {
         if (!IMAGE_MAP.containsKey(index)) {
             throw new UndefinedColorException(index);

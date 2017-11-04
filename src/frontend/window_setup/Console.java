@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Takes in user command input, displaying the command history as with a console/terminal window.
+ *
+ * Commands are submitted by holding SHIFT and pressing ENTER.
+ * Going up and down the command history is achieved by holding SHIFT and pressing the corresponding arrow key.
+ *
  * @author Ben Schwennesen
  */
 public class Console {
@@ -103,6 +108,14 @@ public class Console {
         consoleElements.add(getIndexOfLastEnteredCommand() + 1, commandElement);
     }
 
+    private int getIndexOfLastEnteredCommand() { return consoleElements.size() - 2; }
+
+    /**
+     * In the case that the project fails to build (dependent files not found), allow the IDE window to display this
+     * error in the command area.
+     *
+     * @param error - the project build error message
+     */
     void addError(String error) {
     	Text commandError = new Text(error);
         // change event below to send to Controller
@@ -110,9 +123,19 @@ public class Console {
         consoleElements.add(getIndexOfLastEnteredCommand() + 1, commandError);
     }
 
-    private int getIndexOfLastEnteredCommand() { return consoleElements.size() - 2; }
-    
-    void setCommandEntry(String function) { commandEntry.setText(function); }
 
+    /**
+     * Allow the IDE window to set the command entry to a function call when a function in the function tab area is
+     * clicked.
+     *
+     * @param function - the name of the previously defined function
+     */
+    void setCommandEntryToFunctionCall(String function) { commandEntry.setText(function); }
+
+    /**
+     * Allow the IDE window to get a visual representation of the console.
+     *
+     * @return the list view used to represent the console visually in the IDE
+     */
     ListView<Node> getListView() { return commandsListView; }
 }
