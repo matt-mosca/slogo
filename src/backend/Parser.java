@@ -85,7 +85,7 @@ public class Parser {
 		// Avoid repeated computation for just differing whitespace
 		// Need to remove comments
 		String commandWithoutComments = parserUtils.stripComments(command);
-		String formattedCommand = commandWithoutComments
+		String formattedCommand = commandWithoutComments.toLowerCase()
 				.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
 		syntaxTrees.put(formattedCommand, constructSyntaxTree(
 				new PeekingIterator<>(Arrays.asList(formattedCommand.split(ParserUtils.DELIMITER_REGEX)).iterator())));
@@ -104,7 +104,7 @@ public class Parser {
 	 */
 	public void executeCommand(String command) throws SLogoException {
 		String commandWithoutComments = parserUtils.stripComments(command);
-		String formattedCommand = commandWithoutComments
+		String formattedCommand = commandWithoutComments.toLowerCase()
 				.replaceAll(ParserUtils.DELIMITER_REGEX, ParserUtils.STANDARD_DELIMITER).trim();
 		if (!syntaxTrees.containsKey(formattedCommand)) { // in case method is called without validation
 			syntaxTrees.put(formattedCommand, constructSyntaxTree(new PeekingIterator<String>(
