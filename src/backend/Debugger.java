@@ -47,8 +47,7 @@ public class Debugger {
         commandGetter = new CommandGetter();
     }
 
-	// TODO - Move to debugger?
-	public String serializeTree(SyntaxNode root) throws SLogoException {
+	/*public String serializeTree(SyntaxNode root) throws SLogoException {
 		if (root == null) {
 			return "";
 		}
@@ -63,8 +62,9 @@ public class Debugger {
 			badCommand.printStackTrace();
 			throw new UndefinedCommandException(root.getClass().getName());
 		}
-	}
-    public String serializeValueNode(SyntaxNode root) throws SLogoException {
+	}*/
+
+    /*public String serializeValueNode(SyntaxNode root) throws SLogoException {
         if (root == null) {
             return "";
         }
@@ -91,7 +91,7 @@ public class Debugger {
             rootString += STANDARD_DELIMITER + VARIABLE_ARGS_END_DELIMITER;
         }
         return rootString;
-    }
+    }*/
 
     /*public String serializeDoTimesNode(SyntaxNode root) throws SLogoException {
         if (root == null) {

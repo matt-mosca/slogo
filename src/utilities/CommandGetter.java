@@ -36,7 +36,6 @@ public class CommandGetter {
 	private final Properties COMMAND_PARSING_PROPERTIES;
 
 	private Map<String, String> commandMap = new HashMap<>();
-	private Map<String, String> reverseCommandMap = new HashMap<>();
 
 	/**
 	 * Construct the command getter for use by the parser.
@@ -71,7 +70,6 @@ public class CommandGetter {
 			for (String alias : languageAliases) {
 				commandMap.put(alias.replace("\\", ""), baseCommand);
 			}
-			reverseCommandMap.put(baseCommand, firstAlias);
 		}
 	}
 
