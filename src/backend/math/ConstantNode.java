@@ -3,14 +3,19 @@ package backend.math;
 import backend.NoArgNode;
 
 /**
- * Returns a constant entered as a token by the user.
+ * Syntax node for returning a constant entered as a token by the user.
  *
  * @author Ben Schwennesen
  */
 public class ConstantNode extends NoArgNode {
 	
-	double value;
-	
+	private double value;
+
+	/**
+	 * Construct a syntax node for representing a constant.
+	 *
+	 * @param value - the value of the constant
+	 */
 	public ConstantNode(double value) {
 		this.value = value;
 	}
@@ -19,7 +24,10 @@ public class ConstantNode extends NoArgNode {
 	public double executeSelf(double... arguments) {
 		return value;
 	}
-	
+
+	/**
+	 * @return the value of the constant
+	 */
 	public double getValue() {
 		return value;
 	}

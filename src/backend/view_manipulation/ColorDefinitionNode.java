@@ -2,8 +2,18 @@ package backend.view_manipulation;
 
 import backend.error_handling.SLogoException;
 
+/**
+ * Syntax node for defining a color at an index.
+ *
+ * @author Ben Schwennesen
+ */
 public class ColorDefinitionNode extends ViewNode {
 
+    /**
+     * Construct a node to define a color at an index.
+     *
+     * @param viewController - the controller for objects in the view
+     */
     public ColorDefinitionNode(ViewController viewController) {
         super(viewController);
     }

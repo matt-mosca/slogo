@@ -3,7 +3,8 @@ package backend.logic;
 import backend.OneArgNode;
 
 /**
- * Computes the logical NOT of its (sole) operand, returning one if the operand is zero and zero otherwise.
+ * Syntax node for computing the logical NOT of its (sole) operand, returning one if the operand is zero and zero
+ * otherwise.
  *
  * @author Ben Schwennesen
  */

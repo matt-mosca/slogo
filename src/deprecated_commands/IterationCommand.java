@@ -5,6 +5,9 @@ import backend.SyntaxNode;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
 
+/**
+ * @deprecated
+ */
 public class IterationCommand extends ControlCommand {
 
     private Entry<String, Double> iterationVariable;

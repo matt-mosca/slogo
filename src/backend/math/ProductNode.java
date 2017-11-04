@@ -5,7 +5,7 @@ import backend.VarArgNode;
 import java.util.Arrays;
 
 /**
- * Computer the product of all its operands, of which there can be an arbitrary number.
+ * Syntax node for computing the product of all its operands, of which there can be an arbitrary number.
  *
  * @author Ben Schwennesen
  */

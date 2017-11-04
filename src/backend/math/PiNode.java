@@ -3,17 +3,11 @@ package backend.math;
 import backend.SyntaxNode;
 
 /**
- * Returns the value of the constant pi.
+ * Syntax node for returning the value of the constant pi.
  *
  * @author Ben Schwennesen
  */
 public class PiNode implements SyntaxNode {
-
-	private String commandString;
-    // Want to represent the way the user wrote it?
-	public PiNode(String commandString) {
-		this.commandString = commandString;
-	}
 	
     @Override
     public double execute() {

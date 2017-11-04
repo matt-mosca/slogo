@@ -48,5 +48,4 @@ public final class ExceptionMessageGetter {
     public static String getMessage(String propertyName) {
         return PROPERTIES.containsKey(propertyName) ? PROPERTIES.getProperty(propertyName) : "";
     }
-
 }

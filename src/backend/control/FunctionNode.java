@@ -7,6 +7,8 @@ import backend.error_handling.SLogoException;
 import java.util.List;
 
 /**
+ * Syntax node for executing user-defined functions.
+ *
  * @author Ben Schwennesen
  */
 public class FunctionNode extends ControlNode {
@@ -14,6 +16,13 @@ public class FunctionNode extends ControlNode {
     private List<SyntaxNode> parameters;
     private final String FUNCTION_NAME;
 
+    /**
+     * Construct a user-defined function execution node.
+     *
+     * @param store - the object used to store the current workspace's functions and variables
+     * @param functionName - the name of the function to execute
+     * @param parameters - the expressions to evaluate and set the functions' parameters equal to
+     */
     public FunctionNode(ScopedStorage store, String functionName, List<SyntaxNode> parameters) {
         super(store);
         this.parameters = parameters;

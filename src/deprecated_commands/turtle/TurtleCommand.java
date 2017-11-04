@@ -4,6 +4,9 @@ import deprecated_commands.AbstractCommandOld;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated
+ */
 public class TurtleCommand extends AbstractCommandOld {
 
 	private TurtleListener turtleListener = TurtleListener.getInstance();

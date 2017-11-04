@@ -7,7 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * Abstract representation of an object for controlling the color value of objects with colors set by commands.
  *
  * @author Ben Schwennesen
  */
@@ -16,12 +16,12 @@ public abstract class AbstractColorController implements ColorController {
     private PaletteStorage paletteStorage;
 
     private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>();
-
-    public AbstractColorController(PaletteStorage paletteStorage) {
+    
+    AbstractColorController(PaletteStorage paletteStorage) {
         this.paletteStorage = paletteStorage;
     }
 
-    protected void setColorProperty(int index) throws SLogoException {
+    void setColorProperty(int index) throws SLogoException {
         colorProperty.setValue(paletteStorage.getColor(index));
     }
 

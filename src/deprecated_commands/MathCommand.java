@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * @author Ben Schwennesen
+ * @deprecated
  */
 public class MathCommand extends AbstractCommandOld {
 

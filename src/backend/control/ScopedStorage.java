@@ -13,13 +13,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
+ * Stores variables and functions defined by the user in specific scopes. Notifies listeners--namely the view, which
+ * displays these variables and functions--of changes when they occur.
+ *
+ * This class is well defined for a number of reasons. For one thing, the functions it contains are all well-scoped and
+ * readable, with each having a clearly defined purpose. Furthermore, access is limited as strictly as possible.
+ * Syntax nodes which require access to the storage, notably control nodes, are included in the same package so as to
+ * expose the methods that allow for the modification of stored elements to as few parts of the system as possible.
+ *
+ * When the class does need to expose public methods, it does so exposing as little implementation detail as possible.
+ * For example, in order to pass details about currently defined functions and variables to the view, it returns deep
+ * copies of the maps (ensuring the model data won't be changed by the view) used to store them here; this is flexible
+ * as the way variables and functions are stored could still be changed, so long as they were still collected into
+ * convenient maps when passed along to the view.
+ *
+ * Additionally, the class throws meaningful, custom-defined exceptions when the user attempts to access variables
+ * and functions that are undefined. This makes it very easy for the frontend to display useful messages to the user
+ * about what went wrong with the commands they entered.
+ *
+ * Finally, the class demonstrates solid understanding of the Observer design pattern. In order to communicate to the
+ * view that new functions or variables have been added, the class extends Observable and notifies the view of
+ * changes when they occur. This eliminates the need for the our controller class to serve as an intermediary.
+ *
  * @author Ben Schwennesen
  */
 public class ScopedStorage extends Observable {
 
-	private Map<String, Map<String, Double>> functionVariables = new HashMap<>();
+	private Map<String, Map<String, Double>> variablesInScope = new HashMap<>();
 	private Map<String, List<String>> functionParameterNames = new HashMap<>();
 	private Map<String, SyntaxNode> functionRoots = new HashMap<>();
 
@@ -32,39 +55,62 @@ public class ScopedStorage extends Observable {
 	// track anonymous scopes (loops, conditionals)
 	private int anonymousId = 0;
 
+	/**
+	 * Construct the function and variable storage object for a workspace.
+	 */
 	public ScopedStorage() {
-		functionVariables.put(GLOBAL, new HashMap<>());
+		variablesInScope.put(GLOBAL, new HashMap<>());
 		scopeStack.push(GLOBAL);
 	}
 
-	double addFunction(String functionName, SyntaxNode functionRoot) {
-		functionRoots.put(functionName, functionRoot);
-		return STORAGE_SUCCESS;
-	}
-
-	public double setVariable(String name, double value) {
-		String scopeToDefineIn = getScopeOfDefinition(name);
-		return setVariableInScope(scopeToDefineIn, name, value);
-	}
-
-	double setVariableInScope(String scope, String variableName, double value) {
-		Map<String, Double> functionVariableMap = functionVariables.getOrDefault(scope, new HashMap<>());
-		functionVariableMap.put(variableName, value);
-		functionVariables.put(scope, functionVariableMap);
-		setChanged();
-		notifyObservers();
-		return value;
+	/**
+	 * Enter a new, named scope.
+	 *
+	 * @param newScope - the scope to enter
+	 */
+	void enterScope(String newScope) {
+		scopeStack.addLast(newScope);
 	}
 
 	/**
-	 *
-	 * @return scope where the variable is already defined, or current scope if it's not defined yet
+	 * Enter a part of the program that is unnamed but requires its own scope, such as a loop or conditional.
 	 */
-	private String getScopeOfDefinition(String variableName) {
+	void enterAnonymousScope() {
+		enterScope(String.valueOf(anonymousId++));
+	}
+
+	/**
+	 * Exit the last entered scope. Ensure that the storage object never abandons global scope.
+	 */
+	void exitScope() {
+		if (!scopeStack.isEmpty() && !scopeStack.peekLast().equals(GLOBAL)) {
+			scopeStack.pollLast();
+			setChanged();
+			notifyObservers();
+		}
+	}
+
+	/**
+	 * Set a variable in the highest level scope in which it is defined. Highest level means working up from global
+	 * out to, for example, anonymous for loop scopes inside of function scopes.
+	 *
+	 * Access is public since the frontend requires the ability to update individual variables outside of the usual
+	 * command-based way of doing this.
+	 *
+	 * @param name - the name of the variable
+	 * @param value - the value to which the variable should be set
+	 * @return the newly-set value of the variable
+	 */
+	public double setVariable(String name, double value) {
+		String scopeToDefineIn = determineScopeOfDefinition(name);
+		return setVariableInScope(scopeToDefineIn, name, value);
+	}
+
+	private String determineScopeOfDefinition(String variableName) {
 		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
 		while (innerToOuterScope.hasNext()) {
 			String scope = innerToOuterScope.next();
-			if (functionVariables.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
+			if (variablesInScope.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
 				return scope;
 			}
 		}
@@ -72,66 +118,111 @@ public class ScopedStorage extends Observable {
 		return scopeStack.peekLast();
 	}
 
+	/**
+	 * Set the value of a variable as defined in a particular scope.
+	 *
+	 * This is necessary since, for example, a variable could be defined globally, only for a variable of the same
+	 * name to be used as the parameter to a function (in which case, the value of the global variable should not be
+	 * overwritten).
+	 *
+	 * @param scope - the scope in which the variable should be defined
+	 * @param variableName - the name of the variable
+	 * @param value - the value to which the variable should be set
+	 * @return the newly-set value of the variable
+	 */
+	double setVariableInScope(String scope, String variableName, double value) {
+		Map<String, Double> functionVariableMap = variablesInScope.getOrDefault(scope, new HashMap<>());
+		functionVariableMap.put(variableName, value);
+		variablesInScope.put(scope, functionVariableMap);
+		setChanged();
+		notifyObservers();
+		return value;
+	}
+
+	/**
+	 * Confirm the existence of a variable inside the current scope.
+	 *
+	 * @param variableName - the name of the variable
+	 * @return true if the user has defined this variable previously somewhere accessible to the current scope
+	 */
+	public boolean existsVariable(String variableName) {
+		return getAllAvailableVariables().containsKey(variableName);
+	}
+
+	/**
+	 * Confirm the existence of a function.
+	 *
+	 * @param functionName - the name of the function
+	 * @return true if the user has defined this function previously
+	 */
+	public boolean existsFunction(String functionName) {
+		return functionParameterNames.containsKey(functionName);
+	}
+
+	/**
+	 * Register a function and its associated parameters.
+	 *
+	 * @param functionName - the name of the function
+	 * @param parameterNames - the names of the function's parameters
+	 */
 	public void addFunctionParameterNames(String functionName, List<String> parameterNames) {
 		functionParameterNames.put(functionName, parameterNames);
-		// point at which frontend should display the available "user-defined command" (function)
 		setChanged();
 		notifyObservers();
 	}
 
-	void enterScope(String newScope) {
-		scopeStack.addLast(newScope);
+	/**
+	 * Store a function's subtree of execution.
+	 *
+	 * @param functionName - the name of the function
+	 * @param functionRoot - the syntax node to execute whenever the function is called
+	 * @return one to indicate successful storage of the function
+	 */
+	double addFunction(String functionName, SyntaxNode functionRoot) {
+		functionRoots.put(functionName, functionRoot);
+		return STORAGE_SUCCESS;
 	}
 
-	// for loops, conditionals
-	void enterAnonymousScope() {
-		enterScope(String.valueOf(anonymousId++));
+	/**
+	 * Register the existence of a function prior to parsing its details, so that it may be used recursively.
+	 *
+	 * @param functionName - the name of the function
+	 */
+	public void registerFunctionName(String functionName) {
+		addFunctionParameterNames(functionName, new ArrayList<>());
 	}
 
-	void exitScope() { scopeStack.pollLast(); }
-	/* GETTERS */
-
-	// Whether variable is accessible from current scope, inclusive of outer ones
-	public boolean existsVariable(String name) {
-		return getAllAvailableVariables().containsKey(name);
+	/**
+	 * Retrieve the parameters of a user-defined function.
+	 *
+	 * @param functionName - the name of the function
+	 * @return a list of the names of the parameters that were listed when the user defined the function
+	 */
+	List<String> getFunctionParameterNames(String functionName) {
+		return functionParameterNames.get(functionName);
 	}
 
-	public boolean existsFunction(String name) {
-		return functionParameterNames.containsKey(name);
-	}
-
-	// used by the parser
+	/**
+	 * Retrieve the number of parameters a user-defined function requires.
+	 *
+	 * @param functionName - the name of the function
+	 * @return the number of parameters a call the the function requires
+	 * @throws UndefinedFunctionException - in the case that the user has not defined the function
+	 */
 	public int getNumberOfFunctionParameters(String functionName) throws UndefinedFunctionException {
-		if (!functionParameterNames.containsKey(functionName)) {
+		if (!existsFunction(functionName)) {
 			throw new UndefinedFunctionException(functionName);
 		}
 		return functionParameterNames.get(functionName).size();
 	}
 
-	// used to temporarily note that a function has been declared, for recursion
-	public void registerFunctionName(String functionName) {
-		addFunctionParameterNames(functionName, new ArrayList<>());
-	}
-
-	public Map<String, Double> getAllAvailableVariables() {
-		Map<String, Double> availableVariables = new TreeMap<>();
-		availableVariables.putAll(functionVariables.get(GLOBAL));
-		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
-		while (innerToOuterScope.hasNext()) {
-			availableVariables.putAll(functionVariables.getOrDefault(innerToOuterScope.next(), new HashMap<>()));
-		}
-		return availableVariables;
-	}
-
-	// return function name and parameter name list
-	public Map<String, List<String>> getDefinedFunctions() {
-		return functionParameterNames;
-	}
-
-	List<String> getFunctionParameterNames(String functionName) {
-		return functionParameterNames.get(functionName);
-	}
-
+	/**
+	 * Retrieve the subtree root associated with a function.
+	 *
+	 * @param functionName - the name of the function
+	 * @return the root of the subtree to be executed when the function is called
+	 * @throws UndefinedFunctionException - in the case that the function is undefined
+	 */
 	SyntaxNode getFunctionRoot(String functionName) throws UndefinedFunctionException {
 		if (!existsFunction(functionName)) {
 			throw new UndefinedFunctionException(functionName);
@@ -140,27 +231,60 @@ public class ScopedStorage extends Observable {
 		}
 	}
 
-	// Need to check all scopes from innermost to outermost ... not just innermost
+	/**
+	 * Retrieve the value of a variable defined by the user.
+	 *
+	 * @param variableName - the name of the variable
+	 * @return the value of the variable
+	 * @throws UndefinedVariableException - in the case that the variable is undefined
+	 */
 	double getVariableValue(String variableName) throws UndefinedVariableException {
 		if (!existsVariable(variableName)) {
 			throw new UndefinedVariableException(variableName);
 		}
-		// Search from top to bottom of stack
 		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
 		while (innerToOuterScope.hasNext()) {
 			String scope = innerToOuterScope.next();
-			if (functionVariables.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
-				return functionVariables.get(scope).get(variableName);
+			if (variablesInScope.getOrDefault(scope, new HashMap<>()).containsKey(variableName)) {
+				return variablesInScope.get(scope).get(variableName);
 			}
 		}
 		return 0;
 	}
 
-	// for undo / redo
+	/**
+	 * Retrieve all the persistent (that is, defined outside of an anonymous scope such as a loop) variables defined
+	 * by the user.
+	 *
+	 * @return a deep copy map from variable names to their values
+	 */
+	public Map<String, Double> getAllAvailableVariables() {
+		Map<String, Double> availableVariables = new TreeMap<>();
+		availableVariables.putAll(variablesInScope.get(GLOBAL));
+		Iterator<String> innerToOuterScope = scopeStack.descendingIterator();
+		while (innerToOuterScope.hasNext()) {
+			availableVariables.putAll(variablesInScope.getOrDefault(innerToOuterScope.next(), new HashMap<>()));
+		}
+		return availableVariables;
+	}
+
+	/**
+	 * Retrieve all the functions the user has defined in the current workspace.
+	 *
+	 * @return a deep copy map of the stored function names to lists of their parameter names
+	 */
+	public Map<String, List<String>> getDefinedFunctions() {
+		return functionParameterNames.entrySet().stream()
+				.collect(Collectors.toMap(e -> e.getKey(), e -> new ArrayList<>(e.getValue())));
+	}
+
+	/**
+	 * Remove all stored variables and functions, as part of resetting the model.
+	 */
 	public void clear() {
-		functionVariables.clear();
+		variablesInScope.clear();
 		functionParameterNames.clear();
-		functionVariables.put(GLOBAL, new HashMap<>());
+		variablesInScope.put(GLOBAL, new HashMap<>());
 		functionRoots.clear();
 		scopeStack.clear();
 	}

@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 
 /**
+ * Used to generate the IDE menu bar items from a properties file.
+ *
  * @author Ben Schwennesen
  */
 public class MenuGetter {
@@ -24,9 +26,13 @@ public class MenuGetter {
     public static final String INFO_DELIMITER = ",";
     private final int INFO_LENGTH = 2;
     private final String MENU_INFO_FILE = "resources/MenuBar.properties";
-    private final Class MENU_RUNNABLES_CLASS = IDEWindow.class;
     private final Properties MENU_PROPERTIES = new Properties();
 
+    /**
+     * Construct the menu bar item getter.
+     *
+     * @throws SLogoException - in the case that the menu properties file is not found
+     */
     public MenuGetter() throws SLogoException {
         try {
             InputStream commandPropertiesStream = getClass().getClassLoader().getResourceAsStream(MENU_INFO_FILE);
@@ -34,14 +40,6 @@ public class MenuGetter {
         } catch (IOException fileNotFound) {
             throw new ProjectBuildException();
         }
-    }
-
-    public List<Menu> getMenuDropdowns(IDEWindow runner) throws SLogoException {
-        Map<String, Menu> dropdownsMap = new TreeMap<>(Collections.reverseOrder());
-        for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
-            generateMenuItem(dropdownsMap, itemName, runner);
-        }
-        return new ArrayList<>(dropdownsMap.values());
     }
 
     private void generateMenuItem(Map<String, Menu> dropdownsMap, String itemName, IDEWindow runner) throws ProjectBuildException {
@@ -69,5 +67,21 @@ public class MenuGetter {
         } catch (ReflectiveOperationException callFailure) {
             return;
         }
+    }
+
+    /**
+     * Retrieve the dropdown items for use in the IDE menu bar, as generated from the properties file.
+     *
+     * @param runner - the IDE window instance, needed to create button press associations via reflection
+     * @return a list of dropdown items to be included in the IDE menu bar
+     * @throws SLogoException - in the case that the menu properties file contains an error that causes reflection to
+     *                          fail
+     */
+    public List<Menu> getMenuDropdowns(IDEWindow runner) throws SLogoException {
+        Map<String, Menu> dropdownsMap = new TreeMap<>(Collections.reverseOrder());
+        for (String itemName : MENU_PROPERTIES.stringPropertyNames()) {
+            generateMenuItem(dropdownsMap, itemName, runner);
+        }
+        return new ArrayList<>(dropdownsMap.values());
     }
 }

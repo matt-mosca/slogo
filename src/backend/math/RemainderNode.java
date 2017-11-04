@@ -3,7 +3,7 @@ package backend.math;
 import backend.TwoArgNode;
 
 /**
- * Computes the remainder of its first operand after division by its second operand.
+ * Syntax node for computing the remainder of its first operand after division by its second operand.
  *
  * @author Ben Schwennesen
  */

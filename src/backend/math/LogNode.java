@@ -3,7 +3,7 @@ package backend.math;
 import backend.OneArgNode;
 
 /**
- * Computes the natural logarithm of its (sole) operand.
+ * Syntax node for computing the natural logarithm of its (sole) operand.
  *
  * @author Ben Schwennesen
  */

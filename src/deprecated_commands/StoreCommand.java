@@ -4,6 +4,9 @@ import backend.control.ScopedStorage;
 
 import java.lang.reflect.Method;
 
+/**
+ * @deprecated
+ */
 public class StoreCommand extends AbstractCommandOld {
 
     public StoreCommand (Method methodToInvoke) {

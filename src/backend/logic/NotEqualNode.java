@@ -5,7 +5,7 @@ import backend.VarArgNode;
 import java.util.Arrays;
 
 /**
- * Determines the inequality of its operands, returning zero if all are equal and one otherwise.
+ * Syntax node for determining the inequality of its operands, returning zero if all are equal and one otherwise.
  *
  * @author Ben Schwennesen
  */

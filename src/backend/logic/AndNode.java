@@ -3,7 +3,7 @@ package backend.logic;
 import backend.VarArgNode;
 
 /**
- * Computes the logical AND of its operands, returning one if all are non-zero or zero otherwise.
+ * Syntax node for computing the logical AND of its operands, returning one if all are non-zero or zero otherwise.
  *
  * @author Ben Schwennesen
  */

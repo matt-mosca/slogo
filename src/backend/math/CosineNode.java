@@ -3,7 +3,7 @@ package backend.math;
 import backend.OneArgNode;
 
 /**
- * Computes the value of the cosine function for its (sole) operand.
+ * Syntax node for computing  the value of the cosine function for its (sole) operand.
  *
  * @author Ben Schwennesen
  */
