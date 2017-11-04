@@ -53,7 +53,8 @@ public class HelpWindow {
 				+ "them with \'Space.\' \n");
 		textBuilder.append("3. When a text box is not selected, the user can use WASD to control the "
 				+ "movement of the turtle, and \'Space\' to pick the pen up or put it down. \n \n");
-		textBuilder.append("Commands: \n");
+		textBuilder.append("Commands: \n \n");
+		textBuilder.append("To enter a command, type in text, hold \'Shift,\' and hit \'Enter.\' \n \n");
 		textBuilder.append("FORWARD pixels (FD pixels) - move forward pixels distance \n"
 				+ "BACK pixels (BK pixels) - move back pixels distance \n"
 				+ "LEFT degrees- (LT degrees) - rotate clockwise by degrees angle\n"
